@@ -13,7 +13,7 @@ const backgroundMapping = {
 };
 
 // Fallback configuration if the pathname is not explicitly mapped.
-const defaultBackground = { className: "", color: "#ffffff" };
+const defaultBackground = { className: "", color: "#000000" };
 
 const BackgroundProvider = ({ children }) => {
   const location = useLocation();
