@@ -1,0 +1,16 @@
+:root {
+    --bg1: #242424;
+    --bg2: #ffffff;
+
+    --text-color1: #f4f4f4;
+    --text-color2: #000000;
+}
+.homepageBG {
+    background-color: var(--bg1);
+    color: var(--text-color1);
+}
+
+.gamepageBG {
+    background-color: var(--bg1);
+    color: var(--text-color1);
+}
