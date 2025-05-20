@@ -1,0 +1,27 @@
+#root {
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+.app {
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  grid-template-areas:
+    'header header header'
+    'main main main'
+    'foot foot foot';
+  grid-template-rows: auto 1fr auto;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+header {
+  grid-area: header;
+}
+main {
+  grid-area: main;
+}
+footer {
+  grid-area: foot;
+}
