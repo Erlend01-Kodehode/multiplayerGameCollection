@@ -1,0 +1,13 @@
+.main {
+  font-size: var(--fontsize-large);
+  min-height: 100dvh;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.gameTitle {
+  font-size: var(--fontsize-title5);
+  margin: 3px 0px;
+}

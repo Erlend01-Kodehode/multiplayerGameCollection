@@ -1,10 +1,12 @@
 import { Link, NavLink } from 'react-router-dom'
 
+import styles from "../CSSModule/componentCSS/gamecard.module.css"
+
 export default function GameCard({ gameInfo: { path, title, thumbnail } }) {
   return (
-    <Link className='game-card' to={path}>
-      <img className='game-thumbnail' src={thumbnail} />
-      <div className='game-title'>{title}</div>
+    <Link className={styles.gameList} to={path}>
+      <img className={styles.gameCard} src={thumbnail} />
+      <div className={styles.gameThumbnail}>{title}</div>
     </Link>
   )
 }

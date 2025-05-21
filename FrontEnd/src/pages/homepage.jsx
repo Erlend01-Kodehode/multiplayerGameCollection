@@ -21,10 +21,10 @@ const HomePage = () => {
   ]
 
   return (
-    <div className='main'>
+    <div className={styles.main}>
       <h1>Welcome to the Home Page</h1>
       <p>This is the content of the home page.</p>
-      <div className='game-list'>
+      <div className={styles.gameList}>
         {games.map((game, index) => (
           <GameCard key={index} gameInfo={game} />
         ))}

@@ -1,0 +1,30 @@
+.gameList {
+  /* border: white 1px solid; */
+  max-width: 650px;
+  width: fit-content;
+  height: fit-content;
+  padding: 10px;
+  margin: 10px;
+  gap: 25px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.gameCard {
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.gameThumbnail {
+  background: var(--custom-bg1);
+  border: white 1px solid;
+  border-radius: 10px;
+  aspect-ratio: 4 / 3;
+  width: 300px;
+  object-fit: cover;
+}
