@@ -13,10 +13,14 @@ const GameDetails = () => {
   const InfoComponent = gameInfoMap[gameId];
 
   if (!InfoComponent) {
+    const notFoundStyleContainer = {
+      display: "flex",
+      justifyContent: "center",
+    };
     return (
-      <div>
-        <h1>Game Details</h1>
-        <p>No information available for this game.</p>
+      <div styles={notFoundStyleContainer}>
+          <h1>Game Details</h1>
+          <p>No information available for this game.</p>
       </div>
     );
   }

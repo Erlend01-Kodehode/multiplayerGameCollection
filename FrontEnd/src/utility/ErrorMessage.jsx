@@ -5,7 +5,7 @@ const errorContainerStyle = {
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-  backgroundColor: "inherit",
+  backgroundColor: "var(--bg2)",
 };
 
 const errorContentStyle = {
@@ -14,15 +14,18 @@ const errorContentStyle = {
   left: "50%",
   transform: "translate(-50%, -50%)",
   textAlign: "center",
+  
 };
 
 const errorHeadingStyle = {
   fontSize: "3rem",
   marginBottom: "1rem",
+  color: "var(--error-text-color)",
 };
 
 const errorTextStyle = {
   fontSize: "1.5rem",
+  color: "var(--error-text-color)",
 };
 
 const ErrorMessage = () => {

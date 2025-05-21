@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "../../../CSSModule/infoCSS/tictactoeInfo.module.css";
+import PlayButton from "../../../components/PlayButton.jsx";
 
 const InfoTicTacToe = () => {
   const navigate = useNavigate();
@@ -22,9 +23,9 @@ const InfoTicTacToe = () => {
           <li>Grid size: 3x3</li>
           <li>Goal: Get three of your marks in a row</li>
         </ul>
-        <button className={styles.playButton} onClick={handlePlayClick}>
-          Play
-        </button>
+        <div className={styles.buttonContainer}>
+          <PlayButton onClick={handlePlayClick} />
+        </div>
       </div>
     </div>
   );

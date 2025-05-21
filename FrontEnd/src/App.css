@@ -5,8 +5,8 @@
 }
 
 .app {
-  width: 100dvw;
-  height: 100dvh;
+  max-width: 100dvw;
+  min-height: 100dvh;
   display: grid;
   grid-template-areas:
     'header header header'

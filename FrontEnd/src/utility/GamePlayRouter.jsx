@@ -16,10 +16,6 @@ const GamePlayRouter = () => {
     const notFoundStyleContainer = {
       display: "flex",
       justifyContent: "center",
-      alignItems: "center",
-      height: "100vh",
-      fontSize: "1.2rem",
-      color: "#ff0000", // Red color for error message
     };
     return (
       <div style={notFoundStyleContainer}>

@@ -7,8 +7,8 @@ export const useBackground = () => useContext(BackgroundContext);
 // Mapping each pathname to a background configuration.
 // Add additional routes as needed.
 const backgroundMapping = {
-  "/home": { className: "homepageBG" }, // <<-- change routes to your actual paths and classes in customStyle.css
-  "/game": { className: "gamepageBG" }, // <<-- change routes to your actual paths and classes in customStyle.css
+  "/home": { className: "homepageBG" }, // <<-- change routes to your actual paths and classes in main.css
+  "/game": { className: "gamepageBG" }, // <<-- change routes to your actual paths and classes in main.css
   // You can extend this object with more routes.
 };
 

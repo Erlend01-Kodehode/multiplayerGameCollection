@@ -17,10 +17,11 @@
 
   --bg1: #336699;
   --bg2: #ffffff;
-  --custom-bg1: url(/images/background/bg.png) no-repeat fixed top;
+  --custom-bg1: url(/images/background/bg.png) repeat fixed top;
 
-  --text-color1: rgb(240, 240, 240);
+  --text-color1: #ffffff;
   --text-color2: #000000;
+  --error-text-color: #ff0000;
 }
 
 .homepageBG {
@@ -49,7 +50,7 @@
 }
 
 body {
-  background: var(--background);
+  background: var(--background-main);
 }
 
 a {
@@ -62,90 +63,4 @@ p {
 
 h1 {
   font-size: var(--fontsize-title2);
-}
-.header {
-  background: var(--background-header2);
-  box-shadow: black 0px 0px 10px;
-  width: 100%;
-  height: fit-content;
-  padding: 10px 0px;
-  margin-bottom: 50px;
-  gap: 25px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.nav {
-  font-size: 30px;
-  margin: 0px 25px;
-  gap: 25px;
-  display: flex;
-  align-items: center;
-}
-
-.nav-item {
-  gap: 10px;
-  display: flex;
-  align-items: center;
-}
-
-.nav-profile {
-  height: 50px;
-}
-
-.logo {
-  margin: 0px 10px;
-  width: 200px;
-}
-
-.main {
-  font-size: var(--fontsize-large);
-  min-height: 100dvh;
-  height: fit-content;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.game-list {
-  /* border: white 1px solid; */
-  max-width: 650px;
-  width: fit-content;
-  height: fit-content;
-  padding: 10px;
-  margin: 10px;
-  gap: 25px;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.game-card {
-  display: flex;
-  flex-direction: column;
-
-  &:hover {
-    text-decoration: underline;
-  }
-
-  &:hover .game-thumbnail {
-    transform: scale(1.03);
-  }
-}
-
-.game-thumbnail {
-  background: var(--custom-bg1);
-  /* border: white 1px solid; */
-  border-radius: 10px;
-  box-shadow: black 1px 2px 7px;
-  aspect-ratio: 4 / 3;
-  width: 300px;
-  object-fit: cover;
-}
-
-.game-title {
-  font-size: var(--fontsize-title5);
-  font-weight: 500;
-  margin: 3px 0px;
 }
