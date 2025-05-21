@@ -1,10 +1,9 @@
 import GameCard from '../components/GameCard'
 import styles from '../CSSModule/homepage.module.css'
-import GameLibrary from '../assets/GameLibrary.jsx'
+import games from '../assets/GameLibrary.jsx'
 
 
 const HomePage = () => {
-  const games = GameLibrary;
   
   return (
     <div className={styles.main}>
