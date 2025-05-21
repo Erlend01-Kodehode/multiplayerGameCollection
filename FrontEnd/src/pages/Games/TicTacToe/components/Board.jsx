@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, forwardRef, useImperativeHandle } from "react";
 import styles from "../../../../CSSModule/gameCSS/tictactoeGame.module.css";
 import Square from "./Square";
 
+// Winner calculation logic
 const calculateWinner = (squares) => {
   const lines = [
     [0, 1, 2],
@@ -22,9 +23,23 @@ const calculateWinner = (squares) => {
   return null;
 };
 
-const Board = () => {
+// Use CSS classes for X and O color
+const getSquareClass = (value) => {
+  if (value === "X") return styles.squareX;
+  if (value === "O") return styles.squareO;
+  return "";
+};
+
+const Board = forwardRef((props, ref) => {
   const [squares, setSquares] = useState(Array(9).fill(null));
   const [xIsNext, setXIsNext] = useState(true);
+
+  useImperativeHandle(ref, () => ({
+    resetBoard: () => {
+      setSquares(Array(9).fill(null));
+      setXIsNext(true);
+    },
+  }));
 
   const handleClick = (i) => {
     const newSquares = squares.slice();
@@ -35,30 +50,46 @@ const Board = () => {
   };
 
   const winner = calculateWinner(squares);
-  let status = winner
-    ? `Winner: ${winner}`
-    : `Next player: ${xIsNext ? "X" : "O"}`;
+  const isDraw = !winner && squares.every((sq) => sq !== null);
+
+  let status;
+  if (winner) {
+    status = (
+      <>
+        Winner: <span className={getSquareClass(winner)}>{winner}</span>
+      </>
+    );
+  } else if (isDraw) {
+    status = "It's a draw!";
+  } else {
+    const next = xIsNext ? "X" : "O";
+    status = (
+      <>
+        Next player: <span className={getSquareClass(next)}>{next}</span>
+      </>
+    );
+  }
 
   return (
-    <div>
+    <div className={styles.board}>
       <div className={styles.status}>{status}</div>
       <div className={styles.boardRow}>
-        <Square value={squares[0]} onSquareClick={() => handleClick(0)} />
-        <Square value={squares[1]} onSquareClick={() => handleClick(1)} />
-        <Square value={squares[2]} onSquareClick={() => handleClick(2)} />
+        <Square value={squares[0]} onSquareClick={() => handleClick(0)} className={getSquareClass(squares[0])} />
+        <Square value={squares[1]} onSquareClick={() => handleClick(1)} className={getSquareClass(squares[1])} />
+        <Square value={squares[2]} onSquareClick={() => handleClick(2)} className={getSquareClass(squares[2])} />
       </div>
       <div className={styles.boardRow}>
-        <Square value={squares[3]} onSquareClick={() => handleClick(3)} />
-        <Square value={squares[4]} onSquareClick={() => handleClick(4)} />
-        <Square value={squares[5]} onSquareClick={() => handleClick(5)} />
+        <Square value={squares[3]} onSquareClick={() => handleClick(3)} className={getSquareClass(squares[3])} />
+        <Square value={squares[4]} onSquareClick={() => handleClick(4)} className={getSquareClass(squares[4])} />
+        <Square value={squares[5]} onSquareClick={() => handleClick(5)} className={getSquareClass(squares[5])} />
       </div>
       <div className={styles.boardRow}>
-        <Square value={squares[6]} onSquareClick={() => handleClick(6)} />
-        <Square value={squares[7]} onSquareClick={() => handleClick(7)} />
-        <Square value={squares[8]} onSquareClick={() => handleClick(8)} />
+        <Square value={squares[6]} onSquareClick={() => handleClick(6)} className={getSquareClass(squares[6])} />
+        <Square value={squares[7]} onSquareClick={() => handleClick(7)} className={getSquareClass(squares[7])} />
+        <Square value={squares[8]} onSquareClick={() => handleClick(8)} className={getSquareClass(squares[8])} />
       </div>
     </div>
   );
-};
+});
 
 export default Board;

@@ -9,7 +9,7 @@ const HomePage = () => {
     <div className={styles.main}>
       <div className={styles.title}>
         <h1>Game Library</h1>
-        <p>Welcome to the Game Library! Choose a game to play.</p>
+        <p>Welcome to the Pixel Pademonium! Choose a game to play.</p>
       </div>
       <div className={styles.gameList}>
         {games.map((game, index) => (

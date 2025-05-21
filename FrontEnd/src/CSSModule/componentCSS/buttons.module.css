@@ -1,0 +1,46 @@
+/* Play button */
+.playButton {
+  background: linear-gradient(90deg, #041828 60%, #0d2b4d 100%);
+  color: #a5d6a7;
+  border: 2px solid #388e3c;
+  border-radius: 8px;
+  padding: 10px 32px;
+  font-size: var(--fontsize-normal);
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(21, 101, 192, 0.15);
+  transition: background 0.2s, color 0.2s, border 0.2s;
+}
+
+.playButton:hover,
+.playButton:focus {
+  background: linear-gradient(90deg, #388e3c 60%, #2e7d32 100%);
+  color: #fff;
+  border: 2px solid #2e7d32;
+}
+
+/* Reset button */
+.resetButton {
+  background: linear-gradient(90deg, #b71c1c 60%, #d32f2f 100%);
+  color: #fff;
+  border: 2px solid #b71c1c;
+  border-radius: 8px;
+  padding: 10px 32px;
+  font-size: var(--fontsize-normal);
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(183, 28, 28, 0.15);
+  transition: background 0.2s, color 0.2s, border 0.2s;
+}
+
+.resetButton:hover {
+  background: linear-gradient(90deg, #d32f2f 60%, #b71c1c 100%);
+  color: #fff;
+  border: 2px solid #d32f2f;
+}
+
+.resetButton:focus:not(:hover) {
+  background: linear-gradient(90deg, #b71c1c 60%, #d32f2f 100%);
+  color: #fff;
+  border: 2px solid #b71c1c;
+}

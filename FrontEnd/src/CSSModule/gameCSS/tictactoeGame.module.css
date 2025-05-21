@@ -5,6 +5,10 @@
   margin-top: 2rem;
 }
 
+.board {
+  margin-bottom: 2rem;
+}
+
 .boardRow {
   display: flex;
 }
@@ -14,7 +18,7 @@
   height: 90px;
   background: #fff;
   border: 1px solid #999;
-  font-size: 32px; 
+  font-size: 3rem; 
   font-weight: bold;
   color: #222;
   cursor: pointer;
@@ -27,6 +31,13 @@
 
 .status {
   margin-bottom: 10px;
-  font-size: 18px;
+  font-size: var(--fontsize-normal);
   font-weight: bold;
+}
+
+.squareX {
+  color: rgb(255, 136, 67);
+}
+.squareO {
+  color: gold;
 }
