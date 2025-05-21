@@ -1,25 +1,11 @@
 import GameCard from '../components/GameCard'
 import styles from '../CSSModule/homepage.module.css'
+import GameLibrary from '../assets/GameLibrary.jsx'
+
 
 const HomePage = () => {
-  const games = [
-    {
-      path: '/game/play/tictactoe',
-      title: 'Tic Tac Toe',
-      thumbnail: './images/thumbnail-tictactoe.png',
-    },
-    {
-      path: '',
-      title: 'Game 2',
-      thumbnail: './images/background/bg.png',
-    },
-    {
-      path: '',
-      title: 'Game 3',
-      thumbnail: './images/background/bg.png',
-    },
-  ]
-
+  const games = GameLibrary;
+  
   return (
     <div className={styles.main}>
       <h1>Welcome to the Home Page</h1>
