@@ -1,10 +1,11 @@
 import { createHashRouter, RouterProvider, Navigate } from "react-router-dom";
-
 import App from "../App.jsx";
 import ErrorMessage from "../utility/ErrorMessage.jsx";
 import HomePage from "../pages/homepage.jsx";
 import GamePage from "../pages/gamepage.jsx";
-import GameDetails from "../pages/Games/gameDetails.jsx";
+import GameDetails from "./GameInfoRouter.jsx";
+import { homeRedirects, gameRedirects } from "./redirects.jsx";
+import GamePlayRouter from "./GamePlayRouter.jsx";
 
 const router = createHashRouter([
   {
@@ -13,7 +14,6 @@ const router = createHashRouter([
     errorElement: <ErrorMessage />,
     children: [
       {
-        // Home page redirection when landing at the root path.
         index: true,
         element: <Navigate to="/home" replace />,
       },
@@ -21,31 +21,24 @@ const router = createHashRouter([
         path: "home",
         element: <HomePage />,
       },
+      ...homeRedirects,
       {
-        // Container for game-related routes.
         path: "game",
         element: <GamePage />,
         errorElement: <ErrorMessage />,
         children: [
+          ...gameRedirects,
           {
-            // When at '/game' with no additional segment, redirect to home.
-            index: true,
-            element: <Navigate to="/home" replace />,
-          },
-          {
-            // Example: /multiplayerGameCollection/#/game/info/1
+            // example: /multiplayerGameCollection/#/game/info/tictactoe
+            // or /multiplayerGameCollection/#/game/info/1
             path: "info/:gameId",
             element: <GameDetails />,
           },
           {
-            // Future route for playing the game.
-            // Example: /multiplayerGameCollection/#/game/play/1
+            // example: /multiplayerGameCollection/#/game/play/tictactoe
+            // or /multiplayerGameCollection/#/game/play/1
             path: "play/:gameId",
-            element: (
-              <div>
-                <h1>Game Play</h1>
-              </div>
-            ),
+            element: <GamePlayRouter/>,
           },
         ],
       },
