@@ -1,0 +1,25 @@
+.header {
+  background: var(--background-header2);
+  box-shadow: black 0px 0px 10px;
+  width: 100%;
+  height: fit-content;
+  padding: 10px 0px;
+  margin-bottom: 50px;
+  gap: 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav {
+  font-size: 30px;
+  margin: 0px 25px;
+  gap: 25px;
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  margin: 0px 10px;
+  width: 200px;
+}

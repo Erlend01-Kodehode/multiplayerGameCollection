@@ -21,6 +21,7 @@
 
   --text-color1: #f4f4f4;
   --text-color2: #000000;
+  --error-text-color: #ff0000;
 }
 
 .homepageBG {
@@ -67,7 +68,7 @@ h1 {
   box-shadow: black 0px 0px 10px;
   width: 100%;
   height: fit-content;
-  padding: 10px 0px;
+  /* padding: 10px 0px; */
   margin-bottom: 50px;
   gap: 25px;
   display: flex;
@@ -86,11 +87,4 @@ h1 {
 .logo {
   margin: 0px 10px;
   width: 200px;
-}
-
-.main {
-  height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }

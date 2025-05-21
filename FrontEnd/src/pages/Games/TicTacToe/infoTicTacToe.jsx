@@ -22,9 +22,11 @@ const InfoTicTacToe = () => {
           <li>Grid size: 3x3</li>
           <li>Goal: Get three of your marks in a row</li>
         </ul>
-        <button className={styles.playButton} onClick={handlePlayClick}>
-          Play
-        </button>
+        <div className={styles.buttonContainer}>
+          <button className={styles.playButton} onClick={handlePlayClick}>
+            Play
+          </button>
+        </div>
       </div>
     </div>
   );
