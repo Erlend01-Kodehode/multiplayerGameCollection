@@ -1,13 +1,27 @@
 import createError from "http-errors";
 import express from "express";
+import { createServer } from "http";
+import { Server } from "socket.io";
+
 import path from "path";
 import cookieParser from "cookie-parser";
 import logger from "morgan";
 
 import indexRouter from "./routes/index.js";
 import usersRouter from "./routes/users.js";
+import { port } from "./bin/www";
 
 var app = express();
+const httpServer = createServer();
+const io = new Server(httpServer, {
+  // Things here
+});
+
+io.on("connection", (socket) => {
+  // Things here
+});
+
+httpServer.listen(port);
 
 // view engine setup
 
