@@ -3,8 +3,9 @@ import App from "../App.jsx";
 import ErrorMessage from "../utility/ErrorMessage.jsx";
 import HomePage from "../pages/homepage.jsx";
 import GamePage from "../pages/gamepage.jsx";
-import GameDetails from "../pages/Games/gameDetails.jsx";
+import GameDetails from "./GameInfoRouter.jsx";
 import { homeRedirects, gameRedirects } from "./redirects.jsx";
+import GamePlayRouter from "./GamePlayRouter.jsx";
 
 const router = createHashRouter([
   {
@@ -28,16 +29,16 @@ const router = createHashRouter([
         children: [
           ...gameRedirects,
           {
+            // example: /multiplayerGameCollection/#/game/info/tictactoe
+            // or /multiplayerGameCollection/#/game/info/1
             path: "info/:gameId",
             element: <GameDetails />,
           },
           {
+            // example: /multiplayerGameCollection/#/game/play/tictactoe
+            // or /multiplayerGameCollection/#/game/play/1
             path: "play/:gameId",
-            element: (
-              <div>
-                <h1>Game Play</h1>
-              </div>
-            ),
+            element: <GamePlayRouter/>,
           },
         ],
       },
