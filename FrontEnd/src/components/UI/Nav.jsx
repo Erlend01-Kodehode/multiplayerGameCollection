@@ -7,7 +7,7 @@ export default function Nav() {
   return (
     <div className={styles.nav}>
       <Link className={styles.navItem} to=''>
-        <img className={styles.nav_pfp} src={iconImages.nav_pfp} />
+        <img className={styles.navProfile} src={iconImages.navProfile} />
       </Link>
     </div>
   )
