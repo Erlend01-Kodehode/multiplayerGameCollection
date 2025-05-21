@@ -1,25 +1,20 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet } from 'react-router-dom'
 
-import './App.css'
-import BackgroundProvider from './utility/bgProvider.jsx';
+import BackgroundProvider from './utility/bgProvider.jsx'
+import Header from './components/UI/Header.jsx'
 
 function App() {
-
   return (
     <BackgroundProvider>
-    <>
-      <div className='app'>
-        <header>
-
-        </header>
-        <main>
-          <Outlet/>
-        </main>
-        <footer>
-
-        </footer>
-      </div>
-    </>
+      <>
+        <div className='app'>
+          <Header />
+          <main>
+            <Outlet />
+          </main>
+          <footer></footer>
+        </div>
+      </>
     </BackgroundProvider>
   )
 }
