@@ -1,12 +1,22 @@
-import React from "react";
+import React, { useRef } from "react";
 import styles from "../../../CSSModule/gameCSS/tictactoeGame.module.css";
 import Board from "./components/Board.jsx";
+import { ResetButton } from "../../../components/Buttons.jsx";
 
 const GameTicTacToe = () => {
+  const boardRef = useRef();
+
+  const handleReset = () => {
+    if (boardRef.current && boardRef.current.resetBoard) {
+      boardRef.current.resetBoard();
+    }
+  };
+
   return (
     <div className={styles.game}>
       <h1>Tic Tac Toe</h1>
-      <Board />
+      <Board ref={boardRef} />
+      <ResetButton onClick={handleReset} style={{ marginTop: "1rem" }} />
     </div>
   );
 };

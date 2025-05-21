@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "../../../CSSModule/infoCSS/tictactoeInfo.module.css";
-import PlayButton from "../../../components/PlayButton.jsx";
+import { PlayButton } from "../../../components/Buttons.jsx";
 
 const InfoTicTacToe = () => {
   const navigate = useNavigate();
