@@ -88,3 +88,48 @@ h1 {
   margin: 0px 10px;
   width: 200px;
 }
+
+.main {
+  font-size: var(--fontsize-large);
+  min-height: 100dvh;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.game-list {
+  /* border: white 1px solid; */
+  max-width: 650px;
+  width: fit-content;
+  height: fit-content;
+  padding: 10px;
+  margin: 10px;
+  gap: 25px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.game-card {
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.game-thumbnail {
+  background: var(--custom-bg1);
+  border: white 1px solid;
+  border-radius: 10px;
+  aspect-ratio: 4 / 3;
+  width: 300px;
+  object-fit: cover;
+}
+
+.game-title {
+  font-size: var(--fontsize-title5);
+  margin: 3px 0px;
+}
