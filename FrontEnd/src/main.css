@@ -2,6 +2,17 @@
   --background-main: rgb(33, 33, 33);
   --background-header: rgb(22, 22, 22);
   --background-header2: rgb(4, 24, 40);
+
+  --fontsize-small: 17px;
+  --fontsize-normal: 20px;
+  --fontsize-large: 24px;
+
+  --fontsize-title1: 48px;
+  --fontsize-title2: 42px;
+  --fontsize-title3: 36px;
+  --fontsize-title4: 30px;
+  --fontsize-title5: 24px;
+
   --text: rgb(240, 240, 240);
 
   --bg1: #336699;
@@ -44,6 +55,13 @@ a {
   text-decoration: none;
 }
 
+p {
+  font-size: var(--fontsize-normal);
+}
+
+h1 {
+  font-size: var(--fontsize-title2);
+}
 .header {
   background: var(--background-header2);
   box-shadow: black 0px 0px 10px;
@@ -59,7 +77,7 @@ a {
 
 .nav {
   font-size: 30px;
-  padding: 0px 25px;
+  margin: 0px 25px;
   gap: 25px;
   display: flex;
   align-items: center;
