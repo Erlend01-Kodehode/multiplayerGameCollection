@@ -1,6 +1,6 @@
 import { Navigate } from "react-router-dom";
 
-// Top-level redirects (for /home/play and /home/info)
+// Top-level redirects
 export const homeRedirects = [
   {
     path: "home/play",
