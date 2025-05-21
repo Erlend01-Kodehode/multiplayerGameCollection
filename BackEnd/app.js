@@ -9,6 +9,7 @@ import logger from "morgan";
 
 import indexRouter from "./routes/index.js";
 import usersRouter from "./routes/users.js";
+import apiRouter from "./routes/api.js";
 import { port } from "./bin/www";
 
 var app = express();
@@ -36,6 +37,7 @@ httpServer.listen(port);
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
+app.use("/", apiRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

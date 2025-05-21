@@ -3,8 +3,6 @@
   --background-header: rgb(22, 22, 22);
   --background-header2: rgb(4, 24, 40);
 
-  --text: rgb(240, 240, 240);
-
   --fontsize-small: 17px;
   --fontsize-normal: 20px;
   --fontsize-large: 24px;
@@ -14,6 +12,31 @@
   --fontsize-title3: 36px;
   --fontsize-title4: 30px;
   --fontsize-title5: 24px;
+
+  --text: rgb(240, 240, 240);
+
+  --bg1: #336699;
+  --bg2: #ffffff;
+  --custom-bg1: url(/images/background/bg.png) no-repeat fixed top;
+
+  --text-color1: #f4f4f4;
+  --text-color2: #000000;
+}
+
+.homepageBG {
+  background: var(--custom-bg1);
+  color: var(--text-color1);
+  background-size: cover;
+}
+
+.gamepageBG {
+  background-color: var(--bg1);
+  color: var(--text-color1);
+}
+
+.defaultBG {
+  background-color: var(--bg1);
+  color: var(--text-color1);
 }
 
 * {
@@ -39,12 +62,6 @@ p {
 h1 {
   font-size: var(--fontsize-title2);
 }
-
-.homepageBG {
-  background: url(/bg.png) no-repeat fixed top;
-  background-size: cover;
-}
-
 .header {
   background: var(--background-header2);
   box-shadow: black 0px 0px 10px;

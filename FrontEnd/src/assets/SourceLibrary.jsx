@@ -17,11 +17,11 @@ const path = (folderKey, fileName) => {
 }
 
 export const backgroundImages = {
-    // Example usage:
-    backgroundExample: path("background", "background example.svg"),
+    // usage:
+    bg: path("background", "bg.png"),
 };
 
 export const iconImages = {
-    // Example usage:
-    iconExample: path("icons", "icon example.svg"),
+    // usage:
+    pixel_pandemonium: path("icons", "logo-PIXEL_PANDEMONIUM.png"),
 };

@@ -1,12 +1,12 @@
 import { Link, NavLink } from 'react-router-dom'
 import Nav from './Nav'
-import logo from '/logo-PIXEL_PANDEMONIUM.png'
+import { iconImages } from '../../assets/SourceLibrary.jsx'
 
 export default function Header() {
   return (
     <div className='header'>
       <Link>
-        <img className='logo' src={logo} alt='Pixel Pandemonium logo' />
+        <img className='logo' src={iconImages.pixel_pandemonium} alt='Pixel Pandemonium logo' />
       </Link>
       <Nav />
     </div>
