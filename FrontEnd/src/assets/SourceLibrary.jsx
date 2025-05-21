@@ -23,6 +23,7 @@ export const backgroundImages = {
 
 export const iconImages = {
     pixel_pandemonium: path("icons", "logo-PIXEL_PANDEMONIUM.png"),
+    nav_pfp: path("icons", "pfp-default.png"),
 };
 
 export const thumbnailImages = {

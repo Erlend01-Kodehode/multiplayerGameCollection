@@ -10,6 +10,10 @@
   justify-content: space-between;
   align-items: center;
 }
+.logo {
+  margin: 0px 10px;
+  width: 200px;
+}
 
 .nav {
   font-size: 30px;
@@ -19,7 +23,12 @@
   align-items: center;
 }
 
-.logo {
-  margin: 0px 10px;
-  width: 200px;
+.navItem {
+  gap: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.nav_pfp {
+  height: 50px;
 }

@@ -1,12 +1,13 @@
 import { Link, NavLink } from 'react-router-dom'
+import { iconImages } from "../../assets/SourceLibrary.jsx"
 
 import styles from "../../CSSModule/componentCSS/header.module.css"
 
 export default function Nav() {
   return (
-    <div className='nav'>
-      <Link className='nav-item' to=''>
-        <img className='nav-pfp' src='./images/icons/pfp-default.png' />
+    <div className={styles.nav}>
+      <Link className={styles.navItem} to=''>
+        <img className={styles.nav_pfp} src={iconImages.nav_pfp} />
       </Link>
     </div>
   )
