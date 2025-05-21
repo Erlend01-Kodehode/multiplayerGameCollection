@@ -89,29 +89,34 @@ h1 {
 }
 
 .main {
-  height: 100dvh;
+  font-size: var(--fontsize-large);
+  min-height: 100dvh;
+  height: fit-content;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
 .game-list {
-  border: white 1px solid;
+  /* border: white 1px solid; */
   max-width: 650px;
   width: fit-content;
   height: fit-content;
+  padding: 10px;
   margin: 10px;
   gap: 25px;
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .game-card {
-  border: white 1px solid;
+  display: flex;
+  flex-direction: column;
 }
 
 .game-thumbnail {
-  background: greenyellow;
+  background: var(--custom-bg1);
   border: white 1px solid;
   border-radius: 10px;
   aspect-ratio: 16 / 9;
