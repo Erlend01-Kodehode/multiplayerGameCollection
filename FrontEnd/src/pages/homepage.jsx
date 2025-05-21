@@ -4,19 +4,19 @@ import styles from '../CSSModule/homepage.module.css'
 const HomePage = () => {
   const games = [
     {
-      path: '',
-      title: 'Game 1',
-      thumbnail: '',
+      path: '/game/play/tictactoe',
+      title: 'Tic Tac Toe',
+      thumbnail: './images/thumbnail-tictactoe.png',
     },
     {
       path: '',
       title: 'Game 2',
-      thumbnail: '',
+      thumbnail: './images/background/bg.png',
     },
     {
       path: '',
       title: 'Game 3',
-      thumbnail: '',
+      thumbnail: './images/background/bg.png',
     },
   ]
 

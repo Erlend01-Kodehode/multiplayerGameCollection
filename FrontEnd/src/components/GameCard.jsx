@@ -1,8 +1,10 @@
-export default function GameCard({ gameInfo: { thumbnail, title } }) {
+import { Link, NavLink } from 'react-router-dom'
+
+export default function GameCard({ gameInfo: { path, title, thumbnail } }) {
   return (
-    <div className='game-card'>
+    <Link className='game-card' to={path}>
       <img className='game-thumbnail' src={thumbnail} />
       <div className='game-title'>{title}</div>
-    </div>
+    </Link>
   )
 }
