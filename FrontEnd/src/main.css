@@ -19,7 +19,7 @@
   --bg2: #ffffff;
   --custom-bg1: url(/images/background/bg.png) no-repeat fixed top;
 
-  --text-color1: #f4f4f4;
+  --text-color1: rgb(240, 240, 240);
   --text-color2: #000000;
 }
 
@@ -84,6 +84,16 @@ h1 {
   align-items: center;
 }
 
+.nav-item {
+  gap: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.nav-pfp {
+  height: 50px;
+}
+
 .logo {
   margin: 0px 10px;
   width: 200px;
@@ -136,5 +146,6 @@ h1 {
 
 .game-title {
   font-size: var(--fontsize-title5);
+  font-weight: 500;
   margin: 3px 0px;
 }
