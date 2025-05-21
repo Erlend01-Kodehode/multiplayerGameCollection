@@ -2,6 +2,7 @@ import { Outlet } from 'react-router-dom'
 
 import BackgroundProvider from './utility/bgProvider.jsx'
 import Header from './components/UI/Header.jsx'
+// import './App.css'
 
 function App() {
   return (

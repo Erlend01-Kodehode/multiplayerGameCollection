@@ -1,12 +1,14 @@
 :root {
   --background-main: rgb(33, 33, 33);
   --background-header: rgb(22, 22, 22);
+  --background-header2: rgb(4, 24, 40);
   --text: rgb(240, 240, 240);
 }
 
 * {
   font-family: system-ui, sans-serif, Arial, Helvetica;
   color: var(--text);
+  text-shadow: black 1px 1px 2px;
   padding: 0;
   margin: 0;
 }
@@ -19,10 +21,16 @@ a {
   text-decoration: none;
 }
 
+.homepageBG {
+  background: url(/bg.png) no-repeat fixed top;
+  background-size: cover;
+}
+
 .header {
-  background: var(--background-header);
+  background: var(--background-header2);
   box-shadow: black 0px 0px 10px;
   width: 100%;
+  height: fit-content;
   padding: 10px 0px;
   margin-bottom: 50px;
   gap: 25px;
