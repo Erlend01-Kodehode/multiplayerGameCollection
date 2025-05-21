@@ -19,7 +19,7 @@
   --bg2: #ffffff;
   --custom-bg1: url(/images/background/bg.png) repeat fixed top;
 
-  --text-color1: rgb(240, 240, 240);
+  --text-color1: #ffffff;
   --text-color2: #000000;
   --error-text-color: #ff0000;
 }

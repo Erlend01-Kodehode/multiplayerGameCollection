@@ -7,8 +7,10 @@ const HomePage = () => {
   
   return (
     <div className={styles.main}>
-      <h1>Welcome to the Home Page</h1>
-      <p>This is the content of the home page.</p>
+      <div className={styles.title}>
+        <h1>Game Library</h1>
+        <p>Welcome to the Game Library! Choose a game to play.</p>
+      </div>
       <div className={styles.gameList}>
         {games.map((game, index) => (
           <GameCard key={index} gameInfo={game} />
