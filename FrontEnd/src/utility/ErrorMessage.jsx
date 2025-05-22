@@ -1,7 +1,7 @@
 
 const errorContainerStyle = {
-  width: "100vw",
-  height: "100vh",
+  width: "100%",
+  height: "100%",
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
@@ -10,7 +10,7 @@ const errorContainerStyle = {
 
 const errorContentStyle = {
   position: "absolute",
-  top: "25%",
+  top: "35%",
   left: "50%",
   transform: "translate(-50%, -50%)",
   textAlign: "center",

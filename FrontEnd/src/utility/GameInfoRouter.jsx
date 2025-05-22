@@ -1,10 +1,13 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import InfoTicTacToe from "../pages/Games/TicTacToe/infoTicTacToe.jsx";
+import InfoCheckers from "../pages/Games/Checkers/infoCheckers.jsx";
 
 const gameInfoMap = {
   tictactoe: InfoTicTacToe,
   "1": InfoTicTacToe,
+  checkers: InfoCheckers,
+  "2": InfoCheckers,
   // Add more mappings for other games here
 };
 

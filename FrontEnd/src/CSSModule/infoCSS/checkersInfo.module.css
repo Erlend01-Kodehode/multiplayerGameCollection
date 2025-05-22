@@ -1,0 +1,32 @@
+.infoCheckers {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+  margin-top: 20px;
+  margin-bottom: auto;
+}
+
+.infoContent {
+  max-width: 480px;
+}
+
+.noListStyle {
+  list-style-type: none;
+  padding-left: 0;
+  margin-top: 20px;
+}
+.noListStyle li {
+  font-size: var(--fontsize-normal);
+}
+
+
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.infoNote {
+  margin-top: 16px;
+}
