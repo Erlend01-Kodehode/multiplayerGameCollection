@@ -1,6 +1,13 @@
 {
   "dependencies": {
     "express": "^4.21.2",
+    "react-dnd": "^16.0.1",
+    "react-dnd-html5-backend": "^16.0.1",
     "vite": "^6.3.5"
+  },
+  "devDependencies": {
+    "autoprefix": "^1.0.1",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.1.7"
   }
 }
