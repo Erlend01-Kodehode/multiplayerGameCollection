@@ -1,0 +1,12 @@
+.card-image {
+  width: 80px; /* Juster størrelse etter behov */
+  height: auto;
+  user-select: none;
+  pointer-events: none;
+}
+.card.face-down {
+  cursor: pointer;
+}
+.card.face-up {
+  cursor: pointer;
+}
