@@ -22,6 +22,13 @@ io.on("connection", (socket) => {
   // Things here
 });
 
+io.engine.on("connection_error", (err) => {
+  console.log("Error Object:", err.req); // the request object
+  console.log("Error Code:", err.code); // the error code
+  console.log("Error Message:", err.message); // the error message
+  console.log("Error Context:", err.context); // some additional error context
+});
+
 httpServer.listen(port);
 
 // view engine setup
