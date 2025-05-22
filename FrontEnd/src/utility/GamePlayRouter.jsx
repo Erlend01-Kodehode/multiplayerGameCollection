@@ -2,12 +2,15 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import GameTicTacToe from "../pages/Games/TicTacToe/gameTicTacToe.jsx";
 import GameCheckers from "../pages/Games/Checkers/gameCheckers.jsx";
+import GameChess from "../pages/Games/ChessGame/ChessGameRoute.jsx";
 
 const gameMap = {
   tictactoe: GameTicTacToe,
   "1": GameTicTacToe,
   checkers: GameCheckers,
   "2": GameCheckers,
+  chess: GameChess,
+  "3": GameChess,
   // Add more mappings for other games here
 };
 

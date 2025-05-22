@@ -6,7 +6,6 @@ import GamePage from "../pages/gamepage.jsx";
 import GameDetails from "./GameInfoRouter.jsx";
 import { homeRedirects, gameRedirects } from "./redirects.jsx";
 import GamePlayRouter from "./GamePlayRouter.jsx";
-import ChessGameRoute from "../pages/Games/ChessGame/ChessGameRoute"; 
 
 const router = createHashRouter([
   {
@@ -40,10 +39,6 @@ const router = createHashRouter([
             // or /multiplayerGameCollection/#/game/play/1
             path: "play/:gameId",
             element: <GamePlayRouter />,
-          },
-          {
-            path: "play/chess",
-            element: <ChessGameRoute />,
           },
         ],
       },
