@@ -1,5 +1,6 @@
-import { thumbnailImages } from "./SourceLibrary.jsx";
+import { thumbnailImages, backgroundImages } from "./SourceLibrary.jsx";
 
+// This file contains the game library for the home page.
 const games = [
     {
       path: '/game/info/tictactoe',
@@ -9,12 +10,12 @@ const games = [
     {
       path: '',
       title: 'Game 2',
-      thumbnail: './images/background/bg.png',
+      thumbnail: backgroundImages.bg,
     },
     {
       path: '',
       title: 'Game 3',
-      thumbnail: './images/background/bg.png',
+      thumbnail: backgroundImages.bg,
     },
   ]
 

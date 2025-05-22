@@ -17,7 +17,8 @@
 
   --bg1: #336699;
   --bg2: #ffffff;
-  --custom-bg1: url(/images/background/bg.png) repeat fixed top;
+  --custom-bg1: url(/images/background/bg.svg);
+  --custom-bg2: url(/images/background/bg2.svg);
 
   --text-color1: #ffffff;
   --text-color2: #000000;
@@ -25,14 +26,15 @@
 }
 
 .homepageBG {
-  background: var(--custom-bg1);
+  background: var(--custom-bg1) repeat fixed top;
   color: var(--text-color1);
   background-size: cover;
 }
 
 .gamepageBG {
-  background-color: var(--bg1);
+  background: var(--custom-bg2) repeat top center;
   color: var(--text-color1);
+  background-size: cover;
 }
 
 .defaultBG {

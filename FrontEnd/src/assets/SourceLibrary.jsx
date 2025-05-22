@@ -18,7 +18,8 @@ const path = (folderKey, fileName) => {
 }
 
 export const backgroundImages = {
-    bg: path("background", "bg.png"),
+    bg: path("background", "bg.svg"),
+    bg2: path("background", "bg2.svg"),
 };
 
 export const iconImages = {

@@ -4,27 +4,23 @@ import { useLocation } from "react-router-dom";
 const BackgroundContext = createContext();
 export const useBackground = () => useContext(BackgroundContext);
 
-// Mapping each pathname to a background configuration.
-// Add additional routes as needed.
-const backgroundMapping = {
-  "/home": { className: "homepageBG" }, // <<-- change routes to your actual paths and classes in main.css
-  "/game": { className: "gamepageBG" }, // <<-- change routes to your actual paths and classes in main.css
-  // You can extend this object with more routes.
-};
+const backgroundMapping = [
+  { match: path => path === "/home", className: "homepageBG" }, // <<-- change routes to your actual paths and classes in main.css
+  { match: path => path.startsWith("/game"), className: "gamepageBG" }, // <<-- change routes to your actual paths and classes in main.css
+  // Add more rules as needed
+];
 
-// Fallback configuration if the pathname is not explicitly mapped.
-const defaultBackground = { className: "defaultBG" }; // Default background class and color
+const defaultBackground = { className: "defaultBG" };
 
 const BackgroundProvider = ({ children }) => {
   const location = useLocation();
   const [backgroundClass, setBackgroundClass] = useState("homepageBG");
 
   useEffect(() => {
-    // Get configuration based on the current pathname.
-    const config = backgroundMapping[location.pathname] || defaultBackground;
+    const config =
+      backgroundMapping.find(rule => rule.match(location.pathname)) ||
+      defaultBackground;
     setBackgroundClass(config.className);
-    // Update the background color of the document.
-    document.documentElement.style.backgroundColor = config.color;
   }, [location.pathname]);
 
   return (
