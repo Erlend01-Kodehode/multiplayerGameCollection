@@ -2,6 +2,7 @@ import React from 'react'
 import { useParams } from 'react-router-dom'
 import InfoTicTacToe from '../pages/Games/TicTacToe/infoTicTacToe.jsx'
 import InfoCheckers from '../pages/Games/Checkers/infoCheckers.jsx'
+import InfoChessGame from '../pages/Games/ChessGame/infoChessGame.jsx'
 import InfoMinesweeper from '../pages/Games/Minesweeper/infoMinesweeper.jsx'
 
 const gameInfoMap = {
@@ -9,6 +10,8 @@ const gameInfoMap = {
   1: InfoTicTacToe,
   checkers: InfoCheckers,
   2: InfoCheckers,
+  chess: InfoChessGame,
+  3: InfoChessGame,
   minesweeper: InfoMinesweeper,
   4: InfoMinesweeper,
   // Add more mappings for other games here

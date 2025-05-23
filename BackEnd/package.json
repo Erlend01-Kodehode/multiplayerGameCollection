@@ -13,6 +13,8 @@
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
     "morgan": "~1.9.1",
-    "socket.io": "^4.8.1"
+    "socket.io": "^4.8.1",
+    "socket.io-p2p-parser": "github:tomcartwrightuk/socket.io-p2p-parser",
+    "socket.io-p2p-server": "^1.2.0"
   }
 }

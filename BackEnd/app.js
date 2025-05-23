@@ -13,13 +13,14 @@ import apiRouter from "./routes/api.js";
 import { port } from "./bin/www";
 
 var app = express();
-const httpServer = createServer();
-const io = new Server(httpServer, {
-  // Things here
-});
+const server = createServer(app);
+const io = new Server(server);
 
 io.on("connection", (socket) => {
-  // Things here
+  console.log("User Connected");
+  socket.on("disconnect", () => {
+    console.log("User Disconnected");
+  });
 });
 
 io.engine.on("connection_error", (err) => {
@@ -29,7 +30,9 @@ io.engine.on("connection_error", (err) => {
   console.log("Error Context:", err.context); // some additional error context
 });
 
-httpServer.listen(port);
+server.listen(port, () => {
+  console.log("Server running at PORT:", port);
+});
 
 // view engine setup
 
