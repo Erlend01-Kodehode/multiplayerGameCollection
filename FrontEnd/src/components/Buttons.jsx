@@ -12,3 +12,9 @@ export const ResetButton = ({ onClick, children = "Reset" }) => (
     {children}
   </button>
 );
+
+export const NavigationButton = ({ onClick, children = "Navigate" }) => (
+  <button className={styles.navigationButton} onClick={onClick}>
+    {children}
+  </button>
+);

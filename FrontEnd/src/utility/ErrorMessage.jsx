@@ -1,3 +1,6 @@
+import React from "react";
+import { NavigationButton } from "../components/Buttons";
+import { useNavigate } from "react-router-dom";
 
 const errorContainerStyle = {
   width: "100%",
@@ -14,7 +17,6 @@ const errorContentStyle = {
   left: "50%",
   transform: "translate(-50%, -50%)",
   textAlign: "center",
-  
 };
 
 const errorHeadingStyle = {
@@ -29,11 +31,19 @@ const errorTextStyle = {
 };
 
 const ErrorMessage = () => {
+  const navigate = useNavigate();
+  const handleNavigation = () => navigate("/home");
+
   return (
     <div style={errorContainerStyle}>
       <div style={errorContentStyle}>
         <h1 style={errorHeadingStyle}>Error 404</h1>
         <p style={errorTextStyle}>Page not found</p>
+        <div style={{ marginTop: "2rem" }}>
+          <NavigationButton onClick={handleNavigation}>
+            Back to Home Page
+          </NavigationButton>
+      </div>
       </div>
     </div>
   );

@@ -46,3 +46,24 @@
   color: #fff;
   border: 2px solid #7e0202;
 }
+
+/* Navigation button */
+.navigationButton {
+  background: linear-gradient(90deg, #1976d2 60%, #1565c0 100%);
+  color: #e3f2fd;
+  border: 2px solid #1565c0;
+  border-radius: 8px;
+  padding: 10px 32px;
+  font-size: var(--fontsize-normal);
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(21, 101, 192, 0.15);
+  transition: background 0.2s, color 0.2s, border 0.2s;
+}
+
+.navigationButton:hover,
+.navigationButton:focus {
+  background: linear-gradient(90deg, #1565c0 60%, #1976d2 100%);
+  color: #fff;
+  border: 2px solid #1976d2;
+}
