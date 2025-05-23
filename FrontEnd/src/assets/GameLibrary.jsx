@@ -20,7 +20,7 @@ const games = [
   {
     path: '/game/info/minesweeper',
     title: 'Minesweeper',
-    thumbnail: backgroundImages.bg,
+    thumbnail: thumbnailImages.thumbnail_minesweeper,
   },
 ]
 
