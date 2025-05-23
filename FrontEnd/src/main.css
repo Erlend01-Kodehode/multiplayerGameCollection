@@ -24,6 +24,11 @@
   --text-color1: #ffffff;
   --text-color2: #000000;
   --error-text-color: #ff0000;
+
+  /* info checkers style */
+  --bg-theme-style1: #EEEED2;
+  --text-theme-style1: #2D2D2D;
+  --shadow-theme-style1: 0 2px 5px #A89E80;
 }
 html, body {
   height: 100%;
