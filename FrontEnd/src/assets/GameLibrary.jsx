@@ -13,6 +13,11 @@ const games = [
     thumbnail: thumbnailImages.thumbnail_checkers,
   },
   {
+    path: '/game/info/chess',
+    title: 'Chess',
+    thumbnail: thumbnailImages.bg,
+  },
+  {
     path: '/game/info/minesweeper',
     title: 'Minesweeper',
     thumbnail: backgroundImages.bg,
