@@ -1,14 +1,49 @@
 .container {
   margin-bottom: 50px;
-  gap: 25px;
   display: flex;
   flex-direction: column;
+}
+
+.infoContainer {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+}
+
+.info {
+  width: fit-content;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.button {
+  background: red;
+  border: none;
+  border-radius: 10px;
+  font-size: 20px;
+  width: fit-content;
+  height: fit-content;
+  padding: 5px 10px;
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+
+  &:hover {
+    background: rgb(255, 64, 64);
+  }
 }
 
 .board {
   width: fit-content;
   height: fit-content;
-  display: inline-block;
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .row {
