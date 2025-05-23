@@ -38,7 +38,7 @@ const router = createHashRouter([
             // example: /multiplayerGameCollection/#/game/play/tictactoe
             // or /multiplayerGameCollection/#/game/play/1
             path: "play/:gameId",
-            element: <GamePlayRouter/>,
+            element: <GamePlayRouter />,
           },
         ],
       },

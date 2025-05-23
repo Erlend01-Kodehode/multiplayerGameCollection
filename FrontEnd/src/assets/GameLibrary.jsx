@@ -8,9 +8,9 @@ const games = [
     thumbnail: thumbnailImages.thumbnail_tictactoe,
   },
   {
-    path: '',
-    title: 'Chess',
-    thumbnail: backgroundImages.bg,
+    path: '/game/info/checkers',
+    title: 'Checkers',
+    thumbnail: thumbnailImages.thumbnail_checkers,
   },
   {
     path: '/game/info/minesweeper',

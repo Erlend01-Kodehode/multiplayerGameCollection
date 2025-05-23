@@ -37,7 +37,9 @@
 
 .squareX {
   color: rgb(255, 136, 67);
+  font-weight: bolder;
 }
 .squareO {
   color: gold;
+  font-weight: bolder;
 }
