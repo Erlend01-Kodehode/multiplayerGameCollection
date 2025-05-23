@@ -4,7 +4,7 @@
   box-shadow: 0 2px 12px #b5886344;
   padding: 2rem;
   max-width: 600px;
-  margin: 2rem auto;
+  margin: 0 auto 2rem auto;
   font-family: 'Segoe UI', Arial, sans-serif;
   font-size: var(--fontsize-normal);
 }
@@ -23,6 +23,7 @@
   background: #fffbe9;
   border-radius: 8px;
   border-left: 6px solid #b58863;
+  text-align: left;
 }
 
 .sectionTitle {
@@ -31,6 +32,7 @@
   font-size: var(--fontsize-large);
   font-weight: bold;
   letter-spacing: 0.5px;
+  text-align: center;
 }
 
 .sectionContent ul {
@@ -53,13 +55,13 @@
 }
 
 .sectionContent li strong {
-  color: #b58863;
+  color: #a87a55;
   font-weight: bold;
 }
 
 .playButton {
   display: inline-block;
-  background: #b58863;
+  background: #a87a55;
   color: #fff;
   font-weight: bold;
   font-size: var(--fontsize-normal);

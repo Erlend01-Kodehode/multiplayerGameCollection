@@ -1,4 +1,4 @@
-import { thumbnailImages, backgroundImages } from './SourceLibrary.jsx'
+import { thumbnailImages } from './SourceLibrary.jsx'
 
 // This file contains the game library for the home page.
 const games = [
@@ -15,7 +15,7 @@ const games = [
   {
     path: '/game/info/chess',
     title: 'Chess',
-    thumbnail: thumbnailImages.bg,
+    thumbnail: thumbnailImages.thumbnail_chess,
   },
   {
     path: '/game/info/minesweeper',

@@ -30,8 +30,9 @@ export const iconImages = {
 }
 
 export const thumbnailImages = {
-  thumbnail_tictactoe: path('thumbnail', 'thumbnail-tictactoe.png'),
-  thumbnail_checkers: path('thumbnail', 'checkersThumbnail.svg'),
+  thumbnail_tictactoe: path('thumbnail', 'thumbnail-tictactoe.svg'),
+  thumbnail_checkers: path('thumbnail', 'thumbnail-checkers.svg'),
+  thumbnail_chess: path('thumbnail', 'thumbnail-chess.svg'),
   thumbnail_minesweeper: path('thumbnail', 'thumbnail-minesweeper.png'),
 }
 
