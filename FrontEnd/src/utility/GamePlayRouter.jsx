@@ -1,10 +1,10 @@
-import React from 'react'
-import { useParams } from 'react-router-dom'
-import GameTicTacToe from '../pages/Games/TicTacToe/gameTicTacToe.jsx'
-import GameCheckers from '../pages/Games/Checkers/gameCheckers.jsx'
-import GameChess from '../pages/Games/ChessGame/ChessGame.jsx'
-import GameMinesweeper from '../pages/Games/Minesweeper/gameMinesweeper.jsx'
-
+import React from "react";
+import { useParams } from "react-router-dom";
+import GameTicTacToe from "../pages/Games/TicTacToe/gameTicTacToe.jsx";
+import GameCheckers from "../pages/Games/Checkers/gameCheckers.jsx";
+import GameChess from "../pages/Games/ChessGame/ChessGame.jsx";
+import GameMinesweeper from "../pages/Games/Minesweeper/gameMinesweeper.jsx";
+import GuessPokemon from "../pages/Games/GuessThatGame/guess.jsx";
 
 const gameMap = {
   tictactoe: GameTicTacToe,
@@ -15,26 +15,27 @@ const gameMap = {
   3: GameChess,
   minesweeper: GameMinesweeper,
   4: GameMinesweeper,
+  5: GuessPokemon,
   // Add more mappings for other games here
-}
+};
 
 const GamePlayRouter = () => {
-  const { gameId } = useParams()
-  const GameComponent = gameMap[gameId]
+  const { gameId } = useParams();
+  const GameComponent = gameMap[gameId];
 
   if (!GameComponent) {
     const notFoundStyleContainer = {
-      display: 'flex',
-      justifyContent: 'center',
-    }
+      display: "flex",
+      justifyContent: "center",
+    };
     return (
       <div style={notFoundStyleContainer}>
         <h1>Game not found</h1>
       </div>
-    )
+    );
   }
 
-  return <GameComponent />
-}
+  return <GameComponent />;
+};
 
-export default GamePlayRouter
+export default GamePlayRouter;
