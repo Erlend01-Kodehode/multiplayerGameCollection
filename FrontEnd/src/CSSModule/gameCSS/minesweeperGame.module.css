@@ -17,6 +17,7 @@
 
 .square {
   font-size: 20px;
+  text-shadow: black 1px 1px 1px;
   background: rgb(41, 162, 218);
   border: white 1px solid;
   border-radius: 3px;
@@ -32,4 +33,36 @@
 .revealed {
   background: rgb(200, 200, 200);
   cursor: default;
+}
+
+.number1 {
+  color: rgb(70, 210, 70);
+}
+
+.number2 {
+  color: rgb(70, 160, 210);
+}
+
+.number3 {
+  color: rgb(60, 140, 180);
+}
+
+.number4 {
+  color: rgb(210, 180, 50);
+}
+
+.number5 {
+  color: rgb(200, 100, 50);
+}
+
+.number6 {
+  color: rgb(180, 30, 30);
+}
+
+.number7 {
+  color: rgb(100, 20, 130);
+}
+
+.number8 {
+  color: rgb(0, 0, 0);
 }

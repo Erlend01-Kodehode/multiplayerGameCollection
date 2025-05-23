@@ -10,15 +10,22 @@ export default function Square({ square, onClick, onRightClick }) {
   }
 
   let content = ''
+  let numberClass = ''
+
   if (flagged) {
     content = '🚩'
   } else if (revealed) {
-    content = hasMine ? '💣' : adjacentMines || ''
+    if (hasMine) {
+      content = '💣'
+    } else if (adjacentMines > 0) {
+      content = adjacentMines
+      numberClass = style[`number${adjacentMines}`] || ''
+    }
   }
 
   return (
     <div
-      className={`${style.square} ${revealed ? style.revealed : ''}`}
+      className={`${style.square} ${revealed ? style.revealed : ''} ${numberClass}`}
       onClick={handleClick}
       onContextMenu={handleRightClick}
     >
