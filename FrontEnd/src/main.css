@@ -19,10 +19,20 @@
   --bg2: #ffffff;
   --custom-bg1: url(/images/background/bg.svg);
   --custom-bg2: url(/images/background/bg2.svg);
+  --custom-bg2-portrait: url(/images/background/bg2_portrait.svg);
 
   --text-color1: #ffffff;
   --text-color2: #000000;
   --error-text-color: #ff0000;
+}
+html, body {
+  height: 100%;
+  min-height: 100%;
+  width: 100%;
+  min-width: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 .homepageBG {
@@ -32,7 +42,7 @@
 }
 
 .gamepageBG {
-  background: var(--custom-bg2) repeat top center;
+  background: var(--custom-bg2-portrait) repeat fixed center;
   color: var(--text-color1);
   background-size: cover;
 }

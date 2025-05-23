@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { audioFiles } from "../../../assets/SourceLibrary.jsx";
 
 import "./guess.css";
 
@@ -27,7 +28,7 @@ export default function GuessPokemon() {
       const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
       const data = await res.json();
       setPokemon(data);
-      new Audio("audio/whosthat.mp3").play();
+      new Audio(audioFiles.whosthat).play();
     } catch (err) {
       console.error("Failed to fetch Pokémon", err);
     }

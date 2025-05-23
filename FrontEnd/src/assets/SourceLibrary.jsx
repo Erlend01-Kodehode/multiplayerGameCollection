@@ -4,6 +4,7 @@ const filePaths = {
   background: '/images/background',
   icons: '/images/icons',
   thumbnail: '/images/thumbnail',
+  audio: '/audio',
   // Add other categories as needed
 }
 
@@ -20,6 +21,7 @@ const path = (folderKey, fileName) => {
 export const backgroundImages = {
   bg: path('background', 'bg.svg'),
   bg2: path('background', 'bg2.svg'),
+  bg2_1080p: path('background', 'bg21080p.svg'),
 }
 
 export const iconImages = {
@@ -31,4 +33,9 @@ export const thumbnailImages = {
   thumbnail_tictactoe: path('thumbnail', 'thumbnail-tictactoe.png'),
   thumbnail_checkers: path('thumbnail', 'checkersThumbnail.svg'),
   thumbnail_minesweeper: path('thumbnail', 'thumbnail-minesweeper.png'),
+}
+
+export const audioFiles = {
+  whosthat: path('audio', 'whosthat.mp3'),
+  // Add other audio files as needed
 }
