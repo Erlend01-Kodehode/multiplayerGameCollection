@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef } from 'react'
-import Square from './Square'
-import style from '../../../../CSSModule/gameCSS/minesweeperGame.module.css'
+import { useState, useEffect, useRef } from 'react';
+import Square from './Square';
+import style from '../../../../CSSModule/gameCSS/minesweeperGame.module.css';
+import { ResetButton } from '../../../../components/Buttons';
 
 const createEmptyBoard = (rows, cols) =>
   Array.from({ length: rows }, () =>
@@ -10,31 +11,31 @@ const createEmptyBoard = (rows, cols) =>
       adjacentMines: 0,
       flagged: false,
     }))
-  )
+  );
 
 const placeMines = (board, mineCount) => {
-  let placed = 0
-  const rows = board.length
-  const cols = board[0].length
+  let placed = 0;
+  const rows = board.length;
+  const cols = board[0].length;
 
   while (placed < mineCount) {
-    const r = Math.floor(Math.random() * rows)
-    const c = Math.floor(Math.random() * cols)
+    const r = Math.floor(Math.random() * rows);
+    const c = Math.floor(Math.random() * cols);
     if (!board[r][c].hasMine) {
-      board[r][c].hasMine = true
-      placed++
+      board[r][c].hasMine = true;
+      placed++;
     }
   }
 
-  return board
-}
+  return board;
+};
 
 const countAdjacentMines = (board, r, c) => {
-  let count = 0
+  let count = 0;
   for (let i = -1; i <= 1; i++) {
     for (let j = -1; j <= 1; j++) {
-      const newRow = r + i
-      const newCol = c + j
+      const newRow = r + i;
+      const newCol = c + j;
       if (
         newRow >= 0 &&
         newRow < board.length &&
@@ -42,80 +43,80 @@ const countAdjacentMines = (board, r, c) => {
         newCol < board[0].length &&
         board[newRow][newCol].hasMine
       ) {
-        count++
+        count++;
       }
     }
   }
-  return count
-}
+  return count;
+};
 
 export default function Board({ rows = 0, cols = 0, mines = 0 }) {
-  const [board, setBoard] = useState([])
-  const [gameOver, setGameOver] = useState(false)
-  const [gameWon, setGameWon] = useState(false)
-  const [flagsUsed, setFlagsUsed] = useState(0)
-  const [time, setTime] = useState(0)
-  const [started, setStarted] = useState(false)
-  const timerRef = useRef(null)
+  const [board, setBoard] = useState([]);
+  const [gameOver, setGameOver] = useState(false);
+  const [gameWon, setGameWon] = useState(false);
+  const [flagsUsed, setFlagsUsed] = useState(0);
+  const [time, setTime] = useState(0);
+  const [started, setStarted] = useState(false);
+  const timerRef = useRef(null);
 
   const initBoard = () => {
-    let newBoard = createEmptyBoard(rows, cols)
-    newBoard = placeMines(newBoard, mines)
+    let newBoard = createEmptyBoard(rows, cols);
+    newBoard = placeMines(newBoard, mines);
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
-        newBoard[r][c].adjacentMines = countAdjacentMines(newBoard, r, c)
+        newBoard[r][c].adjacentMines = countAdjacentMines(newBoard, r, c);
       }
     }
-    setBoard(newBoard)
-    setGameOver(false)
-    setGameWon(false)
-    setFlagsUsed(0)
-    clearInterval(timerRef.current)
-    setTime(0)
-    setStarted(false)
-  }
+    setBoard(newBoard);
+    setGameOver(false);
+    setGameWon(false);
+    setFlagsUsed(0);
+    clearInterval(timerRef.current);
+    setTime(0);
+    setStarted(false);
+  };
 
   useEffect(() => {
-    initBoard()
-  }, [])
+    initBoard();
+  }, []);
 
   const formatTime = (ms) => {
-    const seconds = Math.floor(ms / 1000)
-    const milliseconds = Math.floor((ms % 1000) / 10)
-    return `${seconds}.${milliseconds.toString().padStart(2, '0')}s`
-  }
+    const seconds = Math.floor(ms / 1000);
+    const milliseconds = Math.floor((ms % 1000) / 10);
+    return `${seconds}.${milliseconds.toString().padStart(2, '0')}s`;
+  };
 
   const revealSquare = (r, c) => {
-    if (gameOver || board[r][c].flagged || board[r][c].revealed) return
+    if (gameOver || board[r][c].flagged || board[r][c].revealed) return;
 
-    const newBoard = board.map((row) => row.map((square) => ({ ...square })))
-    newBoard[r][c].revealed = true
+    const newBoard = board.map((row) => row.map((square) => ({ ...square })));
+    newBoard[r][c].revealed = true;
 
     if (!started) {
-      setStarted(true)
+      setStarted(true);
       timerRef.current = setInterval(() => {
-        setTime((prev) => prev + 10)
-      }, 10)
+        setTime((prev) => prev + 10);
+      }, 10);
     }
 
     if (newBoard[r][c].hasMine) {
-      setGameOver(true)
-      clearInterval(timerRef.current)
-      revealAllMines(newBoard)
-      alert('Game over!')
+      setGameOver(true);
+      clearInterval(timerRef.current);
+      revealAllMines(newBoard);
+      alert('Game over!');
     } else if (newBoard[r][c].adjacentMines === 0) {
-      revealEmptySquares(newBoard, r, c)
+      revealEmptySquares(newBoard, r, c);
     }
 
-    setBoard(newBoard)
-    checkWin(newBoard)
-  }
+    setBoard(newBoard);
+    checkWin(newBoard);
+  };
 
   const revealEmptySquares = (board, r, c) => {
     for (let i = -1; i <= 1; i++) {
       for (let j = -1; j <= 1; j++) {
-        const newRow = r + i
-        const newCol = c + j
+        const newRow = r + i;
+        const newCol = c + j;
 
         if (
           newRow >= 0 &&
@@ -125,47 +126,47 @@ export default function Board({ rows = 0, cols = 0, mines = 0 }) {
           !board[newRow][newCol].revealed &&
           !board[newRow][newCol].hasMine
         ) {
-          board[newRow][newCol].revealed = true
+          board[newRow][newCol].revealed = true;
           if (board[newRow][newCol].adjacentMines === 0) {
-            revealEmptySquares(board, newRow, newCol)
+            revealEmptySquares(board, newRow, newCol);
           }
         }
       }
     }
-  }
+  };
 
   const toggleFlag = (r, c) => {
-    if (board[r][c].revealed || gameOver) return
+    if (board[r][c].revealed || gameOver) return;
 
-    const newBoard = board.map((row) => row.map((square) => ({ ...square })))
-    const square = newBoard[r][c]
-    square.flagged = !square.flagged
-    setFlagsUsed(flagsUsed + (square.flagged ? 1 : -1))
-    setBoard(newBoard)
-    checkWin(newBoard)
-  }
+    const newBoard = board.map((row) => row.map((square) => ({ ...square })));
+    const square = newBoard[r][c];
+    square.flagged = !square.flagged;
+    setFlagsUsed(flagsUsed + (square.flagged ? 1 : -1));
+    setBoard(newBoard);
+    checkWin(newBoard);
+  };
 
   const revealAllMines = (board) => {
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
         if (board[r][c].hasMine) {
-          board[r][c].revealed = true
+          board[r][c].revealed = true;
         }
       }
     }
-  }
+  };
 
   const checkWin = (board) => {
     const allNonMinesRevealed = board.every((row) =>
       row.every((square) => square.hasMine || square.revealed)
-    )
+    );
     if (allNonMinesRevealed) {
-      setGameWon(true)
-      setGameOver(true)
-      clearInterval(timerRef.current)
-      alert('You win!')
+      setGameWon(true);
+      setGameOver(true);
+      clearInterval(timerRef.current);
+      alert('You win!');
     }
-  }
+  };
 
   return (
     <div className={style.board}>
@@ -174,9 +175,12 @@ export default function Board({ rows = 0, cols = 0, mines = 0 }) {
           <p>Mines left: {mines - flagsUsed}</p>
           <p>Time: {formatTime(time)}</p>
         </div>
-        <button className={style.button} onClick={initBoard}>
+        { /* Commented below is from previous button style, currently replaced with Buttons.jsx component  */
+        /* <button className={style.button} onClick={initBoard}>
           Restart
-        </button>
+        </button> */
+        }
+        <ResetButton onClick={initBoard}>Restart</ResetButton>
       </div>
       <div className={style.board}>
         {board.map((row, r) => (
@@ -193,5 +197,5 @@ export default function Board({ rows = 0, cols = 0, mines = 0 }) {
         ))}
       </div>
     </div>
-  )
+  );
 }

@@ -1,7 +1,7 @@
 .infoContainer {
-  background: #f0d9b5;
+  background: var(--bg-ct-style1);
   border-radius: 12px;
-  box-shadow: 0 2px 12px #b5886344;
+  box-shadow: var(--b-shadow-info);
   padding: 2rem;
   max-width: 600px;
   margin: 0 auto 2rem auto;
@@ -10,7 +10,7 @@
 }
 
 .infoTitle {
-  color: #b58863;
+  color: var(--text-info-title);
   text-align: center;
   margin-bottom: 1rem;
   font-size: var(--fontsize-title4);
@@ -20,14 +20,14 @@
 .infoSection {
   margin-bottom: 2rem;
   padding: 1rem 1.5rem;
-  background: #fffbe9;
+  background: var(--bg-ct-style2);
   border-radius: 8px;
-  border-left: 6px solid #b58863;
+  border-left: var(--section-border-left);
   text-align: left;
 }
 
 .sectionTitle {
-  color: #3a2c1a;
+  color: var(--text-info-title);
   margin-bottom: 0.5rem;
   font-size: var(--fontsize-large);
   font-weight: bold;
@@ -43,7 +43,7 @@
 
 .sectionContent li {
   margin-bottom: 0.5rem;
-  color: #222;
+  color: var(--text-section-content);
   font-size: var(--fontsize-normal);
   line-height: 1.6;
 }
@@ -55,25 +55,6 @@
 }
 
 .sectionContent li strong {
-  color: #a87a55;
+  color: var(--text-section-content-strong);
   font-weight: bold;
-}
-
-.playButton {
-  display: inline-block;
-  background: #a87a55;
-  color: #fff;
-  font-weight: bold;
-  font-size: var(--fontsize-normal);
-  padding: 0.75em 2em;
-  border-radius: 6px;
-  text-decoration: none;
-  transition: background 0.2s;
-  margin-top: 1rem;
-  border: none;
-  cursor: pointer;
-}
-.playButton:hover {
-  background: #a0764b;
-  color: #fff;
 }

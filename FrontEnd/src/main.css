@@ -29,6 +29,16 @@
   --bg-theme-style1: #EEEED2;
   --text-theme-style1: #2D2D2D;
   --shadow-theme-style1: 0 2px 5px #A89E80;
+  
+  /* info chess style */
+  --bg-ct-style1: #f0d9b5;
+  --bg-ct-style2: #fffbe9;
+  --b-shadow-info: 0 2px 12px #b5886344;
+  --text-info-title: #b58863;
+  --text-section-title-: #3a2c1a;
+  --section-border-left: 6px solid #b58863;
+  --text-section-content: #222;
+  --text-section-content-strong: #a87a55;
 }
 html, body {
   height: 100%;

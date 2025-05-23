@@ -18,7 +18,8 @@
   align-items: flex-start;
 }
 
-.button {
+/* Using preset button from Buttons.jsx instead */
+/* .button {
   background: red;
   border: none;
   border-radius: 10px;
@@ -35,7 +36,7 @@
   &:hover {
     background: rgb(255, 64, 64);
   }
-}
+} */
 
 .board {
   width: fit-content;
