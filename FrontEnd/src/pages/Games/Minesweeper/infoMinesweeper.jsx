@@ -16,8 +16,9 @@ export default function InfoMinesweeper() {
       <div className={style.game}>
         <div className={style.gameInfo}>
           <p>Players: 2</p>
-          <p>Grid size: 10x15</p>
-          <p>Goal: Clear the minefield without setting off any mines.</p>
+          <p>Grid size: 20x20</p>
+          <p>Mines: 50</p>
+          <p>Clear the minefield without setting off any mines.</p>
         </div>
         <PlayButton onClick={handlePlayClick} />
       </div>
