@@ -6,10 +6,12 @@ import styles from "../../CSSModule/componentCSS/header.module.css"
 export default function Header() {
   return (
     <div className={styles.header}>
-      <Link>
+      <div className={styles.headerContent}>
+        <Link>
         <img className={styles.logo} src={iconImages.pixel_pandemonium} alt='Pixel Pandemonium logo' />
       </Link>
       <Nav />
+      </div>
     </div>
   )
 }
