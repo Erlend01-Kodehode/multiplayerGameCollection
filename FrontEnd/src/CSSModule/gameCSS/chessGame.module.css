@@ -10,10 +10,35 @@
 
 .topBar {
   grid-area: topBar;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  align-items: center;
   height: fit-content;
+  padding: 0 1rem;
 }
+
+.topBarLeft {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.topBarCenter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.topBarRight {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0.5rem 0;
+}
+
 .topBar h2 {
-  margin-bottom: 0.8rem;
+  margin-bottom: 0;
 }
 
 .leftBar {
