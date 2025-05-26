@@ -27,6 +27,11 @@ const GameSession = ({ mode, onComplete }) => {
     setPin(newPin);
   };
 
+  const pTextStyle = {
+    color: "#fff",
+    fontWeight: "bold",
+  };
+
   return (
     <div className={styles.pinBox}>
       {mode === "join" ? (
@@ -50,7 +55,7 @@ const GameSession = ({ mode, onComplete }) => {
         </>
       ) : (
         <>
-          <p>Your Game PIN:</p>
+          <p style={pTextStyle}>Your Game PIN:</p>
           <div className={styles.generatedPin}>{pin}</div>
           <button onClick={handleStart} className={styles.pinButton}>
             Start Game
