@@ -34,6 +34,7 @@ export const thumbnailImages = {
   thumbnail_checkers: path('thumbnail', 'thumbnail-checkers.svg'),
   thumbnail_chess: path('thumbnail', 'thumbnail-chess.svg'),
   thumbnail_minesweeper: path('thumbnail', 'thumbnail-minesweeper.png'),
+  thumbnail_guesspokemon: path('thumbnail', 'thumbnail-guesspokemon.svg'),
 }
 
 export const audioFiles = {

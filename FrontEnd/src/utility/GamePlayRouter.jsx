@@ -15,6 +15,7 @@ const gameMap = {
   3: GameChess,
   minesweeper: GameMinesweeper,
   4: GameMinesweeper,
+  guesspokemon: GuessPokemon,
   5: GuessPokemon,
   // Add more mappings for other games here
 };

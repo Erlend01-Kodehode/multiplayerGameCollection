@@ -22,6 +22,12 @@ const games = [
     title: 'Minesweeper',
     thumbnail: thumbnailImages.thumbnail_minesweeper,
   },
+  {
+    path: '/game/info/guesspokemon',
+    title: 'Guess Pokémon',
+    thumbnail: thumbnailImages.thumbnail_guesspokemon,
+  },
+  
 ]
 
 export default games

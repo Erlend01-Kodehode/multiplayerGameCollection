@@ -7,10 +7,10 @@ export default function Header() {
   return (
     <div className={styles.header}>
       <div className={styles.headerContent}>
-        <Link>
-        <img className={styles.logo} src={iconImages.pixel_pandemonium} alt='Pixel Pandemonium logo' />
-      </Link>
-      <Nav />
+        <Link to={'/'} className={styles.logoLink}>
+          <img className={styles.logo} src={iconImages.pixel_pandemonium} alt='Pixel Pandemonium logo' />
+        </Link>
+        <Nav />
       </div>
     </div>
   )

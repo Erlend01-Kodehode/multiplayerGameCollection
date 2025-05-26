@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { audioFiles } from "../../../assets/SourceLibrary.jsx";
 
 import "./guess.css";
@@ -63,9 +64,9 @@ export default function GuessPokemon() {
   return (
     <div>
       <div className="header">
-        <a href="./index.html">
+        <Link to="/home" className="logo-link">
           <img className="logo" src="./images/api.png" alt="Logo" />
-        </a>
+        </Link>
         <p className="score">Score: {score}</p>
         <p className="health">Health: {health}</p>
         <p className="high-score">High Score: {highScore}</p>
