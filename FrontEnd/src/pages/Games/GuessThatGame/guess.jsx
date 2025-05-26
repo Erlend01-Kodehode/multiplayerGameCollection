@@ -50,7 +50,9 @@ export default function GuessPokemon() {
         alert(`It was ${pokemon.name}, better luck next time!`);
         fetchPokemon();
       } else {
-        alert(`Game Over! Your final score is ${score}`);
+        alert(
+          `Game Over, the final pokemon was ${pokemon.name}! Your final score is ${score}`
+        );
         if (score > highScore) {
           setHighScore(score);
           localStorage.setItem("highScore", score);
