@@ -4,7 +4,6 @@ import InfoTicTacToe from '../pages/Games/TicTacToe/infoTicTacToe.jsx'
 import InfoCheckers from '../pages/Games/Checkers/infoCheckers.jsx'
 import InfoChessGame from '../pages/Games/ChessGame/infoChessGame.jsx'
 import InfoMinesweeper from '../pages/Games/Minesweeper/infoMinesweeper.jsx'
-import GuessPokemon from '../pages/Games/GuessThatGame/guess.jsx'
 
 const gameInfoMap = {
   tictactoe: InfoTicTacToe,
