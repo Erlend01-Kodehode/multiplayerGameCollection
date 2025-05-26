@@ -43,6 +43,17 @@ const GameSession = ({ mode, onComplete }) => {
   };
 
   const fetchNewPin = async () => {
+    // If there's an existing PIN, delete it first
+    if (pin) {
+      try {
+        await fetch(`http://localhost:3000/api/game/deletepin/${pin}`, {
+          method: "DELETE",
+        });
+      } catch (err) {
+        console.error("Error deleting previous pin:", err);
+      }
+    }
+
     try {
       const res = await fetch("http://localhost:3000/api/game/createpin", {
         method: "POST",
