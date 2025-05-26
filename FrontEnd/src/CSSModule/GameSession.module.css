@@ -5,6 +5,9 @@
   max-width: 300px;
   margin-left: auto;
   margin-right: auto;
+  margin-bottom: 1.5rem;
+  background-color: #202a6d;
+  border-radius: 8px;
 }
 
 .pinInput {
@@ -25,6 +28,9 @@
   border-radius: 6px;
   margin: 5px;
   cursor: pointer;
+}
+.pinButton:hover {
+  background-color: #303f9f;
 }
 
 .generatedPin {

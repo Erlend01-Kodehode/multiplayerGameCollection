@@ -64,7 +64,6 @@ const InfoCheckers = () => {
         <div className={styles.buttonContainer}>
           <HostGameButton onClick={handleHostClick} />
         </div>
-
         {showSession && (
           <GameSession mode={mode} onComplete={handleSessionComplete} />
         )}

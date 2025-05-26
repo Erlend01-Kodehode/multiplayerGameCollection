@@ -25,7 +25,7 @@ export default function InfoMinesweeper() {
       <h1>Minesweeper</h1>
       <div className={style.game}>
         <div className={style.gameInfo}>
-          <p>Players: 1</p>
+          <p>Players: 2</p>
           <p>Grid size: 20x20</p>
           <p>Mines: 50</p>
           <p>Clear the minefield without setting off any mines.</p>
