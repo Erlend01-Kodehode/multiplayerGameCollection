@@ -7,24 +7,57 @@ const GameSession = ({ mode, onComplete }) => {
 
   useEffect(() => {
     if (mode === "host") {
-      generateNewPin();
+      fetchNewPin();
     } else {
       setPin("");
     }
   }, [mode]);
 
-  const handleStart = () => {
-    if (mode === "join" && pin.trim() === "") {
-      setError("PIN cannot be empty.");
-      return;
+  const handleStart = async () => {
+    if (mode === "join") {
+      if (pin.trim() === "") {
+        setError("PIN cannot be empty.");
+        return;
+      }
+
+      try {
+        const res = await fetch(
+          `http://localhost:3000/api/game/checkpin/${pin}`
+        );
+        const data = await res.json();
+
+        if (!res.ok) {
+          setError(data.error || "Invalid PIN.");
+          return;
+        }
+
+        setError("");
+        onComplete(pin);
+      } catch (err) {
+        setError("Server error. Please try again.");
+        console.error(err);
+      }
+    } else {
+      onComplete(pin);
     }
-    setError("");
-    onComplete(pin);
   };
 
-  const generateNewPin = () => {
-    const newPin = Math.floor(1000 + Math.random() * 9000).toString();
-    setPin(newPin);
+  const fetchNewPin = async () => {
+    try {
+      const res = await fetch("http://localhost:3000/api/game/createpin", {
+        method: "POST",
+      });
+      const data = await res.json();
+
+      if (res.ok && data.pin_code) {
+        setPin(data.pin_code);
+      } else {
+        setError(data.error || "Failed to generate PIN.");
+      }
+    } catch (err) {
+      console.error("Error fetching pin:", err);
+      setError("Server error. Try again later.");
+    }
   };
 
   const pTextStyle = {
@@ -60,9 +93,10 @@ const GameSession = ({ mode, onComplete }) => {
           <button onClick={handleStart} className={styles.pinButton}>
             Start Game
           </button>
-          <button onClick={generateNewPin} className={styles.pinButton}>
+          <button onClick={fetchNewPin} className={styles.pinButton}>
             New Pin
           </button>
+          {error && <p style={{ color: "red" }}>{error}</p>}
         </>
       )}
     </div>

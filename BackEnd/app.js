@@ -6,6 +6,7 @@ import { Server } from "socket.io";
 import path from "path";
 import cookieParser from "cookie-parser";
 import logger from "morgan";
+import cors from "cors";
 
 import indexRouter from "./routes/index.js";
 import usersRouter from "./routes/users.js";
@@ -44,6 +45,9 @@ server.listen(port, () => {
 // app.use(express.urlencoded({ extended: false }));
 // app.use(cookieParser());
 // app.use(express.static(path.join(__dirname, "public")));
+
+// CORS
+app.use(cors());
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
