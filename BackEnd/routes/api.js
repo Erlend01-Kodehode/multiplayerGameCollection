@@ -5,10 +5,12 @@ var router = express.Router();
 import { register } from "../controllers/register.js";
 import { login } from "../controllers/login.js";
 import { checkPin } from "../controllers/checkpin.js";
+import { createpin } from "../controllers/createpin.js";
 
 // Routes
 router.post("/api/player/register", register);
 router.post("/api/player/login", login);
+router.post("/api/game/createpin", createpin);
 router.get("/api/game/checkpin/:pin", checkPin);
 
 export default router;
