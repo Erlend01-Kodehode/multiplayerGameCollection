@@ -15,14 +15,6 @@
   font-size: 1.2rem;
 }
 
-.turnRed {
-  color: #e53935;
-}
-
-.turnBlack {
-  color: #222;
-}
-
 /* Layout for board and reserves using grid-template-areas */
 .checkersLayout {
   display: grid;
@@ -31,12 +23,25 @@
   grid-template-areas:
     "reserveRed board reserveBlack"
     "reserveRed board reserveBlack" 
-    "reserveRed board reserveBlack"
-  ;
+    "reserveRed board reserveBlack";
   gap: 0;
   align-items: start;
   justify-items: start;
   position: relative;
+}
+
+.playerName {
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 8px;
+  text-shadow: #0c0c0c 1px 1px 3px, #5659687a 0 3px 6px;
+}
+
+.playerStats {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .reserveRed {
@@ -47,7 +52,7 @@
   font-weight: bold;
   margin-bottom: 8px;
   margin-left: 8px;
-  text-shadow: 1px 1px 3px #000, 0 0 6px #e5393588;
+  text-shadow: #0c0c0c 1px 1px 3px, #5659687a 0 3px 6px;
 }
 
 .boardWrapper {
@@ -68,7 +73,7 @@
 .checkersBoard {
   display: inline-block;
   border: 4px solid #333;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
   background: #222;
 }
 
@@ -106,7 +111,7 @@
   height: 54px;
   border-radius: 50%;
   border: 2.5px solid #333;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .pieceRed {
@@ -154,4 +159,92 @@
   display: flex;
   justify-content: center;
   margin: 16px 0 20px 0;
+}
+
+/* ---------------------------------------------------------- */
+/* PreGameSetup styles (for the pre-game setup screen)       */
+/* ---------------------------------------------------------- */
+
+.setupScreen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #f4f4f4;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+.setupScreen h1 {
+  color: #333;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.setupScreen h2 {
+  color: #555;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+.setupContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+}
+
+/* Styles for multi-player piece selection */
+.playerSelection {
+  margin-bottom: 16px;
+}
+
+.pieceOptions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.selectedPiece {
+  outline: 4px solid #34dd12;
+  box-shadow: 0 0 8px 2px rgba(52, 221, 18, 0.7);
+  border-radius: 50%;
+}
+
+.nameEntry {
+  margin-bottom: 16px;
+}
+
+/* Input styling for the name entry area */
+.nameEntry input {
+  font-weight: 500;
+  color: #333;
+  padding: 8px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.nameEntry input::placeholder {
+  font-weight: lighter;
+  color: #a0a0a0;
+  font-style: italic;
+}
+
+.setupScreen button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  border: none;
+  background-color: #e53935;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 16px;
+}
+
+.setupScreen button:hover {
+  background-color: #d32f2f;
 }

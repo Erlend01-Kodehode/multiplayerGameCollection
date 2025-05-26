@@ -40,6 +40,11 @@
   color: var(--text-theme-style1);
   text-shadow: var(--shadow-theme-style1);
   margin-bottom: 0.5rem;
+  text-align: left;
+}
+.noListStyle li strong {
+  color: var(--text-theme-style1);
+  text-shadow: var(--shadow-theme-style1);
 }
 
 .buttonContainer {

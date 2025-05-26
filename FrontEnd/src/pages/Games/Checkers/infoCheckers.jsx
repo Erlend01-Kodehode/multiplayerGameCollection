@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+// /src/pages/Games/Checkers/infoCheckers.jsx
+import React from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import styles from "../../../CSSModule/infoCSS/checkersInfo.module.css";
 import {
-  PlayButton,
   JoinGameButton,
   HostGameButton,
 } from "../../../components/Buttons.jsx";
@@ -10,25 +10,20 @@ import GameSession from "../GameSession.jsx";
 
 const InfoCheckers = () => {
   const navigate = useNavigate();
-  const [mode, setMode] = useState(null); // 'join' or 'host'
-  const [showSession, setShowSession] = useState(false);
-
-  const handlePlayClick = () => {
-    navigate("/game/play/checkers");
-  };
+  const [searchParams, setSearchParams] = useSearchParams();
+  const modeFromUrl = searchParams.get("mode"); // should be either 'host' or 'join'
 
   const handleHostClick = () => {
-    setMode("host");
-    setShowSession(true);
+    setSearchParams({ mode: "host" });
   };
 
   const handleJoinClick = () => {
-    setMode("join");
-    setShowSession(true);
+    setSearchParams({ mode: "join" });
   };
 
   const handleSessionComplete = (pin) => {
-    navigate(`/game/play/checkers?pin=${pin}`);
+    // Navigate to game play screen and carry both the pin and mode in the URL
+    navigate(`/game/play/checkers?pin=${pin}&mode=${modeFromUrl}`);
   };
 
   return (
@@ -36,38 +31,45 @@ const InfoCheckers = () => {
       <h1>Checkers</h1>
       <div className={styles.infoContent}>
         <p>
-          Checkers is a classic two-player strategy board game played on an 8x8
-          grid. Each player starts with 12 pieces placed on the dark squares of
-          the three rows closest to them.
+          Experience a classic game of Checkers with modern enhancements! In
+          this version, the game is played on an 8x8 grid where each player
+          starts with 12 pieces on the dark squares. Key features include:
         </p>
         <ul className={styles.noListStyle}>
-          <li>Players: 2</li>
-          <li>Board size: 8x8 squares</li>
-          <li>Pieces move diagonally forward to unoccupied dark squares.</li>
-          <li>Capture opponent pieces by jumping over them diagonally.</li>
           <li>
-            If a piece reaches the farthest row, it becomes a "King" and can
-            move both forward and backward diagonally.
+            <strong>Forced Capture:</strong> When a capture move is available,
+            you must capture your opponent’s piece.
           </li>
           <li>
-            The goal is to capture all of your opponent's pieces or block them
-            so they cannot move.
+            <strong>Multi-Capture:</strong> If a piece can continue capturing
+            after a jump, it must do so.
+          </li>
+          <li>
+            <strong>Kinging:</strong> When a piece reaches the far side of the
+            board, it becomes a king and gains the ability to move backward.
+          </li>
+          <li>
+            <strong>Score System:</strong> Wins and losses are tracked and shown
+            in each player’s reserve.
+          </li>
+          <li>
+            <strong>Standard Movement:</strong> Pieces move diagonally forward
+            to unoccupied dark squares.
+          </li>
+          <li>
+            <strong>Win Conditions:</strong> The game ends when one player has
+            no moves left or no remaining pieces.
           </li>
         </ul>
-
-        {/* <div className={styles.buttonContainer}>
-          <PlayButton onClick={handlePlayClick} />
-        </div> */}
         <div className={styles.buttonContainer}>
           <JoinGameButton onClick={handleJoinClick} />
         </div>
         <div className={styles.buttonContainer}>
           <HostGameButton onClick={handleHostClick} />
         </div>
-        {showSession && (
-          <GameSession mode={mode} onComplete={handleSessionComplete} />
+        {modeFromUrl && (
+          <GameSession mode={modeFromUrl} onComplete={handleSessionComplete} />
         )}
-
         <p className={styles.infoNote}>Good luck and have fun!</p>
       </div>
     </div>
