@@ -13,6 +13,18 @@ export const ResetButton = ({ onClick, children = "Reset" }) => (
   </button>
 );
 
+export const JoinGameButton = ({ onClick, children = "Join Game" }) => (
+  <button className={styles.joinGame} onClick={onClick}>
+    {children}
+  </button>
+);
+
+export const HostGameButton = ({ onClick, children = "Host Game" }) => (
+  <button className={styles.hostGame} onClick={onClick}>
+    {children}
+  </button>
+);
+
 export const NavigationButton = ({ onClick, children = "Navigate" }) => (
   <button className={styles.navigationButton} onClick={onClick}>
     {children}

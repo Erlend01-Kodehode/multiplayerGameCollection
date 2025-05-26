@@ -1,14 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "../../../CSSModule/infoCSS/tictactoeInfo.module.css";
 import altStyles from "../../../CSSModule/gameCSS/tictactoeGame.module.css";
-import { PlayButton } from "../../../components/Buttons.jsx";
+import {
+  JoinGameButton,
+  HostGameButton,
+} from "../../../components/Buttons.jsx";
+import GameSession from "../GameSession.jsx";
 
 const InfoTicTacToe = () => {
   const navigate = useNavigate();
+  const [mode, setMode] = useState(null);
 
-  const handlePlayClick = () => {
-    navigate("/game/play/tictactoe");
+  const handleJoinClick = () => setMode("join");
+  const handleHostClick = () => setMode("host");
+
+  const handleSessionComplete = (pin) => {
+    navigate(`/game/play/tictactoe?pin=${pin}`);
   };
 
   return (
@@ -18,8 +26,8 @@ const InfoTicTacToe = () => {
         <p>
           Tic Tac Toe is a classic two-player game. Players take turns marking{" "}
           <span className={altStyles.squareX}>X</span> or{" "}
-          <span className={altStyles.squareO}>O</span> in a 3x3 grid.
-          The first to get three in a row (horizontally, vertically, or diagonally) wins the game!
+          <span className={altStyles.squareO}>O</span> in a 3x3 grid. The first
+          to get three in a row (horizontally, vertically, or diagonally) wins!
         </p>
         <ul className={styles.noListStyle}>
           <li>Players: 2</li>
@@ -30,9 +38,15 @@ const InfoTicTacToe = () => {
             <span className={altStyles.squareO}>O</span>)
           </li>
         </ul>
+
         <div className={styles.buttonContainer}>
-          <PlayButton onClick={handlePlayClick} />
+          <JoinGameButton onClick={handleJoinClick} />
         </div>
+        <div className={styles.buttonContainer}>
+          <HostGameButton onClick={handleHostClick} />
+        </div>
+
+        {mode && <GameSession mode={mode} onComplete={handleSessionComplete} />}
       </div>
     </div>
   );
