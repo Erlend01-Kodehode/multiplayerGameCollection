@@ -1,6 +1,7 @@
 import React, { useState, forwardRef, useImperativeHandle } from "react";
 import styles from "../../../../CSSModule/gameCSS/tictactoeGame.module.css";
 import Square from "./Square";
+import { useEffect } from "react";
 
 // Winner calculation logic
 const calculateWinner = (squares) => {
@@ -70,23 +71,64 @@ const Board = forwardRef((props, ref) => {
     );
   }
 
+  // Run on board Update
+  useEffect(() => {
+    console.log(squares);
+  }, [squares]);
+
   return (
     <div className={styles.board}>
       <div className={styles.status}>{status}</div>
       <div className={styles.boardRow}>
-        <Square value={squares[0]} onSquareClick={() => handleClick(0)} className={getSquareClass(squares[0])} />
-        <Square value={squares[1]} onSquareClick={() => handleClick(1)} className={getSquareClass(squares[1])} />
-        <Square value={squares[2]} onSquareClick={() => handleClick(2)} className={getSquareClass(squares[2])} />
+        <Square
+          value={squares[0]}
+          onSquareClick={() => handleClick(0)}
+          className={getSquareClass(squares[0])}
+        />
+        <Square
+          value={squares[1]}
+          onSquareClick={() => handleClick(1)}
+          className={getSquareClass(squares[1])}
+        />
+        <Square
+          value={squares[2]}
+          onSquareClick={() => handleClick(2)}
+          className={getSquareClass(squares[2])}
+        />
       </div>
       <div className={styles.boardRow}>
-        <Square value={squares[3]} onSquareClick={() => handleClick(3)} className={getSquareClass(squares[3])} />
-        <Square value={squares[4]} onSquareClick={() => handleClick(4)} className={getSquareClass(squares[4])} />
-        <Square value={squares[5]} onSquareClick={() => handleClick(5)} className={getSquareClass(squares[5])} />
+        <Square
+          value={squares[3]}
+          onSquareClick={() => handleClick(3)}
+          className={getSquareClass(squares[3])}
+        />
+        <Square
+          value={squares[4]}
+          onSquareClick={() => handleClick(4)}
+          className={getSquareClass(squares[4])}
+        />
+        <Square
+          value={squares[5]}
+          onSquareClick={() => handleClick(5)}
+          className={getSquareClass(squares[5])}
+        />
       </div>
       <div className={styles.boardRow}>
-        <Square value={squares[6]} onSquareClick={() => handleClick(6)} className={getSquareClass(squares[6])} />
-        <Square value={squares[7]} onSquareClick={() => handleClick(7)} className={getSquareClass(squares[7])} />
-        <Square value={squares[8]} onSquareClick={() => handleClick(8)} className={getSquareClass(squares[8])} />
+        <Square
+          value={squares[6]}
+          onSquareClick={() => handleClick(6)}
+          className={getSquareClass(squares[6])}
+        />
+        <Square
+          value={squares[7]}
+          onSquareClick={() => handleClick(7)}
+          className={getSquareClass(squares[7])}
+        />
+        <Square
+          value={squares[8]}
+          onSquareClick={() => handleClick(8)}
+          className={getSquareClass(squares[8])}
+        />
       </div>
     </div>
   );
