@@ -1,38 +1,33 @@
-
 import db from "../db.js";
 
 export const createpin = (req, res) => {
-  const { pin } = req.body;
+  const generatePin = () => Math.floor(1000 + Math.random() * 9000).toString();
 
-  // Validate that a PIN is provided.
-  if (!pin) {
-    return res
-      .status(400)
-      .json({ error: "PIN is required to be added to the database." });
-  }
+  const tryInsertPin = () => {
+    const pin = generatePin();
 
-  // Validate that the PIN is exactly 4 digits.
-  if (!/^\d{4}$/.test(pin)) {
-    return res
-      .status(400)
-      .json({ error: "PIN must be a 4-digit number." });
-  }
+    const checkQuery = "SELECT pin_code FROM pin WHERE pin_code = ? LIMIT 1";
+    db.get(checkQuery, [pin], (err, row) => {
+      if (err) {
+        console.error("Database error:", err.message);
+        return res.status(500).json({ error: "Database error" });
+      }
 
-  // SQL query to insert the provided PIN into your "pin" table.
-  const sql = `INSERT INTO pin(pin_code) VALUES(?)`;
-  const params = [pin];
+      if (row) {
+        return tryInsertPin();
+      } else {
+        const insertQuery = "INSERT INTO pin (pin_code) VALUES (?)";
+        db.run(insertQuery, [pin], function (err) {
+          if (err) {
+            console.error("Insert error:", err.message);
+            return res.status(500).json({ error: "Failed to create pin" });
+          }
 
-  db.run(sql, params, function (err) {
-    if (err) {
-      console.error("Database insert error:", err.message);
-      return res.status(500).json({ error: err.message });
-    }
-
-    // Return the newly inserted record's ID along with the PIN.
-    res.status(200).json({
-      id: this.lastID,
-      pin,
-      message: "PIN stored successfully in the database."
+          return res.status(201).json({ pin_code: pin });
+        });
+      }
     });
-  });
+  };
+
+  tryInsertPin();
 };

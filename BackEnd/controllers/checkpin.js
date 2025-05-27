@@ -1,27 +1,24 @@
 import db from "../db.js";
 
-export const checkpin = (req, res) => {
-  // Grab the 'pin' value from the query string
-  const { pin } = req.query;
+export const checkPin = (req, res) => {
+  const { pin } = req.params;
 
-  // If no pin is provided, return a 400 error
   if (!pin) {
-    return res.status(400).json({ error: "The 'pin' query parameter is required." });
+    return res.status(400).json({ error: "PIN is required" });
+  } else if (pin.length !== 4) {
+    return res.status(403).json({ error: "PIN not valid" });
   }
 
-  // Query the SQLite database for the given pin_code
-  db.get("SELECT * FROM pin WHERE pin_code = ?", [pin], (err, row) => {
+  const query = "SELECT pin_code FROM pin WHERE pin_code = ? LIMIT 1";
+
+  db.get(query, [pin], (err, row) => {
     if (err) {
-      // If an error occurred during the query, send a 500 error with the error message
-      return res.status(500).json({ error: err.message });
+      console.error("Database error:", err.message);
+      return res.status(500).json({ error: "Internal server error." });
+    } else if (row) {
+      return res.status(200).json({ message: "Valid PIN code" });
+    } else {
+      return res.status(404).json({ error: "PIN code not found" });
     }
-
-    // If no row was found, the pin does not exist in the table
-    if (!row) {
-      return res.status(404).json({ error: "Pin not found." });
-    }
-
-    // If the pin is found, return a success message along with the pin record
-    return res.status(200).json({ message: "Pin verified successfully.", pin: row });
   });
 };

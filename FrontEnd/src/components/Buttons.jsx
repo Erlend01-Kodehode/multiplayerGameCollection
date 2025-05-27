@@ -25,6 +25,12 @@ export const HostGameButton = ({ onClick, children = "Host Game" }) => (
   </button>
 );
 
+export const LocalGameButton = ({ onClick, children = "Local Game" }) => (
+  <button className={styles.localGame} onClick={onClick}>
+    {children}
+  </button>
+);
+
 export const NavigationButton = ({ onClick, children = "Navigate" }) => (
   <button className={styles.navigationButton} onClick={onClick}>
     {children}

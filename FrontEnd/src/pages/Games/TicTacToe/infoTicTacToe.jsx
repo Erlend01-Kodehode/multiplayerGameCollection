@@ -1,8 +1,12 @@
-import React from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import infoStyles from "../../../CSSModule/infoCSS/tictactoeInfo.module.css";
-import gameStyles from "../../../CSSModule/gameCSS/tictactoeGame.module.css";
-import { HostGameButton, JoinGameButton } from "../../../components/Buttons.jsx";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import styles from "../../../CSSModule/infoCSS/tictactoeInfo.module.css";
+import altStyles from "../../../CSSModule/gameCSS/tictactoeGame.module.css";
+import {
+  JoinGameButton,
+  HostGameButton,
+  LocalGameButton,
+} from "../../../components/Buttons.jsx";
 import GameSession from "../GameSession.jsx";
 
 const InfoTicTacToe = () => {
@@ -21,6 +25,11 @@ const InfoTicTacToe = () => {
   const handleSessionComplete = (pin) => {
     // Navigate to the game play screen with the PIN and mode
     navigate(`/game/play/tictactoe?pin=${pin}&mode=${modeFromUrl}`);
+  };
+
+  const handleLocalSession = () => {
+    console.log("Local Game");
+    navigate(`/game/play/tictactoe`);
   };
 
   return (
@@ -47,10 +56,11 @@ const InfoTicTacToe = () => {
         <div className={infoStyles.buttonContainer}>
           <HostGameButton onClick={handleHostClick} />
         </div>
-        {modeFromUrl && (
-          <GameSession mode={modeFromUrl} onComplete={handleSessionComplete} />
-        )}
-        <p className={infoStyles.infoNote}>Good luck and have fun!</p>
+        <div className={styles.buttonContainer}>
+          <LocalGameButton onClick={handleLocalSession} />
+        </div>
+
+        {mode && <GameSession mode={mode} onComplete={handleSessionComplete} />}
       </div>
     </div>
   );

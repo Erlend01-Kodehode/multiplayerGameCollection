@@ -1,4 +1,4 @@
-// app.js (Backend)
+
 import createError from "http-errors";
 import express from "express";
 import { createServer } from "http";
@@ -45,7 +45,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(logger("dev"));
 
-// Routes
+// CORS
+app.use(cors());
+
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/", apiRouter);

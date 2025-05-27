@@ -51,7 +51,7 @@ export default function GuessPokemon() {
         fetchPokemon();
       } else {
         alert(
-          `Game Over, the final pokemon was ${pokemon.name}! Your final score is ${score}`
+          `the final pokemon was ${pokemon.name}! Your final score is ${score}`
         );
         if (score > highScore) {
           setHighScore(score);

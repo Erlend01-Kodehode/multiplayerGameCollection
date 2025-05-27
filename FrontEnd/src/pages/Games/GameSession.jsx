@@ -1,4 +1,4 @@
-// /src/components/GameSession.jsx (Frontend)
+
 import React, { useEffect, useState } from "react";
 import socket from "./Socket.jsx";
 import { createPin } from "../../utility/getAPI.jsx";
@@ -12,7 +12,7 @@ const GameSession = ({ mode, onComplete }) => {
   // generate a new PIN if hosting, or clear it if joining.
   useEffect(() => {
     if (mode === "host") {
-      generateNewPin();
+      fetchNewPin();
     } else {
       setPin("");
     }
@@ -28,40 +28,62 @@ const GameSession = ({ mode, onComplete }) => {
     };
   }, [mode]);
 
-  // Called when the user clicks the button to start/join the game.
   const handleStart = async () => {
-    if (mode === "join" && pin.trim() === "") {
-      setError("PIN cannot be empty.");
-      return;
-    }
-    setError("");
-
-    try {
-      if (mode === "host") {
-        // Host mode: Emit "hostGame" to Socket.IO
-        socket.emit("hostGame", { pin });
-        console.log("Emitted hostGame event with PIN:", pin);
-
-        // Call the backend API to store the newly generated PIN.
-        const result = await createPin(pin);
-        console.log("Created PIN in backend:", result);
-      } else if (mode === "join") {
-        // Join mode: Emit "joinGame" to Socket.IO
-        socket.emit("joinGame", { pin });
-        console.log("Emitted joinGame event with PIN:", pin);
+    if (mode === "join") {
+      if (pin.trim() === "") {
+        setError("PIN cannot be empty.");
+        return;
       }
-      // Notify the parent component that the session setup is complete.
+
+      try {
+        const res = await fetch(
+          `http://localhost:3000/api/game/checkpin/${pin}`
+        );
+        const data = await res.json();
+
+        if (!res.ok) {
+          setError(data.error || "Invalid PIN.");
+          return;
+        }
+
+        setError("");
+        onComplete(pin);
+      } catch (err) {
+        setError("Server error. Please try again.");
+        console.error(err);
+      }
+    } else {
       onComplete(pin);
-    } catch (err) {
-      console.error("Error in handleStart:", err);
-      setError("Failed to create PIN on backend.");
     }
   };
 
-  // Generate a random 4-digit PIN and update state.
-  const generateNewPin = () => {
-    const newPin = Math.floor(1000 + Math.random() * 9000).toString();
-    setPin(newPin);
+  const fetchNewPin = async () => {
+    // If there's an existing PIN, delete it first
+    if (pin) {
+      try {
+        await fetch(`http://localhost:3000/api/game/deletepin/${pin}`, {
+          method: "DELETE",
+        });
+      } catch (err) {
+        console.error("Error deleting previous pin:", err);
+      }
+    }
+
+    try {
+      const res = await fetch("http://localhost:3000/api/game/createpin", {
+        method: "POST",
+      });
+      const data = await res.json();
+
+      if (res.ok && data.pin_code) {
+        setPin(data.pin_code);
+      } else {
+        setError(data.error || "Failed to generate PIN.");
+      }
+    } catch (err) {
+      console.error("Error fetching pin:", err);
+      setError("Server error. Try again later.");
+    }
   };
 
   const pTextStyle = { color: "#fff", fontWeight: "bold" };
@@ -94,7 +116,7 @@ const GameSession = ({ mode, onComplete }) => {
           <button onClick={handleStart} className={styles.pinButton}>
             Start Game
           </button>
-          <button onClick={generateNewPin} className={styles.pinButton}>
+          <button onClick={fetchNewPin} className={styles.pinButton}>
             New Pin
           </button>
           {error && <p style={{ color: "red" }}>{error}</p>}

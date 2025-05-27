@@ -18,6 +18,7 @@
     "nodemon": "^3.1.10",
     "pug": "^3.0.3",
     "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
     "socket.io-p2p-parser": "github:tomcartwrightuk/socket.io-p2p-parser",
     "socket.io-p2p-server": "^1.2.0",
     "sqlite3": "^5.1.7"
