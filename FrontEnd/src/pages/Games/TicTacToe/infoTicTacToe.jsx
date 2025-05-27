@@ -5,6 +5,7 @@ import altStyles from "../../../CSSModule/gameCSS/tictactoeGame.module.css";
 import {
   JoinGameButton,
   HostGameButton,
+  LocalGameButton,
 } from "../../../components/Buttons.jsx";
 import GameSession from "../GameSession.jsx";
 
@@ -17,6 +18,11 @@ const InfoTicTacToe = () => {
 
   const handleSessionComplete = (pin) => {
     navigate(`/game/play/tictactoe?pin=${pin}`);
+  };
+
+  const handleLocalSession = () => {
+    console.log("Local Game");
+    navigate(`/game/play/tictactoe`);
   };
 
   return (
@@ -44,6 +50,9 @@ const InfoTicTacToe = () => {
         </div>
         <div className={styles.buttonContainer}>
           <HostGameButton onClick={handleHostClick} />
+        </div>
+        <div className={styles.buttonContainer}>
+          <LocalGameButton onClick={handleLocalSession} />
         </div>
 
         {mode && <GameSession mode={mode} onComplete={handleSessionComplete} />}
