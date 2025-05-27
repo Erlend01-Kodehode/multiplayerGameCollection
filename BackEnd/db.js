@@ -1,27 +1,22 @@
+
 import sqlite3 from "sqlite3";
 import { resolve } from "path";
+import { updatePinTableSchema } from "./dbFunctions/schemaUpdater.js";
 
 const dbPath = resolve("db.sqlite");
 const db = new sqlite3.Database(dbPath, (err) => {
   if (err) {
     console.error("Failed to connect to SQLite:", err.message);
-  } else {
-    console.log("Connected to SQLite database.");
-
-    const createPinTable = `
-      CREATE TABLE IF NOT EXISTS pin (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        pin_code TEXT NOT NULL
-      ); 
-    `;
-    db.run(createPinTable, (err) => {
-      if (err) {
-        console.error("Error creating pin table:", err.message);
-      } else {
-        console.log("Pin table is ready.");
-      }
-    });
+    return;
   }
+  console.log("Connected to SQLite database.");
 });
+
+// Set a busy timeout so that SQLite waits up to 5 seconds for the lock to clear.
+db.configure("busyTimeout", 5000);
+
+// Call the modularized schema update function.
+// All operations inside updatePinTableSchema will execute sequentially.
+updatePinTableSchema(db);
 
 export default db;

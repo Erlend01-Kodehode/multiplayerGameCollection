@@ -1,6 +1,7 @@
-import GameCard from '../components/GameCard'
-import styles from '../CSSModule/homepage.module.css'
-import games from '../assets/GameLibrary.jsx'
+import React from 'react';
+import GameCard from '../components/GameCard';
+import styles from '../CSSModule/homepage.module.css';
+import games from '../assets/GameLibrary.jsx';
 
 // Helper to chunk array into rows of N items
 function chunkArray(array, size) {
@@ -37,7 +38,7 @@ const HomePage = () => {
         ))}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default HomePage
+export default HomePage;

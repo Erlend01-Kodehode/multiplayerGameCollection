@@ -1,70 +1,74 @@
+// app.js (Backend)
 import createError from "http-errors";
 import express from "express";
 import { createServer } from "http";
-import { Server } from "socket.io";
 import path from "path";
 import cookieParser from "cookie-parser";
 import logger from "morgan";
+import cors from "cors";
 
 import indexRouter from "./routes/index.js";
 import usersRouter from "./routes/users.js";
 import apiRouter from "./routes/api.js";
 import { port } from "./bin/www";
 
+// Import socket initializer
+import { initSocket } from "./controllers/socket.js";
+
 const app = express();
 const server = createServer(app);
-const io = new Server(server);
 
-// Socket.IO event handlers
-io.on("connection", (socket) => {
-  console.log("User Connected");
-  socket.on("disconnect", () => {
-    console.log("User Disconnected");
-  });
-});
+// Define allowed origins for CORS
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://erlend01-kodehode.github.io"
+];
 
-io.engine.on("connection_error", (err) => {
-  console.log("Error Object:", err.req); // the request object
-  console.log("Error Code:", err.code); // the error code
-  console.log("Error Message:", err.message); // the error message
-  console.log("Error Context:", err.context); // some additional error context
-});
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // Allow requests with no origin (e.g. mobile apps or curl)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) === -1) {
+        const msg =
+          "The CORS policy for this site does not allow access from the specified Origin.";
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
+    },
+    credentials: true,
+  })
+);
 
-// Start the server
-server.listen(port, () => {
-  console.log("Server running at PORT:", port);
-});
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(logger("dev"));
 
-// Uncomment middleware as needed for logging and parsing
-// app.use(logger("dev"));
-// app.use(express.json());
-// app.use(express.urlencoded({ extended: false }));
-// app.use(cookieParser());
-
-// If you plan on serving static assets uncomment and use the following lines:
-// import { fileURLToPath } from "url";
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = path.dirname(__filename);
-// app.use(express.static(path.join(__dirname, "public")));
-
+// Routes
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/", apiRouter);
 
-// Catch 404 and forward to error handler.
+// 404 and error handlers
 app.use((req, res, next) => {
   next(createError(404));
 });
-
-// Error handler: send JSON response.
 app.use((err, req, res, next) => {
-  // Set error status and send response in JSON format.
-  res.status(err.status || 500);
-  res.json({
+  res.status(err.status || 500).json({
     message: err.message,
-    // Provide full error only in development.
-    error: req.app.get("env") === "development" ? err : {}
+    error: req.app.get("env") === "development" ? err : {},
   });
+});
+
+// Initialize Socket.IO
+import { Server } from "socket.io";
+const io = new Server(server);
+initSocket(io);
+
+// Start the server
+server.listen(port, () => {
+  console.log("Server running on port:", port);
 });
 
 export default app;
