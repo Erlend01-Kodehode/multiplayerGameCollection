@@ -11,9 +11,11 @@ const GameTicTacToe = () => {
   const boardRef = useRef();
   const location = useLocation();
 
-  const [multiplayer, setMultiplayer] = useState(null);
+  // Bot Config
   const [bot, setBot] = useState(null);
   const [botPlayer, setBotPlayer] = useState(null);
+
+  const [multiplayer, setMultiplayer] = useState(null);
 
   useEffect(() => {
     if (window.location.toString().includes("pin=")) {
@@ -21,7 +23,7 @@ const GameTicTacToe = () => {
       console.log("Multiplayer");
     } else {
       setMultiplayer(false);
-      console.log("Singleplayer");
+      console.log("Local");
     }
   }, []);
 
@@ -32,6 +34,7 @@ const GameTicTacToe = () => {
   const handleReset = useGameReset(() => {
     if (boardRef.current && boardRef.current.resetBoard) {
       boardRef.current.resetBoard();
+      setBot(null);
       setBotPlayer(null);
     }
   });
@@ -77,7 +80,7 @@ const GameTicTacToe = () => {
         </>
       )}
       <h1>Tic Tac Toe</h1>
-      <Board ref={boardRef} />
+      <Board ref={boardRef} props={{ bot, botPlayer }} />
       <ResetButton onClick={handleReset} style={{ marginTop: "1rem" }} />
     </div>
   );

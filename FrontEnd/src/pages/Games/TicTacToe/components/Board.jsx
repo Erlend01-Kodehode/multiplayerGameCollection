@@ -31,7 +31,7 @@ const getSquareClass = (value) => {
   return "";
 };
 
-const Board = forwardRef((props, ref) => {
+const Board = forwardRef(({ props: { bot, botPlayer } }, ref) => {
   const [squares, setSquares] = useState(Array(9).fill(null));
   const [xIsNext, setXIsNext] = useState(true);
 
@@ -71,7 +71,7 @@ const Board = forwardRef((props, ref) => {
     );
   }
 
-  // Run on board Update
+  // Runs on board Update
   useEffect(() => {
     console.log(squares);
   }, [squares]);
