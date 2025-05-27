@@ -1,3 +1,7 @@
+/* ============================= */
+/* Tic Tac Toe Game Styles       */
+/* ============================= */
+
 .game {
   display: flex;
   flex-direction: column;
@@ -31,10 +35,11 @@
 
 .status {
   margin-bottom: 10px;
-  font-size: var(--fontsize-normal);
+  font-size: 1rem;
   font-weight: bold;
 }
 
+/* Colors for symbols */
 .squareX {
   color: rgb(255, 136, 67);
   font-weight: bolder;
@@ -42,4 +47,130 @@
 .squareO {
   color: gold;
   font-weight: bolder;
+}
+
+/* Reset button container (if needed) */
+.resetButtonContainer {
+  display: flex;
+  justify-content: center;
+  margin: 16px 0 20px 0;
+}
+
+/* ============================= */
+/* PreGameSetup (Tic Tac Toe)    */
+/* ============================= */
+
+/* Container for the pre-game setup screen */
+.setupScreen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #f4f4f4;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  width: 90%;
+  max-width: 400px;
+}
+
+/* Headings inside the setup screen */
+.setupScreen h1 {
+  color: #333;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  margin-bottom: 0.5rem;
+}
+
+.setupScreen h2 {
+  color: #555;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.25);
+  margin-bottom: 1rem;
+}
+
+/* Container for all setup content (if needed for additional layout) */
+.setupContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+}
+
+/* Styles for multi-player symbol selection and info */
+.playerSelection {
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+/* Options for selecting a symbol (or piece) */
+.pieceOptions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 16px;
+}
+
+/* In Tic Tac Toe, each option is our “symbolOption” */
+.symbolOption {
+  width: 60px;
+  height: 60px;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  cursor: pointer;
+  background-color: #fff;
+}
+
+/* Highlighting the selected option */
+.selectedPiece {
+  outline: 4px solid #34dd12;
+  box-shadow: 0 0 8px 2px rgba(52, 221, 18, 0.7);
+  border-radius: 50%;
+}
+
+/* Name entry style for player input */
+.nameEntry {
+  margin-bottom: 16px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.nameEntry input {
+  font-weight: 500;
+  color: #333;
+  padding: 8px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 80%;
+}
+
+.nameEntry input::placeholder {
+  font-weight: lighter;
+  color: #a0a0a0;
+  font-style: italic;
+}
+
+/* Style for the setup button */
+.setupScreen button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  border: none;
+  background-color: #e53935;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 16px;
+  transition: background-color 0.2s;
+}
+
+.setupScreen button:hover {
+  background-color: #d32f2f;
 }

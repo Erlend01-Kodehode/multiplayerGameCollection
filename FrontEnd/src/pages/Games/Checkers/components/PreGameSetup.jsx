@@ -23,6 +23,12 @@ const PreGameSetup = ({ mode, availablePiece, onSetupComplete }) => {
     onSetupComplete({ piece: selectedPiece, name: playerName });
   };
 
+  // Helper function to capitalize the first letter of the piece
+  const capitalize = (str) => {
+    if (!str) return "";
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  };
+
   return (
     <div className={styles.setupScreen}>
       <h1>Player Setup</h1>
@@ -46,7 +52,7 @@ const PreGameSetup = ({ mode, availablePiece, onSetupComplete }) => {
         </div>
       ) : (
         <div className={styles.playerSelection}>
-          <h2>Assigned Piece: {availablePiece}</h2>
+          <h2>Your piece is: {capitalize(availablePiece)}</h2>
           <div className={styles.pieceOptions}>
             <div
               className={`${styles.checkersPiece} ${

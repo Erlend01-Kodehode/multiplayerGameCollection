@@ -192,16 +192,6 @@ const CheckersGameView = ({ playerNames, initialTurn }) => {
   const { redCount, blackCount } = countPieces(board);
   const isOneVsOne = redCount === 1 && blackCount === 1;
 
-  // Prevent play until opponent joined
-  if (playerNames.red === "Waiting" || playerNames.black === "Waiting") {
-    return (
-      <div className={styles.checkersContainer}>
-        <h1 className={styles.checkersTitle}>Checkers</h1>
-        <p>Waiting for opponent to join...</p>
-      </div>
-    );
-  }
-
   return (
     <div className={styles.checkersContainer}>
       <h1 className={styles.checkersTitle}>Checkers</h1>

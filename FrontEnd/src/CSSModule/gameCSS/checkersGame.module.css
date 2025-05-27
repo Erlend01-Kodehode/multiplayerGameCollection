@@ -115,11 +115,11 @@
 }
 
 .pieceRed {
-  background: #e53935;
+  color: #e53935;
 }
 
 .pieceBlack {
-  background: #222;
+  color: #222;
 }
 
 .pieceKing {
@@ -206,6 +206,9 @@
   justify-content: center;
   align-items: center;
   margin-top: 16px;
+}
+.pieceOptions div {
+  cursor: pointer;
 }
 
 .selectedPiece {

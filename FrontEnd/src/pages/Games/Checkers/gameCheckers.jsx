@@ -1,18 +1,16 @@
-
 import React, { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import PreGameSetup from "./components/PreGameSetup.jsx";
 import CheckersGameView from "./CheckersGameView.jsx";
+import styles from "../../../CSSModule/gameCSS/checkersGame.module.css";
 
 const GameCheckers = () => {
-  // Get mode from the URL query parameter; default to "host" if not present.
   const [searchParams] = useSearchParams();
   const mode = searchParams.get("mode") || "host";
+  const pin = searchParams.get("pin");
 
-  // Pre-game setup state:
-  // isSetupComplete becomes true once the player's piece selection and name entry are done.
+  // Pre-game setup state: player names are stored under keys "red" and "black"
   const [isSetupComplete, setIsSetupComplete] = useState(false);
-  // setupData stores the player names for red and black, plus which side will start.
   const [setupData, setSetupData] = useState({
     playerNames: { red: "", black: "" },
     initialTurn: "red",
@@ -22,7 +20,8 @@ const GameCheckers = () => {
     return (
       <PreGameSetup
         mode={mode}
-        // For join mode, determine the available piece automatically.
+        // For join mode, automatically assign the available piece:
+        // if red is still "Waiting", assign "red"; otherwise, assign "black".
         availablePiece={
           mode === "join"
             ? setupData.playerNames.red === "Waiting"
@@ -32,7 +31,6 @@ const GameCheckers = () => {
         }
         onSetupComplete={(data) => {
           if (mode === "host") {
-            // In host mode, the chosen side gets the entered name and the opposite side becomes "Waiting"
             if (data.piece === "red") {
               setSetupData({
                 playerNames: { red: data.name, black: "Waiting" },
@@ -45,7 +43,6 @@ const GameCheckers = () => {
               });
             }
           } else {
-            // In join mode, update the available slot with the join player's name.
             if (data.piece === "red") {
               setSetupData({
                 playerNames: { red: data.name, black: setupData.playerNames.black },
@@ -64,11 +61,37 @@ const GameCheckers = () => {
     );
   }
 
+  // Determine waiting mode if either slot is still "Waiting"
+  const opponentWaiting =
+    setupData.playerNames.red === "Waiting" || setupData.playerNames.black === "Waiting";
+
   return (
-    <CheckersGameView
-      playerNames={setupData.playerNames}
-      initialTurn={setupData.initialTurn}
-    />
+    <div className={styles.checkersContainer}>
+      {pin && <h2>Your game PIN is: {pin}</h2>}
+      {opponentWaiting ? (
+        <>
+          <h1 className={styles.checkersTitle}>Checkers</h1>
+          <div>
+            <p>
+              Player <span className={styles.pieceRed}>Red</span>: {setupData.playerNames.red}
+            </p>
+            <p>
+              Player <span className={styles.pieceBlack}>Black</span>: {setupData.playerNames.black}
+            </p>
+          </div>
+          <p>
+            {mode === "join"
+              ? "Waiting for host to join..."
+              : "Waiting for opponent to join..."}
+          </p>
+        </>
+      ) : (
+        <CheckersGameView
+          playerNames={setupData.playerNames}
+          initialTurn={setupData.initialTurn}
+        />
+      )}
+    </div>
   );
 };
 
