@@ -4,6 +4,7 @@ import Board from "./components/Board.jsx";
 import PreGameSetupTicTacToe from "./components/PreGameSetupTicTacToe.jsx";
 import { ResetButton } from "../../../components/Buttons.jsx";
 import useGameReset from "../generalGameUtil/useGameReset.jsx";
+import styles from "../../../CSSModule/gameCSS/tictactoeGame.module.css";
 
 const GameTicTacToe = () => {
   const boardRef = useRef();
@@ -84,20 +85,22 @@ const GameTicTacToe = () => {
   }
 
   return (
-    <div className="game">
+    <div className={styles.game}>
       {pin && <h2>Your game PIN is: {pin}</h2>}
-      {!multiplayer && bot === null && (
-        <>
-          <button onClick={() => setBot(true)}>Enable Bot</button>
-          <button onClick={() => setBot(false)}>Disable Bot</button>
-        </>
-      )}
-      {!multiplayer && bot && !botPlayer && (
-        <>
-          <button onClick={() => setBotPlayer(1)}>Bot is X</button>
-          <button onClick={() => setBotPlayer(2)}>Bot is O</button>
-        </>
-      )}
+      <div>
+        {!multiplayer && bot === null && (
+          <>
+            <button onClick={() => setBot(true)}>Enable Bot</button>
+            <button onClick={() => setBot(false)}>Disable Bot</button>
+          </>
+        )}
+        {!multiplayer && bot && !botPlayer && (
+          <>
+            <button onClick={() => setBotPlayer("X")}>Bot is X</button>
+            <button onClick={() => setBotPlayer("O")}>Bot is O</button>
+          </>
+        )}
+      </div>
       <h1>Tic Tac Toe</h1>
       <Board ref={boardRef} props={{ bot, botPlayer }} />
       <ResetButton onClick={handleReset} style={{ marginTop: "1rem" }} />

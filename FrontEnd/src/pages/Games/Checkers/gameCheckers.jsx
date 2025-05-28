@@ -73,10 +73,10 @@ const GameCheckers = () => {
           <h1 className={styles.checkersTitle}>Checkers</h1>
           <div>
             <p>
-              Player <span className={styles.pieceRed}>Red</span>: {setupData.playerNames.red}
+              Player <span className={styles.textRed}>Red</span>: {setupData.playerNames.red}
             </p>
             <p>
-              Player <span className={styles.pieceBlack}>Black</span>: {setupData.playerNames.black}
+              Player <span className={styles.textBlack}>Black</span>: {setupData.playerNames.black}
             </p>
           </div>
           <p>

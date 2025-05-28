@@ -1,7 +1,6 @@
-
 import React, { useEffect, useState } from "react";
 import socket from "./Socket.jsx";
-import { createPin } from "../../utility/getAPI.jsx";
+import { fetchNewPin, checkPin } from "../../utility/getAPI.jsx";
 import styles from "../../CSSModule/GameSession.module.css";
 
 const GameSession = ({ mode, onComplete }) => {
@@ -12,7 +11,7 @@ const GameSession = ({ mode, onComplete }) => {
   // generate a new PIN if hosting, or clear it if joining.
   useEffect(() => {
     if (mode === "host") {
-      fetchNewPin();
+      handleFetchNewPin();
     } else {
       setPin("");
     }
@@ -34,49 +33,28 @@ const GameSession = ({ mode, onComplete }) => {
         setError("PIN cannot be empty.");
         return;
       }
-
       try {
-        const res = await fetch(
-          `http://localhost:3000/api/game/checkpin/${pin}`
-        );
-        const data = await res.json();
-
-        if (!res.ok) {
-          setError(data.error || "Invalid PIN.");
-          return;
-        }
-
+        // Check the PIN using our centralized API call.
+        await checkPin(pin);
         setError("");
         onComplete(pin);
       } catch (err) {
+        console.error("Error checking PIN:", err);
         setError("Server error. Please try again.");
-        console.error(err);
       }
     } else {
       onComplete(pin);
     }
   };
 
-  const fetchNewPin = async () => {
-    // If there's an existing PIN, delete it first
-    if (pin) {
-      try {
-        await fetch(`http://localhost:3000/api/game/deletepin/${pin}`, {
-          method: "DELETE",
-        });
-      } catch (err) {
-        console.error("Error deleting previous pin:", err);
-      }
-    }
-
+  // This function uses the fetchNewPin function from getAPI.jsx to delete the old pin (if any)
+  // and then create a new one.
+  const handleFetchNewPin = async () => {
     try {
-      const res = await fetch("http://localhost:3000/api/game/createpin", {
-        method: "POST",
-      });
-      const data = await res.json();
-
-      if (res.ok && data.pin_code) {
+      const data = await fetchNewPin(pin);
+      if (data.pin_code) {
         setPin(data.pin_code);
+        setError("");
       } else {
         setError(data.error || "Failed to generate PIN.");
       }
@@ -116,7 +94,7 @@ const GameSession = ({ mode, onComplete }) => {
           <button onClick={handleStart} className={styles.pinButton}>
             Start Game
           </button>
-          <button onClick={fetchNewPin} className={styles.pinButton}>
+          <button onClick={handleFetchNewPin} className={styles.pinButton}>
             New Pin
           </button>
           {error && <p style={{ color: "red" }}>{error}</p>}

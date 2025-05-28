@@ -6,7 +6,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 2rem;
 }
 
 .board {
@@ -49,7 +48,7 @@
   font-weight: bolder;
 }
 
-/* Reset button container (if needed) */
+/* Reset button container */
 .resetButtonContainer {
   display: flex;
   justify-content: center;
@@ -88,7 +87,7 @@
   margin-bottom: 1rem;
 }
 
-/* Container for all setup content (if needed for additional layout) */
+/* Container for all setup content */
 .setupContainer {
   display: flex;
   flex-direction: column;

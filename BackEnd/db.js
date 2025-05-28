@@ -10,4 +10,6 @@ const db = new sqlite3.Database(dbPath, (err) => {
   }
 });
 
+db.configure("busyTimeout", 5000);
+
 export default db;
