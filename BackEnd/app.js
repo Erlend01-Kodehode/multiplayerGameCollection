@@ -1,7 +1,8 @@
-
 import createError from "http-errors";
 import express from "express";
 import { createServer } from "http";
+import { Server } from "socket.io";
+
 import path from "path";
 import cookieParser from "cookie-parser";
 import logger from "morgan";
@@ -12,38 +13,38 @@ import usersRouter from "./routes/users.js";
 import apiRouter from "./routes/api.js";
 import { port } from "./bin/www";
 
-// Import socket initializer
-import { initSocket } from "./controllers/socket.js";
-
-const app = express();
+var app = express();
 const server = createServer(app);
+const io = new Server(server);
 
-// Define allowed origins for CORS
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://erlend01-kodehode.github.io"
-];
+io.on("connection", (socket) => {
+  console.log("User Connected");
+  socket.on("disconnect", () => {
+    console.log("User Disconnected");
+  });
+});
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      // Allow requests with no origin (e.g. mobile apps or curl)
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.indexOf(origin) === -1) {
-        const msg =
-          "The CORS policy for this site does not allow access from the specified Origin.";
-        return callback(new Error(msg), false);
-      }
-      return callback(null, true);
-    },
-    credentials: true,
-  })
-);
+io.engine.on("connection_error", (err) => {
+  console.log("Error Object:", err.req); // the request object
+  console.log("Error Code:", err.code); // the error code
+  console.log("Error Message:", err.message); // the error message
+  console.log("Error Context:", err.context); // some additional error context
+});
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(logger("dev"));
+server.listen(port, () => {
+  console.log("Server running at PORT:", port);
+});
+
+// view engine setup
+
+// app.set("views", path.join(__dirname, "views"));
+// app.set("view engine", "jade");
+
+// app.use(logger("dev"));
+// app.use(express.json());
+// app.use(express.urlencoded({ extended: false }));
+// app.use(cookieParser());
+// app.use(express.static(path.join(__dirname, "public")));
 
 // CORS
 app.use(cors());
@@ -52,25 +53,20 @@ app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/", apiRouter);
 
-// 404 and error handlers
-app.use((req, res, next) => {
+// catch 404 and forward to error handler
+app.use(function (req, res, next) {
   next(createError(404));
 });
-app.use((err, req, res, next) => {
-  res.status(err.status || 500).json({
-    message: err.message,
-    error: req.app.get("env") === "development" ? err : {},
-  });
-});
 
-// Initialize Socket.IO
-import { Server } from "socket.io";
-const io = new Server(server);
-initSocket(io);
+// error handler
+app.use(function (err, req, res, next) {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get("env") === "development" ? err : {};
 
-// Start the server
-server.listen(port, () => {
-  console.log("Server running on port:", port);
+  // render the error page
+  res.status(err.status || 500);
+  res.render("error");
 });
 
 export default app;

@@ -1,16 +1,14 @@
-// /routes/api.js (Backend)
 import express from "express";
+var router = express.Router();
 
-const router = express.Router();
-
-// Import controllers
+// controllers
 import { register } from "../controllers/register.js";
 import { login } from "../controllers/login.js";
 import { checkPin } from "../controllers/checkpin.js";
 import { createpin } from "../controllers/createpin.js";
 import { deletePin } from "../controllers/deletepin.js";
 
-// Define API endpoints
+// Routes
 router.post("/api/player/register", register);
 router.post("/api/player/login", login);
 router.post("/api/game/createpin", createpin);
