@@ -23,6 +23,7 @@ const GameTicTacToe = () => {
   useEffect(() => {
     if (window.location.toString().includes("pin=")) {
       setMultiplayer(true);
+      setBot(false);
     } else {
       setMultiplayer(false);
     }
