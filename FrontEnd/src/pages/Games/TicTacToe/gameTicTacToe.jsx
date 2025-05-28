@@ -20,14 +20,22 @@ const GameTicTacToe = () => {
   // Determine multiplayer mode based on the "pin" query param.
   const [multiplayer, setMultiplayer] = useState(false);
   useEffect(() => {
-    setMultiplayer(Boolean(pin));
+    if (window.location.toString().includes("pin=")) {
+      setMultiplayer(true);
+    } else {
+      setMultiplayer(false);
+    }
     console.log(pin ? "Multiplayer" : "Local");
-  }, [pin]);
+  }, []);
 
   const handleReset = useGameReset(() => {
     if (boardRef.current && boardRef.current.resetBoard) {
       boardRef.current.resetBoard();
-      setBot(null);
+      if (multiplayer) {
+        setBot(false);
+      } else {
+        setBot(null);
+      }
       setBotPlayer(null);
     }
   });
@@ -40,7 +48,14 @@ const GameTicTacToe = () => {
     initialTurn: "X",
   });
 
-  if (!isSetupComplete) {
+  useEffect(() => {
+    if (multiplayer) {
+      setBot(false);
+    }
+    console.log(multiplayer);
+  }, []);
+
+  if (!isSetupComplete && multiplayer) {
     return (
       <PreGameSetupTicTacToe
         mode={mode}
@@ -94,8 +109,8 @@ const GameTicTacToe = () => {
       )}
       {!multiplayer && bot && !botPlayer && (
         <>
-          <button onClick={() => setBotPlayer(1)}>Bot is X</button>
-          <button onClick={() => setBotPlayer(2)}>Bot is O</button>
+          <button onClick={() => setBotPlayer("X")}>Bot is X</button>
+          <button onClick={() => setBotPlayer("O")}>Bot is O</button>
         </>
       )}
       <h1>Tic Tac Toe</h1>
