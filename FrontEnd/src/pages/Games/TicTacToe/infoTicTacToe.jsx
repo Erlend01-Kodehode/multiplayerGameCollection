@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import styles from "../../../CSSModule/infoCSS/tictactoeInfo.module.css";
 import altStyles from "../../../CSSModule/gameCSS/tictactoeGame.module.css";
 import {
@@ -33,34 +33,36 @@ const InfoTicTacToe = () => {
   };
 
   return (
-    <div className={infoStyles.infoTicTacToe}>
+    <div className={styles.infoTicTacToe}>
       <h1>Tic Tac Toe</h1>
-      <div className={infoStyles.infoContent}>
+      <div className={styles.infoContent}>
         <p>
           Challenge a friend to a classic game of Tic Tac Toe! Create a game as
           Host or join an existing session using a unique PIN.
         </p>
-        <ul className={infoStyles.noListStyle}>
+        <ul className={styles.noListStyle}>
           <li>Simple 3x3 grid.</li>
           <li>
             Choose your symbol:{" "}
-            <span className={gameStyles.squareX}>X</span> or{" "}
-            <span className={gameStyles.squareO}>O</span>.
+            <span className={altStyles.squareX}>X</span> or{" "}
+            <span className={altStyles.squareO}>O</span>.
           </li>
           <li>Host generates a game PIN.</li>
           <li>Join with the game PIN to play.</li>
         </ul>
-        <div className={infoStyles.buttonContainer}>
+        <div className={styles.buttonContainer}>
           <JoinGameButton onClick={handleJoinClick} />
         </div>
-        <div className={infoStyles.buttonContainer}>
+        <div className={styles.buttonContainer}>
           <HostGameButton onClick={handleHostClick} />
         </div>
         <div className={styles.buttonContainer}>
           <LocalGameButton onClick={handleLocalSession} />
         </div>
 
-        {mode && <GameSession mode={mode} onComplete={handleSessionComplete} />}
+        {modeFromUrl && (
+          <GameSession mode={modeFromUrl} onComplete={handleSessionComplete} />
+        )}
       </div>
     </div>
   );
