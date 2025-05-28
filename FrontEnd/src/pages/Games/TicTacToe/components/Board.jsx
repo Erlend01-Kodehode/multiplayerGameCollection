@@ -43,6 +43,10 @@ const Board = forwardRef(({ props: { bot, botPlayer } }, ref) => {
   }));
 
   const handleClick = (i) => {
+    if (bot == null || (bot == true && botPlayer == null)) {
+      console.warn("Bot has not been configured");
+      return;
+    }
     const newSquares = squares.slice();
     if (newSquares[i] || calculateWinner(newSquares)) return;
     newSquares[i] = xIsNext ? "X" : "O";
