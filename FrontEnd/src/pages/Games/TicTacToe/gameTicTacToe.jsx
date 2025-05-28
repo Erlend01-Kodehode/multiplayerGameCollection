@@ -21,6 +21,7 @@ const GameTicTacToe = () => {
     if (window.location.toString().includes("pin=")) {
       setMultiplayer(true);
       console.log("Multiplayer");
+      setBot(false);
     } else {
       setMultiplayer(false);
       console.log("Local");
@@ -34,7 +35,11 @@ const GameTicTacToe = () => {
   const handleReset = useGameReset(() => {
     if (boardRef.current && boardRef.current.resetBoard) {
       boardRef.current.resetBoard();
-      setBot(null);
+      if (window.location.toString().includes("pin=")) {
+        setBot(false);
+      } else {
+        setBot(null);
+      }
       setBotPlayer(null);
     }
   });

@@ -43,6 +43,9 @@ const Board = forwardRef(({ props: { bot, botPlayer } }, ref) => {
   }));
 
   const handleClick = (i) => {
+    if (bot === null || (bot === true && botPlayer === null)) {
+      return;
+    }
     const newSquares = squares.slice();
     if (newSquares[i] || calculateWinner(newSquares)) return;
     newSquares[i] = xIsNext ? "X" : "O";
@@ -74,6 +77,11 @@ const Board = forwardRef(({ props: { bot, botPlayer } }, ref) => {
   // Runs on board Update
   useEffect(() => {
     console.log(squares);
+    if (xIsNext) {
+      console.log("X's Turn");
+    } else {
+      console.log("O's Turn");
+    }
   }, [squares]);
 
   return (
