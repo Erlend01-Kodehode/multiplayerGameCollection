@@ -1,55 +1,44 @@
+
 import React, { useEffect, useState } from "react";
-import socket from "./Socket.jsx";
+import socketApi from "./Socket.jsx";
 import { fetchNewPin, checkPin } from "../../utility/getAPI.jsx";
 import styles from "../../CSSModule/GameSession.module.css";
 
 const GameSession = ({ mode, onComplete }) => {
   const [pin, setPin] = useState("");
   const [error, setError] = useState("");
+  const [players, setPlayers] = useState([]);
 
-  // When the component mounts or the mode changes,
-  // generate a new PIN if hosting, or clear it if joining.
   useEffect(() => {
     if (mode === "host") {
-      handleFetchNewPin();
+      generateNewPin();
     } else {
       setPin("");
+      setPlayers([]);
     }
 
-    // Listen for a server message that the game has started.
-    socket.on("gameStarted", (data) => {
-      console.log("Game started event received:", data);
-    });
+    const handleJoin = ({ playerName, socketId }) =>
+      setPlayers((prev) =>
+        prev.some((p) => p.id === socketId)
+          ? prev
+          : [...prev, { name: playerName, id: socketId }]
+      );
 
-    // Clean up the event listener when unmounting.
+    const handleLeave = ({ socketId }) =>
+      setPlayers((prev) => prev.filter((p) => p.id !== socketId));
+
+    socketApi.onPlayerJoined(handleJoin);
+    socketApi.onPlayerLeft(handleLeave);
+    socketApi.onPlayerDisconnected(handleLeave);
+
     return () => {
-      socket.off("gameStarted");
+      socketApi.off("playerJoined", handleJoin);
+      socketApi.off("playerLeft", handleLeave);
+      socketApi.off("playerDisconnected", handleLeave);
     };
   }, [mode]);
 
-  const handleStart = async () => {
-    if (mode === "join") {
-      if (pin.trim() === "") {
-        setError("PIN cannot be empty.");
-        return;
-      }
-      try {
-        // Check the PIN using our centralized API call.
-        await checkPin(pin);
-        setError("");
-        onComplete(pin);
-      } catch (err) {
-        console.error("Error checking PIN:", err);
-        setError("Server error. Please try again.");
-      }
-    } else {
-      onComplete(pin);
-    }
-  };
-
-  // This function uses the fetchNewPin function from getAPI.jsx to delete the old pin (if any)
-  // and then create a new one.
-  const handleFetchNewPin = async () => {
+  async function generateNewPin() {
     try {
       const data = await fetchNewPin(pin);
       if (data.pin_code) {
@@ -58,48 +47,77 @@ const GameSession = ({ mode, onComplete }) => {
       } else {
         setError(data.error || "Failed to generate PIN.");
       }
-    } catch (err) {
-      console.error("Error fetching pin:", err);
+    } catch {
       setError("Server error. Try again later.");
     }
-  };
+  }
 
-  const pTextStyle = { color: "#fff", fontWeight: "bold" };
+  async function handleStart() {
+    if (!pin.trim()) {
+      setError("PIN cannot be empty.");
+      return;
+    }
+
+    if (mode === "join") {
+      try {
+        await checkPin(pin);
+        setError("");
+      } catch {
+        setError("Invalid PIN or server error.");
+        return;
+      }
+    }
+
+    onComplete(pin);
+  }
+
+  const labelStyle = { color: "#fff", fontWeight: "bold" };
 
   return (
     <div className={styles.pinBox}>
       {mode === "join" ? (
         <>
+          <p style={labelStyle}>Enter Game PIN:</p>
           <input
             type="text"
-            placeholder="Enter game PIN"
+            placeholder="Game PIN"
             value={pin}
             onChange={(e) => setPin(e.target.value)}
             className={styles.pinInput}
-            aria-label="Enter Game PIN"
           />
           <button
             onClick={handleStart}
             className={styles.pinButton}
-            disabled={pin.trim() === ""}
+            disabled={!pin.trim()}
           >
-            Join Game
+            Join
           </button>
-          {error && <p style={{ color: "red" }}>{error}</p>}
         </>
       ) : (
         <>
-          <p style={pTextStyle}>Your Game PIN:</p>
+          <p style={labelStyle}>Your Game PIN:</p>
           <div className={styles.generatedPin}>{pin}</div>
           <button onClick={handleStart} className={styles.pinButton}>
-            Start Game
+            Host &amp; Wait
           </button>
-          <button onClick={handleFetchNewPin} className={styles.pinButton}>
-            New Pin
+          <button onClick={generateNewPin} className={styles.pinButton}>
+            New PIN
           </button>
-          {error && <p style={{ color: "red" }}>{error}</p>}
+
+          {players.length > 0 && (
+            <>
+              <p style={labelStyle}>Players Waiting:</p>
+              <ul className={styles.playerList}>
+                {players.map((p) => (
+                  <li key={p.id}>{p.name}</li>
+                ))}
+              </ul>
+            </>
+          )}
         </>
       )}
+
+      {error && <p style={{ color: "red" }}>{error}</p>}
     </div>
   );
 };

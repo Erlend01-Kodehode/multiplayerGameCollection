@@ -1,9 +1,10 @@
-// CheckersGameView.jsx
 import React from "react";
 import Board from "./components/Board.jsx";
 import { ResetButton } from "../../../components/Buttons.jsx";
 import styles from "../../../CSSModule/gameCSS/checkersGame.module.css";
 import useCheckersGame from "./hooks/useCheckersGame.jsx";
+
+const ONE_VS_ONE_DRAW_THRESHOLD = 50;
 
 const CheckersGameView = ({ playerNames, initialTurn, pin }) => {
   const {
@@ -23,14 +24,16 @@ const CheckersGameView = ({ playerNames, initialTurn, pin }) => {
       <h1 className={styles.checkersTitle}>Checkers</h1>
       {isOneVsOne ? (
         <div className={styles.turnIndicator}>
-          {oneVsOneMoveCount >= 50
+          {oneVsOneMoveCount >= ONE_VS_ONE_DRAW_THRESHOLD
             ? "It's a Draw!"
-            : `1 vs 1 Moves: ${oneVsOneMoveCount} / 50`}
+            : `1 vs 1 Moves: ${oneVsOneMoveCount} / ${ONE_VS_ONE_DRAW_THRESHOLD}`}
         </div>
       ) : (
         winner && (
           <div className={styles.turnIndicator}>
-            {winner === "draw" ? "It's a Draw!" : `${playerNames[winner]} wins!`}
+            {winner === "draw"
+              ? "It's a Draw!"
+              : `${playerNames[winner]} wins!`}
           </div>
         )
       )}
@@ -45,7 +48,7 @@ const CheckersGameView = ({ playerNames, initialTurn, pin }) => {
         <div className={styles.boardWrapper}>
           <Board
             board={board}
-            selected={null} // Or you can pass any required selection state
+            selected={null}
             moveableSquares={moveableSquares}
             onSquareClick={handleSquareClick}
           />

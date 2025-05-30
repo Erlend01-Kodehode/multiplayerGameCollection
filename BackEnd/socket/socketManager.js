@@ -1,59 +1,164 @@
+
+const games = {};
+
 export default function socketManager(io) {
   io.on("connection", (socket) => {
     console.log("User connected:", socket.id);
 
-    // Event: A player joins a game session (identified by a game PIN)
+    // 1) PLAYER JOINS
     socket.on("joinGame", ({ pin, playerName }) => {
       if (!pin || !playerName) {
-        console.error(`joinGame missing parameters: pin=${pin}, playerName=${playerName}`);
+        console.error("joinGame missing params:", { pin, playerName });
         return;
       }
+
       socket.join(pin);
-      console.log(`Player ${playerName} joined game session ${pin}`);
-      io.to(pin).emit("playerJoined", { playerName, socketId: socket.id });
+      if (!games[pin]) {
+        games[pin] = {
+          players: {}, 
+          gameState: initializeState(),
+          turn: null,  
+        };
+      }
+
+      const game = games[pin];
+      game.players[socket.id] = { playerName };
+      if (!game.turn) game.turn = socket.id;
+
+      // Send the current board + turn to the joiner
+      socket.emit("moveMade", {
+        gameState: game.gameState,
+        turn:     game.turn,
+      });
+
+      // Tell everyone else “hey, a new player arrived”
+      socket.to(pin).emit("playerJoined", {
+        playerName,
+        socketId: socket.id,
+      });
     });
 
-    // Event: A player makes a move
+    // 2) PLAYER MAKES A MOVE
     socket.on("makeMove", ({ pin, moveData }) => {
-      if (!pin || !moveData) {
-        console.error(`makeMove missing parameters: pin=${pin}, moveData=${moveData}`);
+      const game = games[pin];
+      if (!game) {
+        console.error("makeMove: no game for pin", pin);
         return;
       }
-      console.log(`Move made in game ${pin} by ${socket.id}:`, moveData);
-      // Emit the move to all other players in the same game session
-      socket.to(pin).emit("moveMade", moveData);
-    });
 
-    // Event: Game over state broadcast
-    socket.on("gameOver", ({ pin, result }) => {
-      if (!pin) {
-        console.error(`gameOver missing parameter: pin=${pin}`);
+      // turn check
+      if (game.turn !== socket.id) {
+        socket.emit("invalidMove", { message: "Not your turn" });
         return;
       }
-      console.log(`Game over in session ${pin}. Result: ${result}`);
-      io.to(pin).emit("gameOver", { result });
+      // validity check
+      if (!validateMove(game.gameState, moveData)) {
+        socket.emit("invalidMove", { message: "Invalid move" });
+        return;
+      }
+
+      // apply it
+      game.gameState = applyMove(game.gameState, moveData);
+
+      // is it game over?
+      if (checkGameOver(game.gameState)) {
+        io.to(pin).emit("gameOver", {
+          gameState: game.gameState,
+          winner:    socket.id,
+        });
+        delete games[pin];
+        return;
+      }
+
+      // rotate turn
+      const ids = Object.keys(game.players);
+      const idx = ids.indexOf(socket.id);
+      game.turn = ids[(idx + 1) % ids.length];
+
+      // broadcast new state
+      io.to(pin).emit("moveMade", {
+        gameState: game.gameState,
+        turn:      game.turn,
+        moveData,   
+      });
     });
 
-    // Additional Event: A player leaves the game (if explicitly triggered)
+    // 3) PLAYER LEAVES EXPLICITLY
     socket.on("leaveGame", ({ pin, playerName }) => {
-      if (!pin || !playerName) {
-        console.error(`leaveGame missing parameters: pin=${pin}, playerName=${playerName}`);
-        return;
-      }
-      socket.leave(pin);
-      console.log(`Player ${playerName} left game session ${pin}`);
-      io.to(pin).emit("playerLeft", { playerName, socketId: socket.id });
+      teardown(pin, socket, false);
     });
 
-    // Handle disconnect: notify all rooms this socket was a part of that this player has disconnected.
+    // 4) UNEXPECTED DISCONNECT
     socket.on("disconnect", () => {
       console.log("User disconnected:", socket.id);
-      // socket.rooms is a Set which always contains a room with the socket ID itself.
-      for (const room of socket.rooms) {
-        if (room !== socket.id) {
-          io.to(room).emit("playerDisconnected", { socketId: socket.id });
+      // remove from every game they were in
+      for (const pin in games) {
+        if (games[pin].players[socket.id]) {
+          teardown(pin, socket, true);
         }
       }
     });
+
+
+    // ——— helpers ———
+
+    function teardown(pin, socket, isDisconnect) {
+      const game = games[pin];
+      if (!game) return;
+
+      const name = game.players[socket.id]?.playerName || "Unknown";
+      delete game.players[socket.id];
+      socket.leave(pin);
+
+      const evt = isDisconnect
+        ? "playerDisconnected"
+        : "playerLeft";
+
+      // notify remaining players
+      io.to(pin).emit(evt, {
+        playerName: name,
+        socketId:   socket.id,
+      });
+
+      // if nobody left, delete room
+      if (Object.keys(game.players).length === 0) {
+        delete games[pin];
+        console.log(`Game ${pin} cleaned up (empty).`);
+        return;
+      }
+
+      // if it was their turn, pass to next
+      if (game.turn === socket.id) {
+        const remain = Object.keys(game.players);
+        game.turn = remain[0];
+        io.to(pin).emit("moveMade", {
+          gameState: game.gameState,
+          turn:      game.turn,
+        });
+      }
+    }
+
+    function initializeState() {
+      return { board: Array(9).fill(null), scores: {} };
+    }
+
+    function validateMove(state, { position }) {
+      return (
+        position >= 0 &&
+        position < 9 &&
+        state.board[position] === null
+      );
+    }
+
+    function applyMove(state, { position, playerMark }) {
+      const b = [...state.board];
+      b[position] = playerMark;
+      return { ...state, board: b };
+    }
+
+    function checkGameOver(state) {
+      // your win/draw logic here
+      return false;
+    }
   });
 }

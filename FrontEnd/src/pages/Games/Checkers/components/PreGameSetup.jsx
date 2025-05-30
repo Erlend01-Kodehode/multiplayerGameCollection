@@ -1,14 +1,15 @@
+
 import React, { useState, useEffect } from "react";
+import socketApi from "../../Socket.jsx";
 import styles from "../../../../CSSModule/gameCSS/checkersGame.module.css";
 
-const PreGameSetup = ({ mode, availablePiece, onSetupComplete }) => {
-  // For join mode, auto-assign the availablePiece; for host mode, allow manual selection.
+const PreGameSetup = ({ mode, pin, availablePiece, onSetupComplete }) => {
+
   const [selectedPiece, setSelectedPiece] = useState(
     mode === "join" ? availablePiece : null
   );
   const [playerName, setPlayerName] = useState("");
 
-  // If in join mode and availablePiece changes, update the selection accordingly.
   useEffect(() => {
     if (mode === "join") {
       setSelectedPiece(availablePiece);
@@ -20,18 +21,22 @@ const PreGameSetup = ({ mode, availablePiece, onSetupComplete }) => {
       alert("Please select a piece and enter your name.");
       return;
     }
-    onSetupComplete({ piece: selectedPiece, name: playerName });
+
+    socketApi.joinGame({ pin, playerName });
+
+    onSetupComplete({
+      piece: selectedPiece,
+      name:  playerName,
+    });
   };
 
-  // Helper function to capitalize the first letter of the piece
-  const capitalize = (str) => {
-    if (!str) return "";
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  };
+  const capitalize = (str) =>
+    str ? str.charAt(0).toUpperCase() + str.slice(1) : "";
 
   return (
     <div className={styles.setupScreen}>
       <h1>Player Setup</h1>
+
       {mode === "host" ? (
         <div className={styles.playerSelection}>
           <h2>Choose Your Piece</h2>
@@ -41,13 +46,13 @@ const PreGameSetup = ({ mode, availablePiece, onSetupComplete }) => {
                 selectedPiece === "red" ? styles.selectedPiece : ""
               }`}
               onClick={() => setSelectedPiece("red")}
-            ></div>
+            />
             <div
               className={`${styles.checkersPiece} ${styles.pieceBlack} ${
                 selectedPiece === "black" ? styles.selectedPiece : ""
               }`}
               onClick={() => setSelectedPiece("black")}
-            ></div>
+            />
           </div>
         </div>
       ) : (
@@ -56,12 +61,15 @@ const PreGameSetup = ({ mode, availablePiece, onSetupComplete }) => {
           <div className={styles.pieceOptions}>
             <div
               className={`${styles.checkersPiece} ${
-                availablePiece === "red" ? styles.pieceRed : styles.pieceBlack
+                availablePiece === "red"
+                  ? styles.pieceRed
+                  : styles.pieceBlack
               }`}
-            ></div>
+            />
           </div>
         </div>
       )}
+
       <div className={styles.nameEntry}>
         <input
           type="text"
@@ -70,7 +78,13 @@ const PreGameSetup = ({ mode, availablePiece, onSetupComplete }) => {
           placeholder="Enter Your Name"
         />
       </div>
-      <button onClick={handleStartGame}>Start Game</button>
+
+      <button
+        onClick={handleStartGame}
+        disabled={!selectedPiece || !playerName.trim()}
+      >
+        Start Game
+      </button>
     </div>
   );
 };

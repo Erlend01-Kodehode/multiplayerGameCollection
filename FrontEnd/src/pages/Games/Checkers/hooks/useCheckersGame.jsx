@@ -1,12 +1,10 @@
-// src/hooks/useCheckersGame.js
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { createInitialBoard } from "../utils/boardUtils.jsx";
 import { isValidMove, crownIfNeeded, canCaptureAgain } from "../utils/moveUtils.jsx";
 import { checkGameStatus } from "../utils/gameStatusUtils.jsx";
-import socketApi from "../../Socket.jsx";
+import useSocketGame from "./useSocketGame.jsx";
 import useGameReset from "../../generalGameUtil/useGameReset.jsx";
-
-const ONE_VS_ONE_DRAW_THRESHOLD = 50;
+import socketApi from "../../Socket.jsx";
 
 const useCheckersGame = ({ playerNames, initialTurn, pin }) => {
   // Game state
@@ -106,7 +104,7 @@ const useCheckersGame = ({ playerNames, initialTurn, pin }) => {
     return false;
   };
 
-  // Calculate available moveable squares for the selected piece
+  // Calculate available moveable squares for the selected piece using memoization
   const moveableSquares = useMemo(() => {
     if (!selected) return [];
     const from = selected;
@@ -126,45 +124,33 @@ const useCheckersGame = ({ playerNames, initialTurn, pin }) => {
     return moves;
   }, [selected, board, turn]);
 
-  // SOCKET.IO: Join the game room if in multi-player mode
-  useEffect(() => {
-    if (pin) {
-      // Choose local player's name (assumes one is not "Waiting")
-      const localPlayer = playerNames.red !== "Waiting" ? playerNames.red : playerNames.black;
-      socketApi.joinGame({ pin, playerName: localPlayer });
-    }
-  }, [pin, playerNames]);
+  // Callback to handle remote moves from Socket.IO
+  const handleRemoteMove = useCallback((moveData) => {
+    setBoard((prevBoard) => {
+      const newBoard = prevBoard.map((row) => row.slice());
+      const { from, to, type, middleRow, middleCol } = moveData;
+      const piece = newBoard[from.row][from.col];
+      if (piece) {
+        newBoard[to.row][to.col] = crownIfNeeded(piece, to.row);
+        newBoard[from.row][from.col] = null;
+        if (type === "capture") {
+          newBoard[middleRow][middleCol] = null;
+        }
+      }
+      return newBoard;
+    });
+    setMoveHistory((prev) => [
+      ...prev,
+      `Remote move: from (${moveData.from.row},${moveData.from.col}) to (${moveData.to.row},${moveData.to.col}).`,
+    ]);
+    setTurn((prev) => (prev === "red" ? "black" : "red"));
+  }, []);
 
-  // SOCKET.IO: Listen for remote moves from the opponent
-  useEffect(() => {
-    if (pin) {
-      const handleRemoteMove = (moveData) => {
-        setBoard((prevBoard) => {
-          const newBoard = prevBoard.map((row) => row.slice());
-          const { from, to, type, middleRow, middleCol } = moveData;
-          const piece = newBoard[from.row][from.col];
-          if (piece) {
-            newBoard[to.row][to.col] = crownIfNeeded(piece, to.row);
-            newBoard[from.row][from.col] = null;
-            if (type === "capture") {
-              newBoard[middleRow][middleCol] = null;
-            }
-          }
-          return newBoard;
-        });
-        setMoveHistory((prev) => [
-          ...prev,
-          `Remote move: from (${moveData.from.row},${moveData.from.col}) to (${moveData.to.row},${moveData.to.col}).`,
-        ]);
-        setTurn((prev) => (prev === "red" ? "black" : "red"));
-      };
+  // Determine the local player's name to pass to the socket hook.
+  // (Here we assume that if "red" is not "Waiting", then "red" is the local player.)
+  const localPlayer = pin ? (playerNames.red !== "Waiting" ? playerNames.red : playerNames.black) : "";
 
-      socketApi.onMoveMade(handleRemoteMove);
-      return () => {
-        socketApi.off("moveMade", handleRemoteMove);
-      };
-    }
-  }, [pin]);
+  useSocketGame(pin, localPlayer, handleRemoteMove);
 
   // Handle a click on a board square (for local moves)
   const handleSquareClick = (row, col) => {
@@ -180,7 +166,7 @@ const useCheckersGame = ({ playerNames, initialTurn, pin }) => {
       const move = isValidMove(from, to, piece, board);
       if (move && move.type === "move") {
         if (captureAvailableForCurrentPlayer()) return;
-        const newBoard = board.map((row) => row.slice());
+        const newBoard = board.map((bRow) => bRow.slice());
         newBoard[to.row][to.col] = crownIfNeeded(piece, to.row);
         newBoard[from.row][from.col] = null;
         setBoard(newBoard);
@@ -197,14 +183,13 @@ const useCheckersGame = ({ playerNames, initialTurn, pin }) => {
         setSelected(null);
         setTurn(turn === "red" ? "black" : "red");
         setMovesWithoutCapture((prev) => prev + 1);
-        // Emit the move via Socket.IO if in multi-player mode
         if (pin) {
           socketApi.sendMove(pin, { from, to, type: "move" });
         }
         return;
       }
       if (move && move.type === "capture") {
-        const newBoard = board.map((row) => row.slice());
+        const newBoard = board.map((bRow) => bRow.slice());
         const movedPiece = crownIfNeeded(piece, to.row);
         newBoard[to.row][to.col] = movedPiece;
         newBoard[from.row][from.col] = null;
@@ -227,7 +212,6 @@ const useCheckersGame = ({ playerNames, initialTurn, pin }) => {
           setSelected(null);
           setTurn(turn === "red" ? "black" : "red");
         }
-        // Emit the capture move via Socket.IO if in multi-player mode
         if (pin) {
           socketApi.sendMove(pin, {
             from,
