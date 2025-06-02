@@ -34,7 +34,7 @@ const getSquareClass = (value) => {
 const Board = forwardRef(({ props: { bot, botPlayer } }, ref) => {
   const [squares, setSquares] = useState(Array(9).fill(null));
   const [xIsNext, setXIsNext] = useState(true);
-  const [closeToWinning, setCloseToWinning] = useState(false);
+  const [twoInARow, setTwoInARow] = useState(false);
 
   useImperativeHandle(ref, () => ({
     resetBoard: () => {
@@ -58,8 +58,10 @@ const Board = forwardRef(({ props: { bot, botPlayer } }, ref) => {
   const winner = calculateWinner(squares);
   const isDraw = !winner && squares.every((sq) => sq !== null);
 
+  // Ai behaviour
   const aiAction = () => {
     let random = 0;
+    let gamble = 0;
     if (winner || isDraw) {
       // If game is over. Abort.
       return;
@@ -67,13 +69,18 @@ const Board = forwardRef(({ props: { bot, botPlayer } }, ref) => {
       // If available. Click the centre square.
       handleClick(4);
       console.log("Ai clicked square", 4);
-    } else if (closeToWinning) {
+      return;
+    } else if (twoInARow) {
       // If anyone has two in a row: complete or prevent.
       // TODO
+      random = Math.round(Math.random() * (squares.length - 1));
+      selectRandom(random);
+      return;
     } else {
       // Click randomly
       random = Math.round(Math.random() * (squares.length - 1));
       selectRandom(random);
+      return;
     }
   };
 
@@ -87,13 +94,62 @@ const Board = forwardRef(({ props: { bot, botPlayer } }, ref) => {
     }
   };
 
+  // Container for reading status of winlines
+  let boardState = [];
+
   // Check if any player as two in a row
   const checkWinRisk = () => {
-    // TODO
+    // Reset variables to default
+    setTwoInARow(false);
+    boardState = [];
+
+    // Winlines
+    const lines = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6],
+    ];
+
+    // Loop through win conditions and check for 2/3
+    for (let i = 0; i < lines.length; i++) {
+      const [a, b, c] = lines[i];
+      if (
+        (squares[a] &&
+          squares[a] === squares[b] &&
+          squares[a] != squares[c] &&
+          squares[c] === null) ||
+        (squares[a] &&
+          squares[a] != squares[b] &&
+          squares[b] === null &&
+          squares[a] === squares[c]) ||
+        (!squares[a] &&
+          squares[a] === null &&
+          squares[a] != squares[b] &&
+          squares[b] === squares[c])
+      ) {
+        // TODO
+        // console.log(
+        //   "Two in a row somewhere",
+        //   squares[a],
+        //   squares[b],
+        //   squares[c]
+        // );
+        setTwoInARow(true);
+      }
+      // Push status of winlines into state container
+      boardState.push([squares[a], squares[b], squares[c]]);
+    }
+    // console.log("BoardState", boardState);
   };
 
   // Initiate AI move
   useEffect(() => {
+    checkWinRisk();
     if ((xIsNext && botPlayer == "X") || (!xIsNext && botPlayer == "O")) {
       aiAction();
     }
