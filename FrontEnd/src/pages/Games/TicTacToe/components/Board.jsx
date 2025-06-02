@@ -57,6 +57,37 @@ const Board = forwardRef(({ props: { bot, botPlayer } }, ref) => {
   const winner = calculateWinner(squares);
   const isDraw = !winner && squares.every((sq) => sq !== null);
 
+  const aiAction = () => {
+    let random = 0;
+    // If available. Click the centre square.
+    if (squares[4] == null) {
+      handleClick(4);
+      console.log("Ai clicked square", 4);
+    } else {
+      random = Math.round(Math.random() * 8);
+      selectRandom(random);
+    }
+  };
+
+  const selectRandom = (i) => {
+    if (squares[i] == null) {
+      handleClick(i);
+      console.log("Ai clicked square", i);
+    } else {
+      if (winner || isDraw) {
+        return;
+      } else {
+        aiAction();
+      }
+    }
+  };
+
+  useEffect(() => {
+    if ((xIsNext && botPlayer == "X") || (!xIsNext && botPlayer == "O")) {
+      aiAction();
+    }
+  }, [botPlayer, xIsNext]);
+
   let status;
   if (winner) {
     status = (

@@ -57,6 +57,11 @@ const GameTicTacToe = () => {
     console.log(multiplayer);
   }, []);
 
+  useEffect(() => {
+    console.log("Bot Status:", bot);
+    console.log("Bot Player:", botPlayer);
+  }, [bot, botPlayer]);
+
   if (!isSetupComplete && multiplayer) {
     return (
       <PreGameSetupTicTacToe
