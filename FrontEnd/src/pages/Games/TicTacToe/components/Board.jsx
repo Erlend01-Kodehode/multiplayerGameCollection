@@ -34,6 +34,7 @@ const getSquareClass = (value) => {
 const Board = forwardRef(({ props: { bot, botPlayer } }, ref) => {
   const [squares, setSquares] = useState(Array(9).fill(null));
   const [xIsNext, setXIsNext] = useState(true);
+  const [closeToWinning, setCloseToWinning] = useState(false);
 
   useImperativeHandle(ref, () => ({
     resetBoard: () => {
@@ -59,29 +60,39 @@ const Board = forwardRef(({ props: { bot, botPlayer } }, ref) => {
 
   const aiAction = () => {
     let random = 0;
-    // If available. Click the centre square.
-    if (squares[4] == null) {
+    if (winner || isDraw) {
+      // If game is over. Abort.
+      return;
+    } else if (squares[4] == null) {
+      // If available. Click the centre square.
       handleClick(4);
       console.log("Ai clicked square", 4);
+    } else if (closeToWinning) {
+      // If anyone has two in a row: complete or prevent.
+      // TODO
     } else {
-      random = Math.round(Math.random() * 8);
+      // Click randomly
+      random = Math.round(Math.random() * (squares.length - 1));
       selectRandom(random);
     }
   };
 
+  // Loop until open square is found, then click.
   const selectRandom = (i) => {
     if (squares[i] == null) {
       handleClick(i);
       console.log("Ai clicked square", i);
     } else {
-      if (winner || isDraw) {
-        return;
-      } else {
-        aiAction();
-      }
+      aiAction();
     }
   };
 
+  // Check if any player as two in a row
+  const checkWinRisk = () => {
+    // TODO
+  };
+
+  // Initiate AI move
   useEffect(() => {
     if ((xIsNext && botPlayer == "X") || (!xIsNext && botPlayer == "O")) {
       aiAction();
