@@ -84,12 +84,14 @@ const Board = forwardRef(({ props: { bot, botPlayer } }, ref) => {
     }
   };
 
-  // Loop until open square is found, then click.
+  // Select random square
   const selectRandom = (i) => {
     if (squares[i] == null) {
+      // If available. Click here.
       handleClick(i);
       console.log("Ai clicked square", i);
     } else {
+      // If unavailable. Go through behaviour tree again.
       aiAction();
     }
   };
@@ -119,32 +121,29 @@ const Board = forwardRef(({ props: { bot, botPlayer } }, ref) => {
     for (let i = 0; i < lines.length; i++) {
       const [a, b, c] = lines[i];
       if (
-        (squares[a] &&
-          squares[a] === squares[b] &&
-          squares[a] != squares[c] &&
-          squares[c] === null) ||
-        (squares[a] &&
+        (squares[a] === null &&
           squares[a] != squares[b] &&
-          squares[b] === null &&
+          squares[b] === squares[c]) ||
+        (squares[b] === null &&
+          squares[b] != squares[a] &&
           squares[a] === squares[c]) ||
-        (!squares[a] &&
-          squares[a] === null &&
-          squares[a] != squares[b] &&
-          squares[b] === squares[c])
+        (squares[c] === null &&
+          squares[c] != squares[a] &&
+          squares[a] === squares[b])
       ) {
         // TODO
-        // console.log(
-        //   "Two in a row somewhere",
-        //   squares[a],
-        //   squares[b],
-        //   squares[c]
-        // );
+        console.log(
+          "Two in a row somewhere",
+          squares[a],
+          squares[b],
+          squares[c]
+        );
         setTwoInARow(true);
       }
       // Push status of winlines into state container
       boardState.push([squares[a], squares[b], squares[c]]);
     }
-    // console.log("BoardState", boardState);
+    console.log("BoardState", boardState);
   };
 
   // Initiate AI move
