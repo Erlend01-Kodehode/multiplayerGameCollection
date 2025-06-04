@@ -279,6 +279,7 @@ const Board = forwardRef(({ props: { bot, botPlayer } }, ref) => {
     checkWinRisk();
     if ((xIsNext && botPlayer == "X") || (!xIsNext && botPlayer == "O")) {
       aiAction();
+      return;
     }
   }, [botPlayer, squares]);
 
