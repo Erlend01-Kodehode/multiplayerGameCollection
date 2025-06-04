@@ -94,12 +94,11 @@ const Board = forwardRef(({ props: { bot, botPlayer } }, ref) => {
   };
 
   const selectSpesific = () => {
-    // Gave up. Have an else if wall.
+    // Gave up. Have an elif wall.
     for (let i = 0; i < boardState.length; i++) {
       const [a, b, c] = lines[i];
-      // console.log("Spesific BoardState", boardState[i]);
       for (let u = 0; u < boardState[i].length; u++) {
-        // console.log("Spesificer BoardState", boardState[i][u]);
+        // Ai is stupid and will prioritize clearing the first set of 2/3's it finds.
         if (
           squares[a] === null &&
           squares[a] != squares[b] &&
@@ -260,19 +259,18 @@ const Board = forwardRef(({ props: { bot, botPlayer } }, ref) => {
           squares[c] != squares[a] &&
           squares[a] === squares[b])
       ) {
-        // TODO
-        console.log(
-          "Two in a row somewhere",
-          squares[a],
-          squares[b],
-          squares[c]
-        );
+        // console.log(
+        //   "Two in a row somewhere",
+        //   squares[a],
+        //   squares[b],
+        //   squares[c]
+        // );
         setTwoInARow(true);
       }
       // Push status of winlines into state container
       boardState.push([squares[a], squares[b], squares[c]]);
     }
-    console.log("BoardState", boardState);
+    // console.log("BoardState", boardState);
   };
 
   // Initiate AI move
@@ -304,7 +302,12 @@ const Board = forwardRef(({ props: { bot, botPlayer } }, ref) => {
 
   // Runs on board Update
   useEffect(() => {
-    console.log(squares);
+    const board = [
+      { line1: squares[0], line2: squares[1], line3: squares[2] },
+      { line1: squares[3], line2: squares[4], line3: squares[5] },
+      { line1: squares[6], line2: squares[7], line3: squares[8] },
+    ];
+    console.table(board);
   }, [squares]);
 
   return (
