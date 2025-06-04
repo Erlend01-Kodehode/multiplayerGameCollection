@@ -68,7 +68,7 @@ const Board = forwardRef(({ props: { bot, botPlayer } }, ref) => {
       handleClick(4);
       console.log("Ai clicked square", 4);
       return;
-    } else if (twoInARow) {
+    } else if (!aiGaveUp) {
       // If anyone has two in a row: complete or prevent.
       selectSpesific(boardState);
       return;
@@ -218,6 +218,7 @@ const Board = forwardRef(({ props: { bot, botPlayer } }, ref) => {
       }
     }
     // Backup for when the AI gets confused
+    aiGaveUp = true;
     selectRandom();
     return;
   };
@@ -236,6 +237,8 @@ const Board = forwardRef(({ props: { bot, botPlayer } }, ref) => {
     [0, 4, 8],
     [2, 4, 6],
   ];
+
+  let aiGaveUp = false;
 
   // Check if any player as two in a row
   const checkWinRisk = () => {
@@ -274,6 +277,7 @@ const Board = forwardRef(({ props: { bot, botPlayer } }, ref) => {
 
   // Initiate AI move
   useEffect(() => {
+    aiGaveUp = false;
     checkWinRisk();
     if ((xIsNext && botPlayer == "X") || (!xIsNext && botPlayer == "O")) {
       aiAction();
