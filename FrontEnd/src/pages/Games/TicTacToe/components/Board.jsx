@@ -34,6 +34,7 @@ const getSquareClass = (value) => {
 const Board = forwardRef(({ props: { bot, botPlayer } }, ref) => {
   const [squares, setSquares] = useState(Array(9).fill(null));
   const [xIsNext, setXIsNext] = useState(true);
+  const [twoInARow, setTwoInARow] = useState(false);
 
   useImperativeHandle(ref, () => ({
     resetBoard: () => {
@@ -57,6 +58,231 @@ const Board = forwardRef(({ props: { bot, botPlayer } }, ref) => {
   const winner = calculateWinner(squares);
   const isDraw = !winner && squares.every((sq) => sq !== null);
 
+  // Ai behaviour
+  const aiAction = () => {
+    if (winner || isDraw) {
+      // If game is over. Abort.
+      return;
+    } else if (squares[4] == null) {
+      // If available. Click the centre square.
+      handleClick(4);
+      console.log("Ai clicked square", 4);
+      return;
+    } else if (!aiGaveUp) {
+      // If anyone has two in a row: complete or prevent.
+      selectSpesific(boardState);
+      return;
+    } else {
+      // Click randomly
+      selectRandom();
+      return;
+    }
+  };
+
+  // Select random square
+  const selectRandom = () => {
+    let random = 0;
+    // Randomly loop until stumbling over open square
+    while (true) {
+      random = Math.round(Math.random() * (squares.length - 1));
+      if (squares[random] == null) {
+        handleClick(random);
+        console.log("Ai clicked square", random);
+        return;
+      }
+    }
+  };
+
+  const selectSpesific = () => {
+    // Gave up. Have an elif wall.
+    for (let i = 0; i < boardState.length; i++) {
+      const [a, b, c] = lines[i];
+      for (let u = 0; u < boardState[i].length; u++) {
+        // Ai is stupid and will prioritize clearing the first set of 2/3's it finds.
+        if (
+          squares[a] === null &&
+          squares[a] != squares[b] &&
+          squares[b] === squares[c]
+        ) {
+          if (i === 0) {
+            handleClick(0);
+            console.log("Ai reacted with square", 0);
+            return;
+          } else if (i === 1) {
+            handleClick(3);
+            console.log("Ai reacted with square", 3);
+            return;
+          } else if (i === 2) {
+            handleClick(6);
+            console.log("Ai reacted with square", 6);
+            return;
+          } else if (i === 3) {
+            handleClick(0);
+            console.log("Ai reacted with square", 0);
+            return;
+          } else if (i === 4) {
+            handleClick(1);
+            console.log("Ai reacted with square", 1);
+            return;
+          } else if (i === 5) {
+            handleClick(2);
+            console.log("Ai reacted with square", 2);
+            return;
+          } else if (i === 6) {
+            handleClick(0);
+            console.log("Ai reacted with square", 0);
+            return;
+          } else if (i === 7) {
+            handleClick(2);
+            console.log("Ai reacted with square", 2);
+            return;
+          }
+        } else if (
+          squares[b] === null &&
+          squares[b] != squares[a] &&
+          squares[a] === squares[c]
+        ) {
+          if (i === 0) {
+            handleClick(1);
+            console.log("Ai reacted with square", 1);
+            return;
+          } else if (i === 1) {
+            handleClick(4);
+            console.log("Ai reacted with square", 4);
+            return;
+          } else if (i === 2) {
+            handleClick(7);
+            console.log("Ai reacted with square", 7);
+            return;
+          } else if (i === 3) {
+            handleClick(3);
+            console.log("Ai reacted with square", 3);
+            return;
+          } else if (i === 4) {
+            handleClick(4);
+            console.log("Ai reacted with square", 4);
+            return;
+          } else if (i === 5) {
+            handleClick(5);
+            console.log("Ai reacted with square", 5);
+            return;
+          } else if (i === 6) {
+            handleClick(4);
+            console.log("Ai reacted with square", 4);
+            return;
+          } else if (i === 7) {
+            handleClick(4);
+            console.log("Ai reacted with square", 4);
+            return;
+          }
+        } else if (
+          squares[c] === null &&
+          squares[c] != squares[a] &&
+          squares[a] === squares[b]
+        ) {
+          if (i === 0) {
+            handleClick(2);
+            console.log("Ai reacted with square", 2);
+            return;
+          } else if (i === 1) {
+            handleClick(5);
+            console.log("Ai reacted with square", 5);
+            return;
+          } else if (i === 2) {
+            handleClick(8);
+            console.log("Ai reacted with square", 8);
+            return;
+          } else if (i === 3) {
+            handleClick(6);
+            console.log("Ai reacted with square", 6);
+            return;
+          } else if (i === 4) {
+            handleClick(7);
+            console.log("Ai reacted with square", 7);
+            return;
+          } else if (i === 5) {
+            handleClick(8);
+            console.log("Ai reacted with square", 8);
+            return;
+          } else if (i === 6) {
+            handleClick(8);
+            console.log("Ai reacted with square", 8);
+            return;
+          } else if (i === 7) {
+            handleClick(6);
+            console.log("Ai reacted with square", 6);
+            return;
+          }
+        }
+      }
+    }
+    // Backup for when the AI gets confused
+    aiGaveUp = true;
+    selectRandom();
+    return;
+  };
+
+  // Container for reading status of winlines
+  let boardState = [];
+
+  // Winlines
+  const lines = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
+
+  let aiGaveUp = false;
+
+  // Check if any player as two in a row
+  const checkWinRisk = () => {
+    // Reset variables to default
+    setTwoInARow(false);
+    boardState = [];
+
+    // Loop through win conditions and check for 2/3
+    for (let i = 0; i < lines.length; i++) {
+      const [a, b, c] = lines[i];
+      if (
+        (squares[a] === null &&
+          squares[a] != squares[b] &&
+          squares[b] === squares[c]) ||
+        (squares[b] === null &&
+          squares[b] != squares[a] &&
+          squares[a] === squares[c]) ||
+        (squares[c] === null &&
+          squares[c] != squares[a] &&
+          squares[a] === squares[b])
+      ) {
+        // console.log(
+        //   "Two in a row somewhere",
+        //   squares[a],
+        //   squares[b],
+        //   squares[c]
+        // );
+        setTwoInARow(true);
+      }
+      // Push status of winlines into state container
+      boardState.push([squares[a], squares[b], squares[c]]);
+    }
+    // console.log("BoardState", boardState);
+  };
+
+  // Initiate AI move
+  useEffect(() => {
+    aiGaveUp = false;
+    checkWinRisk();
+    if ((xIsNext && botPlayer == "X") || (!xIsNext && botPlayer == "O")) {
+      aiAction();
+      return;
+    }
+  }, [botPlayer, squares]);
+
   let status;
   if (winner) {
     status = (
@@ -77,7 +303,12 @@ const Board = forwardRef(({ props: { bot, botPlayer } }, ref) => {
 
   // Runs on board Update
   useEffect(() => {
-    console.log(squares);
+    const board = [
+      { line1: squares[0], line2: squares[1], line3: squares[2] },
+      { line1: squares[3], line2: squares[4], line3: squares[5] },
+      { line1: squares[6], line2: squares[7], line3: squares[8] },
+    ];
+    console.table(board);
   }, [squares]);
 
   return (
