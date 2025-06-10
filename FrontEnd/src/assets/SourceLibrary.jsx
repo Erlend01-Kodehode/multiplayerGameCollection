@@ -1,5 +1,6 @@
 import { base_url as base } from '../../config.js'
 
+// This file manages the paths for various assets used in the application.
 const filePaths = {
   background: '/images/background',
   icons: '/images/icons',
@@ -8,6 +9,7 @@ const filePaths = {
   // Add other categories as needed
 }
 
+// Utility function to generate file paths
 const path = (folderKey, fileName) => {
   const folderPath = filePaths[folderKey]
   if (!folderPath) {
@@ -18,6 +20,11 @@ const path = (folderKey, fileName) => {
   return `${base}${folderPath}/${encodedFileName}`
 }
 
+// getFilePaths utility for batch file path generation
+export const getFilePaths = (folderKey, fileNames) =>
+  fileNames.map(fileName => path(folderKey, fileName))
+
+// Export individual file paths for easy access
 export const backgroundImages = {
   bg: path('background', 'bg.svg'),
   bg2: path('background', 'bg2.svg'),

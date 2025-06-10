@@ -1,33 +1,38 @@
 import { thumbnailImages } from './SourceLibrary.jsx'
 
 // This file contains the game library for the home page.
-const games = [
+const gamePaths = [
   {
-    path: '/game/info/tictactoe',
+    key: 'tictactoe',
     title: 'Tic Tac Toe',
     thumbnail: thumbnailImages.thumbnail_tictactoe,
   },
   {
-    path: '/game/info/checkers',
+    key: 'checkers',
     title: 'Checkers',
     thumbnail: thumbnailImages.thumbnail_checkers,
   },
   {
-    path: '/game/info/chess',
+    key: 'chess',
     title: 'Chess',
     thumbnail: thumbnailImages.thumbnail_chess,
   },
   {
-    path: '/game/info/minesweeper',
+    key: 'minesweeper',
     title: 'Minesweeper',
     thumbnail: thumbnailImages.thumbnail_minesweeper,
   },
   {
-    path: '/game/info/guesspokemon',
+    key: 'guesspokemon',
     title: 'Guess Pokémon',
     thumbnail: thumbnailImages.thumbnail_guesspokemon,
   },
-  
 ]
+
+// Dynamically generate the path property using the key
+const games = gamePaths.map(game => ({
+  ...game,
+  path: `/game/info/${game.key}`,
+}))
 
 export default games
