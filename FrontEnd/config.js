@@ -1,1 +1,1 @@
-export const base_url = "/multiplayerGameCollection/";
+export const base_url = "/multiplayerGameCollection";

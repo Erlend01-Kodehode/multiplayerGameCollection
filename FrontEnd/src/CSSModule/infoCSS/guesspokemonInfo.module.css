@@ -1,0 +1,51 @@
+.infoGuessPokemon {
+  background: var(--bg-theme-style1);
+  border-radius: 18px;
+  box-shadow: var(--shadow-theme-style1);
+  padding: 2rem 2.5rem;
+  max-width: 480px;
+  margin: 2rem auto;
+  font-family: system-ui, Arial, sans-serif;
+  color: var(--text-theme-style1);
+}
+
+.infoContent {
+  margin-top: 1.5rem;
+}
+
+.listStyle {
+  list-style: inside;
+  padding: 0;
+  margin: 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.listStyle li {
+  margin-bottom: 0.7rem;
+  font-size: var(--fontsize-normal);
+  color: var(--text-theme-style1);
+  text-align: left;
+  text-shadow: none;
+  width: 100%;
+  max-width: 420px;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.2rem;
+}
+
+h1 {
+  font-size: var(--fontsize-title3);
+  color: var(--text-theme-style1);
+  text-shadow: none;
+}
+
+p {
+  font-size: var(--fontsize-normal, 20px);
+  color: var(--text-theme-style1);
+  text-shadow: none;
+}

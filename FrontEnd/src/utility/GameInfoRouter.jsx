@@ -4,6 +4,7 @@ import InfoTicTacToe from '../pages/Games/TicTacToe/infoTicTacToe.jsx'
 import InfoCheckers from '../pages/Games/Checkers/infoCheckers.jsx'
 import InfoChessGame from '../pages/Games/ChessGame/infoChessGame.jsx'
 import InfoMinesweeper from '../pages/Games/Minesweeper/infoMinesweeper.jsx'
+import InfoGuessPokemon from '../pages/Games/GuessThatGame/infoGuessPokemon.jsx'
 
 const gameInfoMap = {
   tictactoe: InfoTicTacToe,
@@ -14,8 +15,8 @@ const gameInfoMap = {
   3: InfoChessGame,
   minesweeper: InfoMinesweeper,
   4: InfoMinesweeper,
-  // guesspokemon: InfoGuessPokemon,  << To be implemented later
-  // 5: InfoGuessPokemon,
+  guesspokemon: InfoGuessPokemon,
+  5: InfoGuessPokemon,
   // Add more mappings for other games here
 }
 
