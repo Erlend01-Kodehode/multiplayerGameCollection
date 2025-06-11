@@ -1,4 +1,3 @@
-
 const games = {};
 
 export default function socketManager(io) {
@@ -9,6 +8,7 @@ export default function socketManager(io) {
     socket.on("joinGame", ({ pin, playerName }) => {
       if (!pin || !playerName) {
         console.error("joinGame missing params:", { pin, playerName });
+        socket.emit("feedback", { type: "error", message: "Missing pin or player name." });
         return;
       }
 
@@ -36,6 +36,13 @@ export default function socketManager(io) {
         playerName,
         socketId: socket.id,
       });
+
+      // Emit updated player list to all in the room
+      const playerList = Object.entries(game.players).map(([id, { playerName }]) => ({
+        id,
+        name: playerName,
+      }));
+      io.to(pin).emit("playerList", playerList);
     });
 
     // 2) PLAYER MAKES A MOVE
@@ -43,17 +50,20 @@ export default function socketManager(io) {
       const game = games[pin];
       if (!game) {
         console.error("makeMove: no game for pin", pin);
+        socket.emit("feedback", { type: "error", message: "Game not found." });
         return;
       }
 
       // turn check
       if (game.turn !== socket.id) {
         socket.emit("invalidMove", { message: "Not your turn" });
+        socket.emit("feedback", { type: "warning", message: "It's not your turn." });
         return;
       }
       // validity check
       if (!validateMove(game.gameState, moveData)) {
         socket.emit("invalidMove", { message: "Invalid move" });
+        socket.emit("feedback", { type: "error", message: "Invalid move." });
         return;
       }
 
@@ -66,6 +76,7 @@ export default function socketManager(io) {
           gameState: game.gameState,
           winner:    socket.id,
         });
+        io.to(pin).emit("feedback", { type: "info", message: "Game over!" });
         delete games[pin];
         return;
       }
@@ -81,6 +92,9 @@ export default function socketManager(io) {
         turn:      game.turn,
         moveData,   
       });
+
+      // Feedback: move accepted
+      socket.emit("feedback", { type: "success", message: "Move accepted." });
     });
 
     // 3) PLAYER LEAVES EXPLICITLY
@@ -98,7 +112,6 @@ export default function socketManager(io) {
         }
       }
     });
-
 
     // ——— helpers ———
 
@@ -119,6 +132,13 @@ export default function socketManager(io) {
         playerName: name,
         socketId:   socket.id,
       });
+
+      // Emit updated player list to all in the room
+      const playerList = Object.entries(game.players).map(([id, { playerName }]) => ({
+        id,
+        name: playerName,
+      }));
+      io.to(pin).emit("playerList", playerList);
 
       // if nobody left, delete room
       if (Object.keys(game.players).length === 0) {

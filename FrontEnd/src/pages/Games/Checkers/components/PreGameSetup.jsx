@@ -1,14 +1,13 @@
-
 import React, { useState, useEffect } from "react";
 import socketApi from "../../Socket.jsx";
 import styles from "../../../../CSSModule/gameCSS/checkersGame.module.css";
 
 const PreGameSetup = ({ mode, pin, availablePiece, onSetupComplete }) => {
-
   const [selectedPiece, setSelectedPiece] = useState(
     mode === "join" ? availablePiece : null
   );
   const [playerName, setPlayerName] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (mode === "join") {
@@ -18,7 +17,7 @@ const PreGameSetup = ({ mode, pin, availablePiece, onSetupComplete }) => {
 
   const handleStartGame = () => {
     if (!selectedPiece || playerName.trim() === "") {
-      alert("Please select a piece and enter your name.");
+      setError("Please select a piece and enter your name.");
       return;
     }
 
@@ -26,7 +25,7 @@ const PreGameSetup = ({ mode, pin, availablePiece, onSetupComplete }) => {
 
     onSetupComplete({
       piece: selectedPiece,
-      name:  playerName,
+      name: playerName,
     });
   };
 
@@ -74,10 +73,15 @@ const PreGameSetup = ({ mode, pin, availablePiece, onSetupComplete }) => {
         <input
           type="text"
           value={playerName}
-          onChange={(e) => setPlayerName(e.target.value)}
+          onChange={(e) => {
+            setPlayerName(e.target.value);
+            setError("");
+          }}
           placeholder="Enter Your Name"
         />
       </div>
+
+      {error && <div className={styles.errorMsg}>{error}</div>}
 
       <button
         onClick={handleStartGame}

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import socketApi from "./Socket.jsx";
 import { fetchNewPin, checkPin } from "../../utility/getAPI.jsx";
@@ -17,6 +16,12 @@ const GameSession = ({ mode, onComplete }) => {
       setPlayers([]);
     }
 
+    // Real-time player list update
+    const handlePlayerList = (list) => setPlayers(list);
+
+    socketApi.onPlayerList(handlePlayerList);
+
+    // Fallback for join/leave/disconnect (optional, can be removed if playerList is always sent)
     const handleJoin = ({ playerName, socketId }) =>
       setPlayers((prev) =>
         prev.some((p) => p.id === socketId)
@@ -32,6 +37,7 @@ const GameSession = ({ mode, onComplete }) => {
     socketApi.onPlayerDisconnected(handleLeave);
 
     return () => {
+      socketApi.off("playerList", handlePlayerList);
       socketApi.off("playerJoined", handleJoin);
       socketApi.off("playerLeft", handleLeave);
       socketApi.off("playerDisconnected", handleLeave);

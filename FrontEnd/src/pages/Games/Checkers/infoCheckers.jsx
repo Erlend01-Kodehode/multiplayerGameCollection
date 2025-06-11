@@ -1,5 +1,3 @@
-// /src/pages/Games/Checkers/infoCheckers.jsx
-import React from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import styles from "../../../CSSModule/infoCSS/checkersInfo.module.css";
 import {
@@ -11,7 +9,7 @@ import GameSession from "../GameSession.jsx";
 const InfoCheckers = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const modeFromUrl = searchParams.get("mode"); // should be either 'host' or 'join'
+  const modeFromUrl = searchParams.get("mode");
 
   const handleHostClick = () => {
     setSearchParams({ mode: "host" });
