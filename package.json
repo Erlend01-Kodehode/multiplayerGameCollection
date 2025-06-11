@@ -1,0 +1,15 @@
+{
+  "name": "multiplayergamecollection",
+  "version": "1.0.0",
+  "description": "",
+  "main": "",
+  "scripts": {
+    "postinstall": "cd FrontEnd && npm install && cd ../BackEnd && npm install",
+    "dev": "concurrently \"cd FrontEnd && npm run dev\" \"cd BackEnd && npm start\""
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
