@@ -7,28 +7,71 @@
 import app from "../app.js";
 import debug from "debug";
 import http from "http";
+import { Server } from "socket.io"; // Import Socket.IO Server
+import initializeSocketIO from "../socket/socketio.js"; // Import your socket initializer
+
 
 /**
  * Get port from environment and store in Express.
  */
-
-export var port = normalizePort(process.env.PORT || "3000");
+// @@ Let's assume we'll always use a port number, and not a string.
+export const port = ((+process.env.PORT) > 0 && +process.env.PORT) || 3000
 app.set("port", port);
 
+
+// REMARK: 
+// "Server" can be anything, let's be a bit more verbose
+// Also, avoid using "var" for variables that are not global.
 /**
  * Create HTTP server.
  */
+const httpServer = http.createServer(app);
 
-var server = http.createServer(app);
+/**
+ * Initialize Socket.IO server.
+ */
+const io = new Server(httpServer, {
+  cors: {
+    origin: "*", // DO NOT USE THIS IN PRODUCTION
+    methods: ["GET", "POST"]
+  }
+});
+
+initializeSocketIO(io);
+
+// @@ Listen for Socket.IO connection errors
+io.engine.on("connection_error", (err) => {
+  console.error("Socket.IO Connection Error:");
+  console.error("  Code:", err.code);
+  console.error("  Message:", err.message);
+  if (err.context) console.error("  Context:", err.context);
+});
 
 /**
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port);
+server.listen(port, "0.0.0.0", () => {
+  console.log(`Server is running on port ${port}`);
+});
 server.on("error", onError);
 server.on("listening", onListening);
 
+
+
+// REMARK:
+// This can be reduced to a single line:
+// ```javascript
+// export var port = normalizePort(process.env.PORT || "3000");
+// 
+// export const port = ((+process.env.PORT) > 0 && +process.env.PORT) || 3000
+// ```
+// Since we are using "export" we can use the "const" keyword.
+// The `+` operator is a shorthand for `Number(port)`.
+// If the port is not a number, it will be `NaN`, which is never > 0
+// If the port is a number, it will be the number, and if it is > 0, it will be used
+// If the port is a string, it will be the string, and if it is > 0, it will be used due to type coercion
+//
 /**
  * Normalize a port into a number, string, or false.
  */
@@ -52,7 +95,6 @@ function normalizePort(val) {
 /**
  * Event listener for HTTP server "error" event.
  */
-
 function onError(error) {
   if (error.syscall !== "listen") {
     throw error;
@@ -78,9 +120,9 @@ function onError(error) {
 /**
  * Event listener for HTTP server "listening" event.
  */
-
 function onListening() {
-  var addr = server.address();
+  var addr = httpServer.address();
   var bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
   debug("Listening on " + bind);
+  debug(`Server (and Socket.IO) listening on port ${addr.port}`);
 }

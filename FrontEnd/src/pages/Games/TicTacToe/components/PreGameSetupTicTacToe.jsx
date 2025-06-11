@@ -1,37 +1,100 @@
 import React, { useState, useEffect } from "react";
 import styles from "../../../../CSSModule/gameCSS/tictactoeGame.module.css";
 
-const PreGameSetupTicTacToe = ({ mode, availableSymbol, onSetupComplete }) => {
-  // For join mode, auto-assign the availableSymbol; in host mode, allow manual selection.
-  const [selectedSymbol, setSelectedSymbol] = useState(
-    mode === "join" ? availableSymbol : null
-  );
+const PreGameSetupTicTacToe = ({
+  mode, 
+  pin,  
+  isMultiplayer,
+  onSetupComplete,
+  isLobbyView = false,
+  lobbyPlayers = [],
+  canStart = false,
+  onStartGame = () => {},
+  minPlayers = 2,
+  maxPlayers = 2,
+  availableSymbol, 
+  gameStatusMessage = "",
+  currentClientSocketId = null
+}) => {
+  const [selectedSymbol, setSelectedSymbol] = useState(availableSymbol || null); 
   const [playerName, setPlayerName] = useState("");
 
-  // Update selectedSymbol automatically if availableSymbol changes in join mode.
+  useEffect(() => {
+    if (availableSymbol && mode === 'host') {
+        setSelectedSymbol(availableSymbol);
+    }
+  }, [availableSymbol, mode]);
+
   useEffect(() => {
     if (mode === "join") {
-      setSelectedSymbol(availableSymbol);
+      setSelectedSymbol(null); 
     }
-  }, [mode, availableSymbol]);
+  }, [mode]);
 
-  const handleStartGame = () => {
-    if (!selectedSymbol || playerName.trim() === "") {
-      alert("Please select a symbol and enter your name.");
+  const handleDoSetup = () => {
+    if (playerName.trim() === "") {
+      alert("Please enter your name.");
       return;
     }
-    onSetupComplete({ symbol: selectedSymbol, name: playerName });
+    if (isMultiplayer && mode === "host" && !selectedSymbol) {
+      alert("Please select a symbol (X or O).");
+      return;
+    }
+
+    onSetupComplete({
+      name: playerName,
+      symbol: selectedSymbol, 
+      pin,
+    });
   };
 
-  const capitalize = (str) => {
-    if (!str) return "";
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  };
+  if (isLobbyView && mode === 'host') {
+    return (
+      <div className={styles.setupScreen}>
+        <h1>Tic Tac Toe - Host Lobby</h1>
+        <p>Game PIN: <strong>{pin}</strong></p>
+        <p className={styles.statusMessageLobby}>{gameStatusMessage}</p>
+        
+        <h2>Players Connected ({lobbyPlayers.length}/{maxPlayers}):</h2>
+        <ul className={styles.playerListLobby}>
+          {lobbyPlayers.map((player, index) => (
+            <li key={player.id || index} className={styles.playerItemLobby}>
+              {player.name} ({player.symbol}) {player.id === currentClientSocketId ? "(You, Host)" : ""}
+            </li>
+          ))}
+        </ul>
+
+        {lobbyPlayers.length < minPlayers && (
+          <div className={styles.waitingForPlayers}>
+            <div className={styles.spinner}></div>
+            <p>Waiting for {minPlayers - lobbyPlayers.length} more player(s)...</p>
+          </div>
+        )}
+
+        {lobbyPlayers.length >= minPlayers && lobbyPlayers.length < maxPlayers && canStart && (
+          <button onClick={onStartGame} className={styles.startButtonLobby}>
+            Start Game Now ({lobbyPlayers.length}/{maxPlayers})
+          </button>
+        )}
+         {lobbyPlayers.length === maxPlayers && minPlayers === maxPlayers && (
+          <p>All players connected. Game should start automatically.</p>
+        )}
+        {lobbyPlayers.length >= minPlayers && !canStart && lobbyPlayers.length < maxPlayers && (
+            <p>Waiting for enough players or for the game to auto-start if max is reached.</p>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className={styles.setupScreen}>
-      <h1>Player Setup</h1>
-      {mode === "host" ? (
+      <h1>
+        Player Setup 
+        {`(${mode === 'host' ? 'Hosting New Game' : `Joining Game ${pin ? `PIN: ${pin}` : '(Please provide a PIN)'}`})`}
+      </h1>
+      <p>{gameStatusMessage}</p>
+
+      {mode === "host" && (
         <div className={styles.playerSelection}>
           <h2>Choose Your Symbol</h2>
           <div className={styles.pieceOptions}>
@@ -49,29 +112,24 @@ const PreGameSetupTicTacToe = ({ mode, availableSymbol, onSetupComplete }) => {
             </div>
           </div>
         </div>
-      ) : (
-        <div className={styles.playerSelection}>
-          <h2>Your symbol is: {capitalize(availableSymbol)}</h2>
-          <div className={styles.pieceOptions}>
-            <div className={styles.symbolOption}>
-              {availableSymbol === "X" ? (
-                <span className={styles.squareX}>X</span>
-              ) : (
-                <span className={styles.squareO}>O</span>
-              )}
-            </div>
-          </div>
-        </div>
       )}
+ 
+      {mode === "join" && (
+        <p>Your symbol will be assigned automatically when you join the game.</p>
+      )}
+
       <div className={styles.nameEntry}>
         <input
           type="text"
           value={playerName}
           onChange={(e) => setPlayerName(e.target.value)}
           placeholder="Enter Your Name"
+          className={styles.nameInput}
         />
       </div>
-      <button onClick={handleStartGame}>Start Game</button>
+      <button onClick={handleDoSetup} className={styles.startButton}>
+        {mode === 'host' ? 'Create Game & Wait in Lobby' : 'Join Game Lobby'}
+      </button>
     </div>
   );
 };

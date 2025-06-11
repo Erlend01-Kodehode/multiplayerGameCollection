@@ -50,15 +50,18 @@ const InfoTicTacToe = () => {
           <li>Host generates a game PIN.</li>
           <li>Join with the game PIN to play.</li>
         </ul>
-        <div className={styles.buttonContainer}>
-          <JoinGameButton onClick={handleJoinClick} />
-        </div>
-        <div className={styles.buttonContainer}>
-          <HostGameButton onClick={handleHostClick} />
-        </div>
-        <div className={styles.buttonContainer}>
-          <LocalGameButton onClick={handleLocalSession} />
-        </div>
+        {!modeFromUrl && (
+          <>
+            <div className={styles.buttonContainer}>
+              <JoinGameButton onClick={handleJoinClick} />
+            </div>
+            <div className={styles.buttonContainer}>
+            <HostGameButton onClick={handleHostClick} />
+          </div>
+          <div className={styles.buttonContainer}>
+            <LocalGameButton onClick={handleLocalSession} />
+          </div>
+        </>)}
 
         {modeFromUrl && (
           <GameSession mode={modeFromUrl} onComplete={handleSessionComplete} />
