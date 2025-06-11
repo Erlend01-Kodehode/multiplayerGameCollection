@@ -39,3 +39,19 @@
   margin: 1rem 0;
   color: #fff;
 }
+
+.joinBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.hostBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.buttonGroup {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}

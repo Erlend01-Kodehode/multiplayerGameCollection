@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import socketApi from "./Socket.jsx";
 import { fetchNewPin, checkPin } from "../../utility/getAPI.jsx";
 import styles from "../../CSSModule/GameSession.module.css";
@@ -8,6 +8,23 @@ const GameSession = ({ mode, onComplete }) => {
   const [error, setError] = useState("");
   const [players, setPlayers] = useState([]);
 
+  // Memoize handlers to keep references stable
+  const handlePlayerList = useCallback((list) => setPlayers(list), []);
+  const handleJoin = useCallback(
+    ({ playerName, socketId }) =>
+      setPlayers((prev) =>
+        prev.some((p) => p.id === socketId)
+          ? prev
+          : [...prev, { name: playerName, id: socketId }]
+      ),
+    []
+  );
+  const handleLeave = useCallback(
+    ({ socketId }) =>
+      setPlayers((prev) => prev.filter((p) => p.id !== socketId)),
+    []
+  );
+
   useEffect(() => {
     if (mode === "host") {
       generateNewPin();
@@ -16,22 +33,7 @@ const GameSession = ({ mode, onComplete }) => {
       setPlayers([]);
     }
 
-    // Real-time player list update
-    const handlePlayerList = (list) => setPlayers(list);
-
     socketApi.onPlayerList(handlePlayerList);
-
-    // Fallback for join/leave/disconnect (optional, can be removed if playerList is always sent)
-    const handleJoin = ({ playerName, socketId }) =>
-      setPlayers((prev) =>
-        prev.some((p) => p.id === socketId)
-          ? prev
-          : [...prev, { name: playerName, id: socketId }]
-      );
-
-    const handleLeave = ({ socketId }) =>
-      setPlayers((prev) => prev.filter((p) => p.id !== socketId));
-
     socketApi.onPlayerJoined(handleJoin);
     socketApi.onPlayerLeft(handleLeave);
     socketApi.onPlayerDisconnected(handleLeave);
@@ -42,7 +44,9 @@ const GameSession = ({ mode, onComplete }) => {
       socketApi.off("playerLeft", handleLeave);
       socketApi.off("playerDisconnected", handleLeave);
     };
-  }, [mode]);
+    // Only re-run if mode changes
+    // eslint-disable-next-line
+  }, [mode, handlePlayerList, handleJoin, handleLeave]);
 
   async function generateNewPin() {
     try {
@@ -82,7 +86,7 @@ const GameSession = ({ mode, onComplete }) => {
   return (
     <div className={styles.pinBox}>
       {mode === "join" ? (
-        <>
+        <div className={styles.joinBox}>
           <p style={labelStyle}>Enter Game PIN:</p>
           <input
             type="text"
@@ -98,18 +102,19 @@ const GameSession = ({ mode, onComplete }) => {
           >
             Join
           </button>
-        </>
+        </div>
       ) : (
-        <>
+        <div className={styles.hostBox}>
           <p style={labelStyle}>Your Game PIN:</p>
           <div className={styles.generatedPin}>{pin}</div>
-          <button onClick={handleStart} className={styles.pinButton}>
-            Host &amp; Wait
-          </button>
-          <button onClick={generateNewPin} className={styles.pinButton}>
-            New PIN
-          </button>
-
+          <div className={styles.buttonGroup}>
+            <button onClick={handleStart} className={styles.pinButton}>
+              Host &amp; Wait
+            </button>
+            <button onClick={generateNewPin} className={styles.pinButton}>
+              New PIN
+            </button>
+          </div>
           {players.length > 0 && (
             <>
               <p style={labelStyle}>Players Waiting:</p>
@@ -120,7 +125,7 @@ const GameSession = ({ mode, onComplete }) => {
               </ul>
             </>
           )}
-        </>
+        </div>
       )}
 
       {error && <p style={{ color: "red" }}>{error}</p>}
