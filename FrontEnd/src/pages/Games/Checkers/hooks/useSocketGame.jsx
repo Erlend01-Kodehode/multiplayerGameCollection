@@ -1,23 +1,22 @@
-
 import { useEffect } from "react";
 import socketApi from "../../Socket.jsx";
 
-const useSocketGame = (pin, playerName, onRemoteMove) => {
+const useSocketGame = (pin, playerName, piece, onRemoteMove) => {
   useEffect(() => {
-    if (!pin || !playerName) return;
+    if (!pin || !playerName || !piece) return;
 
-    // 1) Join the Socket.IO room
-    socketApi.joinGame({ pin, playerName });
+    // Join with piece info
+    socketApi.joinGame({ pin, playerName, piece });
 
-    // 2) Subscribe to incoming moves
+    // Subscribe to incoming moves
     socketApi.onMoveMade(onRemoteMove);
 
-    // 3) Clean up on unmount or change of pin/playerName
+    // Clean up on unmount or change of pin/playerName/piece
     return () => {
-      socketApi.leaveGame({ pin, playerName });
-      socketApi.off("moveMade", onRemoteMove);
+      socketApi.leaveGame({ pin, playerName, piece });
+      socketApi.off("checkers:moveMade", onRemoteMove);
     };
-  }, [pin, playerName, onRemoteMove]);
+  }, [pin, playerName, piece, onRemoteMove]);
 };
 
 export default useSocketGame;

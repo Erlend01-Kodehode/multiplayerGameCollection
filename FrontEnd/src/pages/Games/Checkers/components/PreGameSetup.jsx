@@ -21,7 +21,8 @@ const PreGameSetup = ({ mode, pin, availablePiece, onSetupComplete }) => {
       return;
     }
 
-    socketApi.joinGame({ pin, playerName });
+    // Send piece to backend!
+    socketApi.joinGame({ pin, playerName, piece: selectedPiece });
 
     onSetupComplete({
       piece: selectedPiece,
