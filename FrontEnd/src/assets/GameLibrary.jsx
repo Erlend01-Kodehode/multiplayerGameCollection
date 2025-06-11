@@ -1,5 +1,13 @@
 import { thumbnailImages } from './SourceLibrary.jsx'
 
+/*
+  REMARK:
+  Perhaps moving this list to the backend, having an endpoint
+  return a JSON object with the game information would be better?
+  This would allow for more flexibility in the future, and would make it
+  easier to add new games to the library.
+*/
+
 // This file contains the game library for the home page.
 const games = [
   {
