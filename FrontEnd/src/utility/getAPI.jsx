@@ -1,4 +1,4 @@
-export const API_BASE_URL = "http://localhost:3000";
+export const API_BASE_URL = "http://34.51.175.243:3000";
 
 // Generic helper function for API calls using fetch.
 async function request(endpoint, method, body = null) {
@@ -6,8 +6,8 @@ async function request(endpoint, method, body = null) {
   const options = {
     method,
     headers: {
-      "Content-Type": "application/json"
-    }
+      "Content-Type": "application/json",
+    },
   };
 
   if (body !== null && method.toUpperCase() !== "GET") {
@@ -57,7 +57,7 @@ export async function createPin(retryCount = 0) {
       console.warn(
         `Database is busy. Retrying createPin (attempt ${retryCount + 1})...`
       );
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       return await createPin(retryCount + 1);
     }
     throw error;
