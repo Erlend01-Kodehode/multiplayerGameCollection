@@ -5,6 +5,7 @@ import GameCheckers from "../pages/Games/Checkers/gameCheckers.jsx";
 import GameChess from "../pages/Games/ChessGame/ChessGame.jsx";
 import GameMinesweeper from "../pages/Games/Minesweeper/gameMinesweeper.jsx";
 import GuessPokemon from "../pages/Games/GuessThatGame/guess.jsx";
+import Solitaire from "../pages/Games/Solitaire/Solitaire.jsx";
 
 const gameMap = {
   tictactoe: GameTicTacToe,
@@ -17,6 +18,8 @@ const gameMap = {
   4: GameMinesweeper,
   guesspokemon: GuessPokemon,
   5: GuessPokemon,
+  6: Solitaire,
+  solitaire: Solitaire,
   // Add more mappings for other games here
 };
 

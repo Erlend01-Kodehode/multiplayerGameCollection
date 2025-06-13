@@ -1,0 +1,64 @@
+.navbar-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.navbar-links {
+  list-style: none;
+  display: flex;
+  gap: 24px;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-links a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: color 0.2s;
+}
+
+.navbar-links a:hover {
+  color: #ffd700;
+}
+
+.button.small {
+  font-size: 0.85rem;
+  padding: 3px 10px;
+  margin: 0 2px;
+  border-radius: 4px;
+  background: #2e7031;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.button.small:hover {
+  background: #3fa34d;
+}
+
+.move-counter {
+  margin-left: 16px;
+  font-size: 0.95rem;
+  color: #ffd700;
+  font-weight: bold;
+  align-self: center;
+}
+
+.solitaire-navbar-buttons {
+  position: fixed;
+  top: 0;
+  right: 100px;
+  height: 120px;           /* Sett til høyden på din hovednavbar */
+  display: flex;
+  align-items: center;    /* Sentrerer knappene vertikalt i navbaren */
+  gap: 8px;
+  z-index: 1001;
+  background: none;
+  box-shadow: none;
+  border: none;
+  padding: 0;
+}
+
+
