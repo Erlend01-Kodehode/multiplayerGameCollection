@@ -3,12 +3,12 @@ import socketApi from "./Socket.jsx";
 import { fetchNewPin, checkPin } from "../../utility/getAPI.jsx";
 import styles from "../../CSSModule/GameSession.module.css";
 
-const GameSession = ({ mode, onComplete }) => {
+const GameSession = ({ mode, game, onComplete }) => {
   const [pin, setPin] = useState("");
   const [error, setError] = useState("");
   const [players, setPlayers] = useState([]);
 
-  // Memoize handlers to keep references stable
+  // Memoized handlers for stable references
   const handlePlayerList = useCallback((list) => setPlayers(list), []);
   const handleJoin = useCallback(
     ({ playerName, socketId }) =>
@@ -33,20 +33,21 @@ const GameSession = ({ mode, onComplete }) => {
       setPlayers([]);
     }
 
-    socketApi.onPlayerList(handlePlayerList);
-    socketApi.onPlayerJoined(handleJoin);
-    socketApi.onPlayerLeft(handleLeave);
-    socketApi.onPlayerDisconnected(handleLeave);
+    socketApi.onPlayerList(game, handlePlayerList);
+    socketApi.onPlayerJoined(game, handleJoin);
+    socketApi.onPlayerLeft(game, handleLeave);
+    socketApi.onPlayerDisconnected(game, handleLeave);
 
     return () => {
-      socketApi.off("playerList", handlePlayerList);
-      socketApi.off("playerJoined", handleJoin);
-      socketApi.off("playerLeft", handleLeave);
-      socketApi.off("playerDisconnected", handleLeave);
+      socketApi.offAllGameSession(game, {
+        handlePlayerList,
+        handleJoin,
+        handleLeave,
+      });
     };
-    // Only re-run if mode changes
+    // Only re-run if mode or game changes
     // eslint-disable-next-line
-  }, [mode, handlePlayerList, handleJoin, handleLeave]);
+  }, [mode, game, handlePlayerList, handleJoin, handleLeave]);
 
   async function generateNewPin() {
     try {
@@ -95,13 +96,15 @@ const GameSession = ({ mode, onComplete }) => {
             onChange={(e) => setPin(e.target.value)}
             className={styles.pinInput}
           />
-          <button
-            onClick={handleStart}
-            className={styles.pinButton}
-            disabled={!pin.trim()}
-          >
-            Join
-          </button>
+          <div className={styles.buttonGroup}>
+            <button
+              onClick={handleStart}
+              className={styles.pinButton}
+              disabled={!pin.trim()}
+            >
+              Join
+            </button>
+          </div>
         </div>
       ) : (
         <div className={styles.hostBox}>

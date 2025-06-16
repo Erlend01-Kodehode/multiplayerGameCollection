@@ -1,15 +1,9 @@
 import { io } from "socket.io-client";
 
 const SOCKET_URL = "http://localhost:3000";
+const socket = io(SOCKET_URL, { autoConnect: true });
 
-// Initialize socket connection
-const socket = io(SOCKET_URL, {
-  autoConnect: true,
-});
-
-// ----------------
 // --- Emitters ---
-// ----------------
 
 const joinGame = ({ game, pin, playerName, piece, symbol }) => {
   switch (game) {
@@ -25,13 +19,13 @@ const joinGame = ({ game, pin, playerName, piece, symbol }) => {
   }
 };
 
-const leaveGame = ({ game, pin, playerName, piece, symbol }) => {
+const leaveGame = ({ game, pin, playerName }) => {
   switch (game) {
     case "checkers":
-      socket.emit("checkers:leaveGame", { pin, playerName, piece });
+      socket.emit("checkers:leaveGame", { pin });
       break;
     case "tictactoe":
-      socket.emit("tictactoe:leaveGame", { pin, playerName, symbol });
+      socket.emit("tictactoe:leaveGame", { pin });
       break;
     default:
       socket.emit("leaveGame", { pin, playerName });
@@ -53,108 +47,102 @@ const sendMove = (game, pin, moveData) => {
   }
 };
 
-// -----------------
 // --- Listeners ---
-// -----------------
-
-function normalizeArgs(gameOrCallback, callbackMaybe) {
-  if (typeof gameOrCallback === "function") {
-    // Only callback provided
-    return { game: undefined, callback: gameOrCallback };
-  }
-  return { game: gameOrCallback, callback: callbackMaybe };
-}
 
 const onPlayerJoined = (game, callback) => {
-  const { game: g, callback: cb } = normalizeArgs(game, callback);
-  switch (g) {
+  switch (game) {
     case "checkers":
-      socket.on("checkers:playerJoined", cb);
+      socket.on("checkers:playerJoined", callback);
       break;
     case "tictactoe":
-      socket.on("tictactoe:playerJoined", cb);
+      socket.on("tictactoe:playerJoined", callback);
       break;
     default:
-      socket.on("playerJoined", cb);
+      socket.on("playerJoined", callback);
       break;
   }
 };
 
 const onPlayerLeft = (game, callback) => {
-  const { game: g, callback: cb } = normalizeArgs(game, callback);
-  switch (g) {
+  switch (game) {
     case "checkers":
-      socket.on("checkers:playerLeft", cb);
+      socket.on("checkers:playerLeft", callback);
       break;
     case "tictactoe":
-      socket.on("tictactoe:playerLeft", cb);
+      socket.on("tictactoe:playerLeft", callback);
       break;
     default:
-      socket.on("playerLeft", cb);
+      socket.on("playerLeft", callback);
       break;
   }
 };
 
 const onPlayerDisconnected = (game, callback) => {
-  const { game: g, callback: cb } = normalizeArgs(game, callback);
-  switch (g) {
+  switch (game) {
     case "checkers":
-      socket.on("checkers:playerDisconnected", cb);
+      socket.on("checkers:playerDisconnected", callback);
       break;
     case "tictactoe":
-      socket.on("tictactoe:playerDisconnected", cb);
+      socket.on("tictactoe:playerDisconnected", callback);
       break;
     default:
-      socket.on("playerDisconnected", cb);
+      socket.on("playerDisconnected", callback);
       break;
   }
 };
 
 const onMoveMade = (game, callback) => {
-  const { game: g, callback: cb } = normalizeArgs(game, callback);
-  switch (g) {
+  switch (game) {
     case "checkers":
-      socket.on("checkers:moveMade", cb);
+      socket.on("checkers:moveMade", callback);
       break;
     case "tictactoe":
-      socket.on("tictactoe:moveMade", cb);
+      socket.on("tictactoe:moveMade", callback);
       break;
     default:
-      socket.on("moveMade", cb);
+      socket.on("moveMade", callback);
       break;
   }
 };
 
 const onGameOver = (game, callback) => {
-  const { game: g, callback: cb } = normalizeArgs(game, callback);
-  switch (g) {
+  switch (game) {
     case "checkers":
-      socket.on("checkers:gameOver", cb);
+      socket.on("checkers:gameOver", callback);
       break;
     case "tictactoe":
-      socket.on("tictactoe:gameOver", cb);
+      socket.on("tictactoe:gameOver", callback);
       break;
     default:
-      socket.on("gameOver", cb);
+      socket.on("gameOver", callback);
       break;
   }
 };
 
-const onInvalidMove = (callback) => {
-  socket.on("invalidMove", callback);
+const onInvalidMove = (game, callback) => {
+  switch (game) {
+    case "checkers":
+      socket.on("checkers:invalidMove", callback);
+      break;
+    case "tictactoe":
+      socket.on("tictactoe:invalidMove", callback);
+      break;
+    default:
+      socket.on("invalidMove", callback);
+      break;
+  }
 };
 
 const onPlayerList = (game, callback) => {
-  const { game: g, callback: cb } = normalizeArgs(game, callback);
-  switch (g) {
+  switch (game) {
     case "checkers":
-      socket.on("checkers:playerList", cb);
+      socket.on("checkers:playerList", callback);
       break;
     case "tictactoe":
-      socket.on("tictactoe:playerList", cb);
+      socket.on("tictactoe:playerList", callback);
       break;
     default:
-      socket.on("playerList", cb);
+      socket.on("playerList", callback);
       break;
   }
 };
@@ -167,6 +155,21 @@ const off = (event, callback) => {
   if (typeof callback === "function") {
     socket.off(event, callback);
   }
+};
+
+// --- Remove all session listeners for a game ---
+const offAllGameSession = (game, { handlePlayerList, handleJoin, handleLeave }) => {
+  const prefix =
+    game === "checkers"
+      ? "checkers:"
+      : game === "tictactoe"
+      ? "tictactoe:"
+      : "";
+
+  socket.off(`${prefix}playerList`, handlePlayerList);
+  socket.off(`${prefix}playerJoined`, handleJoin);
+  socket.off(`${prefix}playerLeft`, handleLeave);
+  socket.off(`${prefix}playerDisconnected`, handleLeave);
 };
 
 const socketApi = {
@@ -182,6 +185,7 @@ const socketApi = {
   onPlayerList,
   onFeedback,
   off,
+  offAllGameSession,
   socket,
 };
 

@@ -23,7 +23,7 @@ const InfoTicTacToe = () => {
   };
 
   const handleSessionComplete = (pin) => {
-    // Navigate to the game play screen with the PIN and mode
+    // Navigate to the game with the provided pin and mode
     navigate(`/game/play/tictactoe?pin=${pin}&mode=${modeFromUrl}`);
   };
 
@@ -61,7 +61,11 @@ const InfoTicTacToe = () => {
         </div>
 
         {modeFromUrl && (
-          <GameSession mode={modeFromUrl} onComplete={handleSessionComplete} />
+          <GameSession
+            mode={modeFromUrl}
+            game="tictactoe"
+            onComplete={handleSessionComplete}
+          />
         )}
       </div>
     </div>

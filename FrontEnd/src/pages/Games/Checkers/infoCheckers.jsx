@@ -66,7 +66,11 @@ const InfoCheckers = () => {
           <HostGameButton onClick={handleHostClick} />
         </div>
         {modeFromUrl && (
-          <GameSession mode={modeFromUrl} onComplete={handleSessionComplete} />
+          <GameSession
+            mode={modeFromUrl}
+            game="checkers"
+            onComplete={handleSessionComplete}
+          />
         )}
         <p className={styles.infoNote}>Good luck and have fun!</p>
       </div>

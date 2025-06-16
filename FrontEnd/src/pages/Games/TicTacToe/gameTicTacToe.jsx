@@ -18,17 +18,29 @@ const GameTicTacToe = () => {
   const mode = searchParams.get("mode") || "host";
   const pin = searchParams.get("pin");
 
-  // Determine multiplayer mode based on the "pin" query param.
-  const [multiplayer, setMultiplayer] = useState(false);
+  // Determine if the game is multiplayer based on the presence of a pin
+  const multiplayer = !!pin;
+
+  // Pre-game setup state:
+  const [isSetupComplete, setIsSetupComplete] = useState(false);
+  const [setupData, setSetupData] = useState({
+    playerNames: { X: "", O: "" },
+    initialTurn: "X",
+  });
+
   useEffect(() => {
-    if (window.location.toString().includes("pin=")) {
-      setMultiplayer(true);
+    if (multiplayer) {
       setBot(false);
+      console.log("Multiplayer");
     } else {
-      setMultiplayer(false);
+      console.log("Local");
     }
-    console.log(pin ? "Multiplayer" : "Local");
-  }, []);
+  }, [multiplayer]);
+
+  useEffect(() => {
+    console.log("Bot Status:", bot);
+    console.log("Bot Player:", botPlayer);
+  }, [bot, botPlayer]);
 
   const handleReset = useGameReset(() => {
     if (boardRef.current && boardRef.current.resetBoard) {
@@ -41,26 +53,6 @@ const GameTicTacToe = () => {
       setBotPlayer(null);
     }
   });
-
-  // Pre-game setup state:
-  const [isSetupComplete, setIsSetupComplete] = useState(false);
-  // setupData stores player names keyed by symbols "X" and "O"
-  const [setupData, setSetupData] = useState({
-    playerNames: { X: "", O: "" },
-    initialTurn: "X",
-  });
-
-  useEffect(() => {
-    if (multiplayer) {
-      setBot(false);
-    }
-    console.log(multiplayer);
-  }, []);
-
-  useEffect(() => {
-    console.log("Bot Status:", bot);
-    console.log("Bot Player:", botPlayer);
-  }, [bot, botPlayer]);
 
   if (!isSetupComplete && multiplayer) {
     return (

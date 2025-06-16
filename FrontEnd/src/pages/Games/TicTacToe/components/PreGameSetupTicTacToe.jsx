@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
+import socketApi from "../../Socket.jsx";
 import styles from "../../../../CSSModule/gameCSS/tictactoeGame.module.css";
 
-const PreGameSetupTicTacToe = ({ mode, availableSymbol, onSetupComplete }) => {
-  // For join mode, auto-assign the availableSymbol; in host mode, allow manual selection.
+const PreGameSetupTicTacToe = ({ mode, pin, availableSymbol, onSetupComplete }) => {
   const [selectedSymbol, setSelectedSymbol] = useState(
     mode === "join" ? availableSymbol : null
   );
   const [playerName, setPlayerName] = useState("");
+  const [error, setError] = useState("");
 
-  // Update selectedSymbol automatically if availableSymbol changes in join mode.
   useEffect(() => {
     if (mode === "join") {
       setSelectedSymbol(availableSymbol);
@@ -17,9 +17,11 @@ const PreGameSetupTicTacToe = ({ mode, availableSymbol, onSetupComplete }) => {
 
   const handleStartGame = () => {
     if (!selectedSymbol || playerName.trim() === "") {
-      alert("Please select a symbol and enter your name.");
+      setError("Please select a symbol and enter your name.");
       return;
     }
+    // Emit join event
+    socketApi.joinGame({ game: "tictactoe", pin, playerName, symbol: selectedSymbol });
     onSetupComplete({ symbol: selectedSymbol, name: playerName });
   };
 
@@ -67,11 +69,20 @@ const PreGameSetupTicTacToe = ({ mode, availableSymbol, onSetupComplete }) => {
         <input
           type="text"
           value={playerName}
-          onChange={(e) => setPlayerName(e.target.value)}
+          onChange={(e) => {
+            setPlayerName(e.target.value);
+            setError("");
+          }}
           placeholder="Enter Your Name"
         />
       </div>
-      <button onClick={handleStartGame}>Start Game</button>
+      {error && <div className={styles.errorMsg}>{error}</div>}
+      <button
+        onClick={handleStartGame}
+        disabled={!selectedSymbol || !playerName.trim()}
+      >
+        Start Game
+      </button>
     </div>
   );
 };
