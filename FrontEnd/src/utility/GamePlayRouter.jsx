@@ -18,8 +18,9 @@ const gameMap = {
   4: GameMinesweeper,
   guesspokemon: GuessPokemon,
   5: GuessPokemon,
-  6: Solitaire,
   solitaire: Solitaire,
+  6: Solitaire,
+  
   // Add more mappings for other games here
 };
 
