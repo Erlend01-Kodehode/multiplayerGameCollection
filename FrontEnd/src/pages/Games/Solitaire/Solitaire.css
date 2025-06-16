@@ -1,0 +1,261 @@
+
+
+.solitaire-game {
+  max-width: 1900px;
+  margin: 0 auto;
+  padding: 44px 24px 24px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.card-image {
+  width: clamp(72px, 8vw, 100px);
+  height: clamp(96px, 11vw, 140px);
+  object-fit: contain;
+  margin: 0;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.22);
+  background: white;
+  display: block;
+  z-index: 1;
+}
+
+.card-image.selected {
+  z-index: 2;
+}
+
+.card-image.win-slide {
+  animation: win-slide-right 1.5s cubic-bezier(0.4, 0.2, 0.2, 1) forwards;
+}
+
+@keyframes win-slide-right {
+  0% {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(800px) scale(0.9);
+    opacity: 0;
+  }
+}
+
+.empty,
+.waste,
+.stock,
+.foundation,
+.tableau-pile {
+  width: clamp(72px, 8vw, 100px);
+  height: clamp(96px, 11vw, 140px);
+  min-height: clamp(96px, 11vw, 140px);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.foundation {
+  border: 1.5px solid #ccc;
+  background: rgba(255, 255, 255, 0.08);
+  position: relative;
+}
+
+.empty {
+  background: rgba(0, 0, 0, 0.1);
+  font-size: 2.5rem;
+  color: #999;
+  font-weight: bold;
+  text-align: center;
+  user-select: none;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+}
+
+.selected {
+  outline: 3px solid gold;
+}
+
+.stock-row,
+.foundation-row,
+.tableau-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+  justify-content: flex-start;
+  width: 100%;
+  max-width: 1400px;
+}
+
+.stock-row {
+  max-width: 900px;
+}
+
+.tableau-pile {
+  position: relative;
+  margin-right: 0;
+}
+
+.button {
+  background: linear-gradient(90deg, #357a38 0%, #4caf50 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 28px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  /* Ikke margin her, kun i Navbar */
+}
+
+.button:hover,
+.button:focus {
+  background: linear-gradient(90deg, #2e7031 0%, #388e3c 100%);
+  transform: translateY(-2px) scale(1.04);
+  outline: none;
+}
+
+.button.small {
+  font-size: 0.8rem;
+  padding: 4px 10px;
+  margin: 0 4px;
+}
+
+.move-counter {
+  margin-left: 16px;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.waste-animate-in {
+  animation: waste-slide-in 0.3s cubic-bezier(0.4, 0.2, 0.2, 1);
+}
+
+@keyframes waste-slide-in {
+  from {
+    transform: translateY(-40px) scale(0.95) rotate(-5deg);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+.waste-flip {
+  animation: waste-flip-in 0.5s cubic-bezier(0.4, 0.2, 0.2, 1);
+  backface-visibility: hidden;
+}
+
+@keyframes waste-flip-in {
+  0% {
+    transform: perspective(400px) rotateY(90deg) scale(0.95);
+    opacity: 0.2;
+  }
+  60% {
+    transform: perspective(400px) rotateY(-10deg) scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: perspective(400px) rotateY(0deg) scale(1);
+    opacity: 1;
+  }
+}
+
+.moving-card {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  border-radius: 6px;
+}
+
+@keyframes win-fade-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -60%) scale(0.15);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.win-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  background: transparent;
+  pointer-events: all;
+}
+
+/* Vinner-popup */
+.win-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  color: #222;
+  border: 2px solid #357a38;
+  border-radius: 14px;
+  padding: 36px 32px 28px 32px;
+  z-index: 2001;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.25);
+  min-width: 320px;
+  text-align: center;
+  animation: win-fade-in 0.5s;
+}
+
+.win-popup h2 {
+  margin-top: 0;
+  color: #357a38;
+  font-size: 2rem;
+  margin-bottom: 12px;
+}
+
+.win-popup p {
+  font-size: 1.1rem;
+  margin-bottom: 18px;
+}
+
+.win-popup button {
+  margin-top: 12px;
+  padding: 8px 22px;
+  font-size: 1rem;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #357a38 0%, #4caf50 100%);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+
+.win-popup button:hover {
+  background: linear-gradient(90deg, #2e7031 0%, #388e3c 100%);
+}
+
+.win-popup ul {
+  text-align: left;
+  margin: 0 auto 0 auto;
+  padding: 0 0 0 18px;
+  max-height: 120px;
+  overflow-y: auto;
+  font-size: 0.97rem;
+}
+
+.win-popup h4 {
+  margin-bottom: 6px;
+  margin-top: 18px;
+  color: #357a38;
+  font-size: 1.1rem;
+}
