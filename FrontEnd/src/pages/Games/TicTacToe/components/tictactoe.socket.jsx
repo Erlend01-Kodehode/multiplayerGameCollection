@@ -1,5 +1,27 @@
 import socket from "../../Socket.jsx";
 
+/**
+ * Register all TicTacToe socket event handlers.
+ * @param {Object} params
+ * @param {(pin: string) => void} params.setGamePin
+ * @param {(symbol: "X"|"O"|null) => void} params.setPlayerSymbol
+ * @param {(name: string) => void} params.setPlayerName
+ * @param {(players: any[]) => void} params.setLobbyPlayers
+ * @param {(min: number) => void} params.setMinPlayersRequired
+ * @param {(max: number) => void} params.setMaxPlayersAllowed
+ * @param {(id: string) => void} params.setHostId
+ * @param {(mode: "host"|"join") => void} params.setGameMode
+ * @param {(waiting: boolean) => void} params.setIsWaitingInLobby
+ * @param {(setup: boolean) => void} params.setIsSetupComplete
+ * @param {(msg: string) => void} params.setGameStatusMessage
+ * @param {(squares: ("X"|"O"|null)[]) => void} params.setBoardSquares
+ * @param {(turn: string|null) => void} params.setCurrentTurn
+ * @param {(players: any[]) => void} params.setPlayers
+ * @param {(winner: "X"|"O"|null) => void} params.setWinner
+ * @param {(draw: boolean) => void} params.setIsDraw
+ * @param {Function} params.navigate
+ * @param {React.RefObject} params.boardRef
+ */
 export function registerTicTacToeSocketHandlers({
   setGamePin,
   setPlayerSymbol,
@@ -20,6 +42,7 @@ export function registerTicTacToeSocketHandlers({
   navigate,
   boardRef,
 }) {
+  // event: gameCreatedWaitingForPlayers
   socket.on("gameCreatedWaitingForPlayers", (data) => {
     setGamePin(data.pin);
     setPlayerSymbol(data.playerSymbol);
@@ -35,11 +58,13 @@ export function registerTicTacToeSocketHandlers({
     navigate(`?mode=host&pin=${data.pin}`, { replace: true });
   });
 
+  // event: playerJoinedLobby
   socket.on("playerJoinedLobby", (data) => {
     setLobbyPlayers(data.playersList);
     setGameStatusMessage(`Players: ${data.playersList.length}/${data.maxPlayers}. Waiting for more...`);
   });
 
+  // event: joinedLobby
   socket.on("joinedLobby", (data) => {
     setGamePin(data.pin);
     setPlayerSymbol(data.yourSymbol);
@@ -51,6 +76,7 @@ export function registerTicTacToeSocketHandlers({
     navigate(`?mode=join&pin=${data.pin}`, { replace: true });
   });
 
+  // event: gameReady
   socket.on("gameReady", (data) => {
     setGamePin(data.pin);
     setBoardSquares(data.board);
@@ -61,6 +87,7 @@ export function registerTicTacToeSocketHandlers({
     setGameStatusMessage("Game started!");
   });
 
+  // event: gameStateUpdate
   socket.on("gameStateUpdate", (data) => {
     setBoardSquares(data.board);
     setCurrentTurn(data.turn);
@@ -76,6 +103,7 @@ export function registerTicTacToeSocketHandlers({
     }
   });
 
+  // event: gameReset
   socket.on("gameReset", (data) => {
     setBoardSquares(data.board);
     setCurrentTurn(data.turn);
@@ -88,11 +116,13 @@ export function registerTicTacToeSocketHandlers({
     }
   });
 
+  // event: gameError
   socket.on("gameError", (error) => {
     setGameStatusMessage(`Error: ${error.message}`);
     alert(`Game Error: ${error.message}`);
   });
 
+  // event: playerDisconnected
   socket.on("playerDisconnected", (data) => {
     setGameStatusMessage(data.message);
     setIsSetupComplete(false);
@@ -102,6 +132,7 @@ export function registerTicTacToeSocketHandlers({
     alert("Host disconnected. The lobby was closed.");
   });
 
+  // event: gameTerminated
   socket.on("gameTerminated", (data) => {
     setGameStatusMessage(data.message);
     setIsSetupComplete(false);
@@ -112,14 +143,27 @@ export function registerTicTacToeSocketHandlers({
   });
 }
 
+/**
+ * Unregister all TicTacToe socket event handlers.
+ * @returns {void}
+ */
 export function unregisterTicTacToeSocketHandlers() {
+  // off: gameCreatedWaitingForPlayers
   socket.off("gameCreatedWaitingForPlayers");
+  // off: playerJoinedLobby
   socket.off("playerJoinedLobby");
+  // off: joinedLobby
   socket.off("joinedLobby");
+  // off: gameReady
   socket.off("gameReady");
+  // off: gameStateUpdate
   socket.off("gameStateUpdate");
+  // off: gameReset
   socket.off("gameReset");
+  // off: gameError
   socket.off("gameError");
+  // off: playerDisconnected
   socket.off("playerDisconnected");
+  // off: gameTerminated
   socket.off("gameTerminated");
 }

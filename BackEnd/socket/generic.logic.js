@@ -3,6 +3,12 @@ import { Server, Socket } from 'socket.io';
 const INACTIVE_THRESHOLD_MS = 30 * 60 * 1000; // 30 minutes
 let isCleanupScheduled = false;
 
+/**
+ * Periodically checks for and removes inactive games.
+ * @param {import("./socketio").ActiveGames} activeGames
+ * @param {Server} io
+ */
+
 function scheduleInactiveCleanup(activeGames, io) {
   if (isCleanupScheduled) return;
   isCleanupScheduled = true;
@@ -58,24 +64,10 @@ export class GenericGameState {
 }
 
 export class GenericGameLogic {
+  // Properties to be defined by subclasses
   gameType = "GenericGame";
   maxPlayers = 2;
   minPlayers = 2;
-
-  #socket;
-  #io;
-  #activeGames;
-
-  constructor(socket, io, activeGames) {
-    if (this.constructor === GenericGameLogic) {
-      throw new Error('Abstract class "GenericGameLogic" cannot be instantiated directly.');
-    }
-    this.#socket = socket;
-    this.#io = io;
-    this.#activeGames = activeGames;
-
-    scheduleInactiveCleanup(this.#activeGames, this.#io);
-  }
 
   // Abstract methods to be implemented by subclasses
   initializeGameData(hostSocketId, clientCreateData) {
@@ -101,6 +93,27 @@ export class GenericGameLogic {
   }
   beforeGameStart(game) {
     throw new Error(`"beforeGameStart" not implemented in ${this.constructor.name}`);
+  }
+
+  // Private properties
+  #socket;
+  #io;
+  #activeGames;
+
+  /**
+    * @param {Socket} socket
+    * @param {Server} io
+    * @param {import("./socketio").ActiveGames} activeGames
+    */
+  constructor(socket, io, activeGames) {
+    if (this.constructor === GenericGameLogic) {
+      throw new Error('Abstract class "GenericGameLogic" cannot be instantiated directly.');
+    }
+    this.#socket = socket;
+    this.#io = io;
+    this.#activeGames = activeGames;
+
+    scheduleInactiveCleanup(this.#activeGames, this.#io);
   }
 
   registerEventHandlers() {

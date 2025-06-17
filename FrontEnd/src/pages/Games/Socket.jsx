@@ -8,6 +8,14 @@ const socket = io(SOCKET_URL, {
 let _gameType = null; // Variable to store the current game type
 
 socket.game = {
+
+  /**
+   * @typedef {Object} GameType
+   * @property {function(): string} get - Get the current game type.
+   * @property {function(string): void} set - Set the game type.
+   * @property {string} value - The current game type.
+   */
+
   type: {
     get: () => _gameType,
     set: (type) => {

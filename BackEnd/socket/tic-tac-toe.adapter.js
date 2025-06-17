@@ -5,7 +5,12 @@ class TicTacToeGameLogic extends GenericGameLogic {
     maxPlayers = 2;
     minPlayers = 2;
 
-    // Initializes Tic Tac Toe game data.
+    /**
+     * Initializes Tic Tac Toe game data.
+     * @param {string} hostSocketId - The socket ID of the host.
+     * @param {object} clientCreateData - Data from the client (e.g., { name, pin, symbol (optional) }).
+     * @returns {{ initialPlayer: object, board: any[], turn: string, additionalGameState?: object }}
+     */
     initializeGameData(hostSocketId, clientCreateData) {
         const hostSymbol = clientCreateData.symbol || 'X'; // Host defaults to 'X' or picks a symbol
         return {
@@ -19,14 +24,22 @@ class TicTacToeGameLogic extends GenericGameLogic {
         };
     }
 
-    // Gets properties for a joining player in Tic Tac Toe.
+    /**
+     * Gets properties for a joining player in Tic Tac Toe.
+     * @param {any[]} currentPlayers - Array of current players in the game.
+     * @param {object} clientJoinData - Data from the joining client (e.g., { name, pin }).
+     * @returns {{ symbol: string }}
+     */
     getJoiningPlayerProps(currentPlayers, clientJoinData) {
         const hostPlayer = currentPlayers[0];
         const joiningSymbol = hostPlayer.symbol === "X" ? "O" : "X";
         return { symbol: joiningSymbol };
     }
 
-    // Sets the initial turn before the game starts. In Tic-Tac-Toe, 'X' always starts.
+    /**
+     * Sets the initial turn before the game starts. In Tic-Tac-Toe, 'X' always starts.
+     * @param {object} game The full game state object.
+     */
     beforeGameStart(game) {
         const playerX = game.players.find(p => p.symbol === 'X');
         if (playerX) {
@@ -86,7 +99,11 @@ class TicTacToeGameLogic extends GenericGameLogic {
         return nextPlayer ? nextPlayer.id : null;
     }
 
-    // Gets the state for a Tic Tac Toe game reset.
+    /**
+     * Gets the state for a Tic Tac Toe game reset.
+     * @param {object} game - The current game state.
+     * @returns {{ board: any[], turn: string }}
+     */
     getResetState(game) {
         const playerX = game.players.find(p => p.symbol === 'X');
         // 'X' should always start, even on reset. Fallback to host if 'X' isn't found.
@@ -98,8 +115,13 @@ class TicTacToeGameLogic extends GenericGameLogic {
     }
 }
 
-// Handles the logic for Tic Tac Toe games by instantiating the TicTacToeGameLogic class
-// for each new socket connection.
+/**
+ * Handles the logic for Tic Tac Toe games by instantiating the TicTacToeGameLogic class
+ * for each new socket connection.
+ * @param {import("socket.io").Socket} socket 
+ * @param {import("socket.io").Server} io 
+ * @param {import("./socketio.js").ActiveGames} activeGames 
+ */
 export default function (socket, io, activeGames) {
     const ticTacToeLogic = new TicTacToeGameLogic(socket, io, activeGames);
     ticTacToeLogic.registerEventHandlers();

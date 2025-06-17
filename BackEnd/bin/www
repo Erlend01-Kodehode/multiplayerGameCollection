@@ -2,7 +2,7 @@ import http from "http";
 import debug from "debug";
 import { Server } from "socket.io";
 import app from "../app.js";
-import socketManager from "../socket/socketio.js";
+import initializeSocketIO from "../socket/socketio.js";
 
 // Normalize port
 const port = ((+process.env.PORT) > 0 && +process.env.PORT) || 3000;
@@ -10,6 +10,8 @@ app.set("port", port);
 
 // Create HTTP server
 const server = http.createServer(app);
+server.on("error", onError);
+server.listen(port, "0.0.0.0", () => onListening());
 
 // Attach Socket.IO to server with CORS config
 const io = new Server(server, {
@@ -20,7 +22,7 @@ const io = new Server(server, {
 });
 
 // Initialize socket manager (handles all game logic and event registration)
-socketManager(io);
+initializeSocketIO(io);
 
 // Log socket.io connection errors
 io.engine.on("connection_error", (err) => {
@@ -29,10 +31,6 @@ io.engine.on("connection_error", (err) => {
   console.error(" Message:", err.message);
   if (err.context) console.error(" Context:", err.context);
 });
-
-// Start server
-server.listen(port, "0.0.0.0", () => onListening());
-server.on("error", onError);
 
 function onError(error) {
   if (error.syscall !== "listen") {
