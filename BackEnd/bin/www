@@ -5,13 +5,11 @@ import app from "../app.js";
 import socketManager from "../socket/socketio.js";
 
 // Normalize port
-const port = ((+process.env.PORT) > 0 && +process.env.PORT) || 3000
+const port = ((+process.env.PORT) > 0 && +process.env.PORT) || 3000;
 app.set("port", port);
 
 // Create HTTP server
 const server = http.createServer(app);
-httpServer.on("error", onError);
-httpServer.listen(port, "0.0.0.0", () => onListening());
 
 // Attach Socket.IO to server with CORS config
 const io = new Server(server, {
@@ -21,7 +19,7 @@ const io = new Server(server, {
   },
 });
 
-// Initialize socket manager
+// Initialize socket manager (handles all game logic and event registration)
 socketManager(io);
 
 // Log socket.io connection errors
@@ -33,9 +31,8 @@ io.engine.on("connection_error", (err) => {
 });
 
 // Start server
-server.listen(port);
+server.listen(port, "0.0.0.0", () => onListening());
 server.on("error", onError);
-server.on("listening", onListening);
 
 function onError(error) {
   if (error.syscall !== "listen") {
@@ -59,6 +56,6 @@ function onError(error) {
 function onListening() {
   var addr = server.address();
   var bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
-  debugLog("Listening on " + bind);
+  debug("Listening on " + bind);
   debug(`Server (and Socket.IO) listening on port ${addr.port}`);
 }

@@ -39,11 +39,11 @@
 }
 
 /* Colors for symbols */
-.squareX {
+.squareX, .squareX > p {
   color: rgb(255, 136, 67);
   font-weight: bolder;
 }
-.squareO {
+.squareO, .squareO > p {
   color: gold;
   font-weight: bolder;
 }
@@ -78,11 +78,16 @@
 .setupScreen h1 {
   color: #333;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.1rem;
 }
 
 .setupScreen h2 {
-  color: #555;
+  color: #424242;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.25);
+  margin-bottom: 1rem;
+}
+.setupScreen > span {
+  color: var(--grayout-text);
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.25);
   margin-bottom: 1rem;
 }
@@ -124,6 +129,22 @@
   font-size: 2rem;
   cursor: pointer;
   background-color: #fff;
+}
+.symbolOption > span {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+.symbolOption > span > p {
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  padding: 0;
+  margin: 0;
 }
 
 /* Highlighting the selected option */

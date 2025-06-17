@@ -6,44 +6,15 @@ import styles from "../../CSSModule/GameSession.module.css";
 const GameSession = ({ mode, game, onComplete }) => {
   const [pin, setPin] = useState("");
   const [error, setError] = useState("");
-  const [players, setPlayers] = useState([]);
 
   useEffect(() => {
+    socket.game.type.set(game);
+
     if (mode === "host") {
       generateNewPin();
     } else {
       setPin("");
-      setPlayers([]);
     }
-
-    socket.onPlayerList(game, setPlayers);
-    socket.onPlayerJoined(game, ({ playerName, socketId }) =>
-      setPlayers((prev) =>
-        prev.some((p) => p.id === socketId)
-          ? prev
-          : [...prev, { name: playerName, id: socketId }]
-      )
-    );
-    socket.onPlayerLeft(game, ({ socketId }) =>
-      setPlayers((prev) => prev.filter((p) => p.id !== socketId))
-    );
-    socket.onPlayerDisconnected(game, ({ socketId }) =>
-      setPlayers((prev) => prev.filter((p) => p.id !== socketId))
-    );
-
-    return () => {
-      socket.offAllGameSession(game, {
-        handlePlayerList: setPlayers,
-        handleJoin: ({ playerName, socketId }) =>
-          setPlayers((prev) =>
-            prev.some((p) => p.id === socketId)
-              ? prev
-              : [...prev, { name: playerName, id: socketId }]
-          ),
-        handleLeave: ({ socketId }) =>
-          setPlayers((prev) => prev.filter((p) => p.id !== socketId)),
-      });
-    };
     // eslint-disable-next-line
   }, [mode, game]);
 
@@ -116,16 +87,6 @@ const GameSession = ({ mode, game, onComplete }) => {
               New PIN
             </button>
           </div>
-          {players.length > 0 && (
-            <>
-              <p style={labelStyle}>Players Waiting:</p>
-              <ul className={styles.playerList}>
-                {players.map((p) => (
-                  <li key={p.id}>{p.name}</li>
-                ))}
-              </ul>
-            </>
-          )}
         </div>
       )}
 
