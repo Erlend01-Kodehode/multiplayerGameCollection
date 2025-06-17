@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useCallback } from "react";
-import socketApi from "./Socket.jsx";
+import React, { useEffect, useState } from "react";
+import socket from "./Socket.jsx";
 import { fetchNewPin, checkPin } from "../../utility/getAPI.jsx";
 import styles from "../../CSSModule/GameSession.module.css";
 
@@ -7,23 +7,6 @@ const GameSession = ({ mode, game, onComplete }) => {
   const [pin, setPin] = useState("");
   const [error, setError] = useState("");
   const [players, setPlayers] = useState([]);
-
-  // Memoized handlers for stable references
-  const handlePlayerList = useCallback((list) => setPlayers(list), []);
-  const handleJoin = useCallback(
-    ({ playerName, socketId }) =>
-      setPlayers((prev) =>
-        prev.some((p) => p.id === socketId)
-          ? prev
-          : [...prev, { name: playerName, id: socketId }]
-      ),
-    []
-  );
-  const handleLeave = useCallback(
-    ({ socketId }) =>
-      setPlayers((prev) => prev.filter((p) => p.id !== socketId)),
-    []
-  );
 
   useEffect(() => {
     if (mode === "host") {
@@ -33,21 +16,36 @@ const GameSession = ({ mode, game, onComplete }) => {
       setPlayers([]);
     }
 
-    socketApi.onPlayerList(game, handlePlayerList);
-    socketApi.onPlayerJoined(game, handleJoin);
-    socketApi.onPlayerLeft(game, handleLeave);
-    socketApi.onPlayerDisconnected(game, handleLeave);
+    socket.onPlayerList(game, setPlayers);
+    socket.onPlayerJoined(game, ({ playerName, socketId }) =>
+      setPlayers((prev) =>
+        prev.some((p) => p.id === socketId)
+          ? prev
+          : [...prev, { name: playerName, id: socketId }]
+      )
+    );
+    socket.onPlayerLeft(game, ({ socketId }) =>
+      setPlayers((prev) => prev.filter((p) => p.id !== socketId))
+    );
+    socket.onPlayerDisconnected(game, ({ socketId }) =>
+      setPlayers((prev) => prev.filter((p) => p.id !== socketId))
+    );
 
     return () => {
-      socketApi.offAllGameSession(game, {
-        handlePlayerList,
-        handleJoin,
-        handleLeave,
+      socket.offAllGameSession(game, {
+        handlePlayerList: setPlayers,
+        handleJoin: ({ playerName, socketId }) =>
+          setPlayers((prev) =>
+            prev.some((p) => p.id === socketId)
+              ? prev
+              : [...prev, { name: playerName, id: socketId }]
+          ),
+        handleLeave: ({ socketId }) =>
+          setPlayers((prev) => prev.filter((p) => p.id !== socketId)),
       });
     };
-    // Only re-run if mode or game changes
     // eslint-disable-next-line
-  }, [mode, game, handlePlayerList, handleJoin, handleLeave]);
+  }, [mode, game]);
 
   async function generateNewPin() {
     try {

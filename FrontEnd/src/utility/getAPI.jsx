@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:3000";
+export const API_BASE_URL = "http://localhost:3000";
 
 // Generic helper function for API calls using fetch.
 async function request(endpoint, method, body = null) {

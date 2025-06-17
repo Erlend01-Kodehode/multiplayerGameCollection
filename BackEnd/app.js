@@ -6,6 +6,7 @@ import logger from "morgan";
 import cors from "cors";
 import { fileURLToPath } from "url";
 
+// Import routers
 import indexRouter from "./routes/index.js";
 import usersRouter from "./routes/users.js";
 import apiRouter from "./routes/api.js";
@@ -16,7 +17,7 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Middleware
+// Standard middleware
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -24,9 +25,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 // Use CORS with environment-configured frontend origin
-app.use(cors({
-  origin: process.env.CLIENT_ORIGIN || "*"
-}));
+app.use(cors());
 
 // Routes
 app.use("/", indexRouter);
@@ -39,10 +38,14 @@ app.use((req, res, next) => {
 });
 
 // Error handler
-app.use((err, req, res, next) => {
-  res.status(err.status || 500).json({
+app.use(function (err, req, res, next) {
+  res.locals.message = err.message;
+  res.locals.error = req.app.get("env") === "development" ? err : {};
+
+  res.status(err.status || 500);
+  res.json({
     message: err.message,
-    error: req.app.get("env") === "development" ? err : {},
+    error: req.app.get("env") === "development" ? err : {}
   });
 });
 
