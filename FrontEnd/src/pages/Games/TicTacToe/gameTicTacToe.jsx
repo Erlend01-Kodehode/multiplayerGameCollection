@@ -6,6 +6,7 @@ import { ResetButton } from "../../../components/Buttons.jsx";
 import styles from "../../../CSSModule/gameCSS/tictactoeGame.module.css";
 import { registerTicTacToeSocketHandlers, unregisterTicTacToeSocketHandlers } from "./components/tictactoe.socket.jsx";
 import socket from "../Socket.jsx";
+import Confirmation from "../../../components/UI/Confirmation.jsx";
 
 const GameTicTacToe = () => {
   const boardRef = useRef();
@@ -40,6 +41,10 @@ const GameTicTacToe = () => {
   const [bot, setBot] = useState(null);
   const [botPlayer, setBotPlayer] = useState(null);
 
+  // --- Reset confirmation state ---
+  const [resetRequestedBy, setResetRequestedBy] = useState(null);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
+
   const multiplayer = !!gamePin;
 
   useEffect(() => {
@@ -64,6 +69,8 @@ const GameTicTacToe = () => {
         setIsDraw,
         navigate,
         boardRef,
+        setResetRequestedBy,
+        setShowResetConfirm,
       });
       return () => {
         unregisterTicTacToeSocketHandlers();
@@ -262,12 +269,38 @@ const GameTicTacToe = () => {
   const filteredStatusMessage =
     multiplayer && gameStatusMessage.startsWith("Turn:") ? "" : gameStatusMessage;
 
+  // --- Show current turn with color for X/O in multiplayer ---
+  let turnDisplay = null;
+  if (multiplayer && currentTurn && players.length > 0) {
+    const currentPlayer = players.find(p => p.id === currentTurn);
+    if (currentPlayer) {
+      turnDisplay = (
+        <div style={{ fontSize: "1.3rem", marginBottom: "12px"}}>
+          Turn: <b>{currentPlayer.name}</b> (
+          <span
+            className={
+              currentPlayer.symbol === "X"
+                ? styles.squareX
+                : currentPlayer.symbol === "O"
+                ? styles.squareO
+                : undefined
+            }
+          >
+            {currentPlayer.symbol}
+          </span>
+          )
+        </div>
+      );
+    }
+  }
+
   // --- Main Game ---
   return (
     <div className={styles.game}>
       {gamePin && <h2>Your game PIN is: {gamePin}</h2>}
       {renderBotControls()}
       <h1>Tic Tac Toe</h1>
+      {turnDisplay}
       <Board
         ref={boardRef}
         props={{
@@ -285,13 +318,16 @@ const GameTicTacToe = () => {
         }}
       />
       <ResetButton onClick={() => {
-        setBoardSquares(Array(9).fill(null));
-        setWinner(null);
-        setIsDraw(false);
-        setCurrentTurn("X");
-        setBotPlayer(null);
-        setGameStatusMessage("Game reset.");
-        if (!multiplayer) {
+        if (multiplayer) {
+          socket.emit("requestResetConfirmation", { pin: gamePin });
+          setGameStatusMessage("Reset request sent. Waiting for other player to confirm.");
+        } else {
+          setBoardSquares(Array(9).fill(null));
+          setWinner(null);
+          setIsDraw(false);
+          setCurrentTurn("X");
+          setBotPlayer(null);
+          setGameStatusMessage("Game reset.");
           setBot(null);
           if (boardRef.current && boardRef.current.resetBoard) {
             boardRef.current.resetBoard();
@@ -301,6 +337,25 @@ const GameTicTacToe = () => {
       {multiplayer && (
         <p className={styles.statusMessage}>{filteredStatusMessage}</p>
       )}
+
+      <Confirmation
+        open={showResetConfirm}
+        message={
+          resetRequestedBy
+            ? `${resetRequestedBy} wants to reset the game. Do you accept?`
+            : "Opponent wants to reset the game. Do you accept?"
+        }
+        onConfirm={() => {
+          socket.emit("confirmReset", { pin: gamePin, accept: true });
+          setShowResetConfirm(false);
+        }}
+        onCancel={() => {
+          socket.emit("confirmReset", { pin: gamePin, accept: false });
+          setShowResetConfirm(false);
+        }}
+        confirmText="Accept"
+        cancelText="Decline"
+      />
     </div>
   );
 };

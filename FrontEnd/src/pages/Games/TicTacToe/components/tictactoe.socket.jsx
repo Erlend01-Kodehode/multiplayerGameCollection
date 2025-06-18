@@ -21,6 +21,8 @@ import socket from "../../Socket.jsx";
  * @param {(draw: boolean) => void} params.setIsDraw
  * @param {Function} params.navigate
  * @param {React.RefObject} params.boardRef
+ * @param {(string|null) => void} [params.setResetRequestedBy]
+ * @param {(boolean) => void} [params.setShowResetConfirm]
  */
 export function registerTicTacToeSocketHandlers({
   setGamePin,
@@ -41,6 +43,8 @@ export function registerTicTacToeSocketHandlers({
   setIsDraw,
   navigate,
   boardRef,
+  setResetRequestedBy,
+  setShowResetConfirm,
 }) {
   // event: gameCreatedWaitingForPlayers
   socket.on("gameCreatedWaitingForPlayers", (data) => {
@@ -142,6 +146,25 @@ export function registerTicTacToeSocketHandlers({
     navigate(`/game/info/tictactoe`, { replace: true });
     alert("Game terminated.");
   });
+
+  // --- Reset confirmation request handler ---
+  socket.on("resetConfirmationRequested", (data) => {
+    if (setResetRequestedBy) setResetRequestedBy(data.requestedByName || "Opponent");
+    if (setShowResetConfirm) setShowResetConfirm(true);
+    setGameStatusMessage(`${data.requestedByName || "Opponent"} wants to reset the game.`);
+  });
+
+  // --- Reset confirmed handler ---
+  socket.on("resetConfirmed", () => {
+    setGameStatusMessage("Game reset.");
+    if (setShowResetConfirm) setShowResetConfirm(false);
+  });
+
+  // --- Reset declined handler ---
+  socket.on("resetDeclined", () => {
+    setGameStatusMessage("Reset request was declined.");
+    if (setShowResetConfirm) setShowResetConfirm(false);
+  });
 }
 
 /**
@@ -149,22 +172,16 @@ export function registerTicTacToeSocketHandlers({
  * @returns {void}
  */
 export function unregisterTicTacToeSocketHandlers() {
-  // off: gameCreatedWaitingForPlayers
   socket.off("gameCreatedWaitingForPlayers");
-  // off: playerJoinedLobby
   socket.off("playerJoinedLobby");
-  // off: joinedLobby
   socket.off("joinedLobby");
-  // off: gameReady
   socket.off("gameReady");
-  // off: gameStateUpdate
   socket.off("gameStateUpdate");
-  // off: gameReset
   socket.off("gameReset");
-  // off: gameError
   socket.off("gameError");
-  // off: playerDisconnected
   socket.off("playerDisconnected");
-  // off: gameTerminated
   socket.off("gameTerminated");
+  socket.off("resetConfirmationRequested");
+  socket.off("resetConfirmed");
+  socket.off("resetDeclined");
 }

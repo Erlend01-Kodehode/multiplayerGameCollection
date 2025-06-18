@@ -11,7 +11,7 @@ let isCleanupScheduled = false;
 function scheduleInactiveGameCleanup(activeGames, io) {
     if (isCleanupScheduled) return;
     isCleanupScheduled = true;
-    
+
     console.log("Scheduling cleanup task for inactive games.");
 
     setInterval(() => {
@@ -21,6 +21,7 @@ function scheduleInactiveGameCleanup(activeGames, io) {
             if (now - (game.lastActivity || 0) > INACTIVE_THRESHOLD_MS) {
                 console.log(`Closing inactive game ${pin} (${game.gameType}). Last activity: ${new Date(game.lastActivity).toISOString()}`);
                 io.to(pin).emit("gameError", { message: "The game was closed due to inactivity." });
+                io.to(pin).emit("checkers:gameInactive", { pin });
                 delete activeGames[pin];
             }
         }
@@ -54,7 +55,6 @@ export class GenericGameState {
         if (stateName in this.#internalGameStates) {
             throw new Error(`State name ${stateName} is already defined in the internal game states.`);
         }
-
         this.#customGameStates[stateName] = this.#customGameStates.length + 100;
     }
 
@@ -116,6 +116,8 @@ export class GenericGameLogic {
         this.#socket.on("hostInitiatesGameStart", this.#handleHostInitiatesGameStart.bind(this));
         this.#socket.on("performAction", this.#handlePerformAction.bind(this));
         this.#socket.on("requestReset", this.#handleRequestReset.bind(this));
+        this.#socket.on("requestResetConfirmation", this.#handleRequestResetConfirmation.bind(this));
+        this.#socket.on("confirmReset", this.#handleConfirmReset.bind(this));
         this.#socket.on("disconnect", this.#handleDisconnect.bind(this));
     }
 
@@ -216,7 +218,7 @@ export class GenericGameLogic {
         if (game.players.length >= game.minPlayers) {
             this.#io.to(game.hostId).emit("hostReadyToStart", { pin: clientData.pin, gameType: game.gameType });
         }
-        
+
         if (game.players.length === game.maxPlayers) {
             console.log(`Game ${clientData.pin} (${game.gameType}) reached max players. Starting automatically.`);
             this.beforeGameStart(game);
@@ -331,6 +333,72 @@ export class GenericGameLogic {
         }
     }
 
+    // --- Handle reset confirmation request ---
+    #handleRequestResetConfirmation(clientData) {
+        if (!clientData.pin) {
+            this.#socket.emit("gameError", { message: "PIN must be provided for reset confirmation." });
+            return;
+        }
+        const game = this.#activeGames[clientData.pin];
+        if (!game) {
+            this.#socket.emit("gameError", { message: "Game not found for reset confirmation." });
+            return;
+        }
+        if (!game.gameStarted) {
+            this.#socket.emit("gameError", { message: "Cannot reset a game that hasn't started." });
+            return;
+        }
+        // Find the other player
+        const otherPlayer = game.players.find(p => p.id !== this.#socket.id);
+        const requestingPlayer = game.players.find(p => p.id === this.#socket.id);
+        if (otherPlayer) {
+            this.#io.to(otherPlayer.id).emit("resetConfirmationRequested", {
+                requestedById: this.#socket.id,
+                requestedByName: requestingPlayer ? requestingPlayer.name : "Opponent",
+                pin: clientData.pin,
+            });
+        }
+    }
+
+    // --- Handle reset confirmation response ---
+    #handleConfirmReset(clientData) {
+        if (!clientData.pin) {
+            this.#socket.emit("gameError", { message: "PIN must be provided for reset confirmation." });
+            return;
+        }
+        const game = this.#activeGames[clientData.pin];
+        if (!game) {
+            this.#socket.emit("gameError", { message: "Game not found for reset confirmation." });
+            return;
+        }
+        if (!game.gameStarted) {
+            this.#socket.emit("gameError", { message: "Cannot reset a game that hasn't started." });
+            return;
+        }
+        if (clientData.accept) {
+            // Both players agreed, do the reset
+            const resetState = this.getResetState(game);
+            game.board = resetState.board;
+            game.turn = resetState.turn;
+            if (resetState.additionalGameState) {
+                Object.assign(game, resetState.additionalGameState);
+            }
+            this.#io.to(clientData.pin).emit("gameReset", {
+                board: game.board,
+                turn: game.turn,
+                playersData: game.players.map(p => ({ id: p.id, name: p.name, symbol: p.symbol })),
+                message: "Game reset by agreement.",
+                gameType: game.gameType
+            });
+            this.#io.to(clientData.pin).emit("resetConfirmed");
+            console.log(`Game ${clientData.pin} (${game.gameType}) was reset by agreement.`);
+        } else {
+            // Declined
+            this.#io.to(clientData.pin).emit("resetDeclined");
+            console.log(`Game ${clientData.pin} (${game.gameType}) reset request was declined.`);
+        }
+    }
+
     #handleDisconnect() {
         console.log(`User Disconnected: ${this.#socket.id}`);
         for (const pin in this.#activeGames) {
@@ -342,76 +410,76 @@ export class GenericGameLogic {
                 continue;
             }
 
-                const disconnectedPlayer = game.players[playerIndex];
-                console.log(`Player ${disconnectedPlayer.name} (${this.#socket.id}) disconnected from game ${pin} (${game.gameType})`);
+            const disconnectedPlayer = game.players[playerIndex];
+            console.log(`Player ${disconnectedPlayer.name} (${this.#socket.id}) disconnected from game ${pin} (${game.gameType})`);
 
-                if (!game.gameStarted) { // Player disconnected from lobby
-                    game.players.splice(playerIndex, 1);
-                    console.log(`Player ${disconnectedPlayer.name} removed from lobby ${pin}. Remaining: ${game.players.length}`);
+            if (!game.gameStarted) { // Player disconnected from lobby
+                game.players.splice(playerIndex, 1);
+                console.log(`Player ${disconnectedPlayer.name} removed from lobby ${pin}. Remaining: ${game.players.length}`);
 
-                    if (game.players.length === 0) {
-                        console.log(`Lobby ${pin} (${game.gameType}) is empty and closing.`);
-                        delete this.#activeGames[pin];
-                        break; 
-                    }
+                if (game.players.length === 0) {
+                    console.log(`Lobby ${pin} (${game.gameType}) is empty and closing.`);
+                    delete this.#activeGames[pin];
+                    break; 
+                }
                     
-                    if (this.#socket.id !== game.hostId && this.#activeGames[pin]) {
-                         this.#io.to(game.hostId).emit("playerLeftLobby", {
-                            pin: pin,
-                            playersList: game.players.map(p => ({ id: p.id, name: p.name, symbol: p.symbol })),
-                            disconnectedPlayerName: disconnectedPlayer.name,
-                            gameType: game.gameType
-                        });
+                if (this.#socket.id !== game.hostId && this.#activeGames[pin]) {
+                     this.#io.to(game.hostId).emit("playerLeftLobby", {
+                        pin: pin,
+                        playersList: game.players.map(p => ({ id: p.id, name: p.name, symbol: p.symbol })),
+                        disconnectedPlayerName: disconnectedPlayer.name,
+                        gameType: game.gameType
+                    });
 
-                        if (game.players.length < game.minPlayers) {
-                            this.#io.to(game.hostId).emit("hostCannotStartAnymore", { pin: pin, gameType: game.gameType });
-                        }
-                    } else if (this.#socket.id === game.hostId && this.#activeGames[pin]) {
-                        console.log(`Host of lobby ${pin} disconnected. Closing lobby.`);
-                        this.#socket.to(pin).emit("gameError", { message: "Host disconnected. The lobby is closing." });
-                        delete this.#activeGames[pin];
+                    if (game.players.length < game.minPlayers) {
+                        this.#io.to(game.hostId).emit("hostCannotStartAnymore", { pin: pin, gameType: game.gameType });
                     }
+                } else if (this.#socket.id === game.hostId && this.#activeGames[pin]) {
+                    console.log(`Host of lobby ${pin} disconnected. Closing lobby.`);
+                    this.#socket.to(pin).emit("gameError", { message: "Host disconnected. The lobby is closing." });
+                    delete this.#activeGames[pin];
+                }
 
-                } else { // Player disconnected from an ongoing game
-                    const isHost = this.#socket.id === game.hostId;
-                    game.players.splice(playerIndex, 1);
+            } else { // Player disconnected from an ongoing game
+                const isHost = this.#socket.id === game.hostId;
+                game.players.splice(playerIndex, 1);
 
-                    if (isHost || game.players.length < game.minPlayers) {
-                        const reason = isHost 
-                            ? `The game has ended because the host, ${disconnectedPlayer.name}, has disconnected.`
-                            : `The game was ended because a player disconnected and there are not enough players to continue.`;
-                        
-                        console.log(`Game ${pin} (${game.gameType}) is being closed. ${isHost ? 'Host disconnected.' : 'Insufficient players.'}`);
-                        
-                        this.#io.to(pin).emit("gameTerminated", {
-                            message: reason,
-                            pin: pin,
-                            gameType: game.gameType,
-                        });
-                        delete this.#activeGames[pin];
-                    } else {
-                        // Game continues
-                        let message = `${disconnectedPlayer.name} has disconnected.`;
-                        if (game.turn === this.#socket.id) {
-                            // It was the disconnected player's turn. Pass it to the next player.
-                            const nextPlayerIndex = playerIndex % game.players.length;
-                            const nextPlayer = game.players[nextPlayerIndex];
-                            game.turn = nextPlayer.id;
-                            message = `${disconnectedPlayer.name} has disconnected. It's now ${nextPlayer.name}'s turn.`;
-                            console.log(`Turn was with disconnected player in game ${pin}. Reassigning to ${nextPlayer.name} (${nextPlayer.id}).`);
-                        }
-                
-                        this.#io.to(pin).emit("playerDisconnected", {
-                            message: message,
-                            disconnectedPlayerId: this.#socket.id,
-                            playersList: game.players.map(p => ({ id: p.id, name: p.name, symbol: p.symbol })),
-                            turn: game.turn,
-                            pin: pin,
-                            gameType: game.gameType
-                        });
+                if (isHost || game.players.length < game.minPlayers) {
+                    const reason = isHost 
+                        ? `The game has ended because the host, ${disconnectedPlayer.name}, has disconnected.`
+                        : `The game was ended because a player disconnected and there are not enough players to continue.`;
+                    
+                    console.log(`Game ${pin} (${game.gameType}) is being closed. ${isHost ? 'Host disconnected.' : 'Insufficient players.'}`);
+                    
+                    this.#io.to(pin).emit("gameTerminated", {
+                        message: reason,
+                        pin: pin,
+                        gameType: game.gameType,
+                    });
+                    delete this.#activeGames[pin];
+                } else {
+                    // Game continues
+                    let message = `${disconnectedPlayer.name} has disconnected.`;
+                    if (game.turn === this.#socket.id) {
+                        // It was the disconnected player's turn. Pass it to the next player.
+                        const nextPlayerIndex = playerIndex % game.players.length;
+                        const nextPlayer = game.players[nextPlayerIndex];
+                        game.turn = nextPlayer.id;
+                        message = `${disconnectedPlayer.name} has disconnected. It's now ${nextPlayer.name}'s turn.`;
+                        console.log(`Turn was with disconnected player in game ${pin}. Reassigning to ${nextPlayer.name} (${nextPlayer.id}).`);
                     }
-                break; 
-            }
+            
+                    this.#io.to(pin).emit("playerDisconnected", {
+                        message: message,
+                        disconnectedPlayerId: this.#socket.id,
+                        playersList: game.players.map(p => ({ id: p.id, name: p.name, symbol: p.symbol })),
+                        turn: game.turn,
+                        pin: pin,
+                        gameType: game.gameType
+                    });
+                }
+            break; 
         }
     }
+  }
 }
