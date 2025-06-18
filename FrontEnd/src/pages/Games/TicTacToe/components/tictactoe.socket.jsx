@@ -44,6 +44,7 @@ export function registerTicTacToeSocketHandlers({
 }) {
   // event: gameCreatedWaitingForPlayers
   socket.on("gameCreatedWaitingForPlayers", (data) => {
+    console.log("Game created:", data);
     setGamePin(data.pin);
     setPlayerSymbol(data.playerSymbol);
     setPlayerName(data.playerName);

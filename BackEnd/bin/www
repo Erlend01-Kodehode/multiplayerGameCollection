@@ -54,6 +54,8 @@ function onError(error) {
 function onListening() {
   var addr = server.address();
   var bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
+  const host = addr.address === "::" ? "localhost" : addr.address;
+  console.log(`Server address: ${host}:${addr.port}`);
   debug("Listening on " + bind);
   debug(`Server (and Socket.IO) listening on port ${addr.port}`);
 }

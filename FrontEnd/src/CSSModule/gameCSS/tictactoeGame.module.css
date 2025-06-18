@@ -59,7 +59,7 @@
 /* PreGameSetup (Tic Tac Toe)    */
 /* ============================= */
 
-/* Container for the pre-game setup screen */
+/* Container for the pre-game setup screen and lobby */
 .setupScreen {
   display: flex;
   flex-direction: column;
@@ -74,7 +74,6 @@
   max-width: 400px;
 }
 
-/* Headings inside the setup screen */
 .setupScreen h1 {
   color: #333;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
@@ -86,10 +85,19 @@
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.25);
   margin-bottom: 1rem;
 }
-.setupScreen > span {
-  color: var(--grayout-text);
+
+.setupScreen > span,
+.gameMode {
+  color: var(--grayout-text, #888);
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.25);
   margin-bottom: 1rem;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.pin > strong {
+  margin: 0;
+  color: #e53935;
 }
 
 /* Container for all setup content */
@@ -117,7 +125,6 @@
   margin-top: 16px;
 }
 
-/* In Tic Tac Toe, each option is our “symbolOption” */
 .symbolOption {
   width: 60px;
   height: 60px;
@@ -129,6 +136,10 @@
   font-size: 2rem;
   cursor: pointer;
   background-color: #fff;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.symbolOption:hover {
+  box-shadow: 0 0 8px 2px rgba(229, 57, 53, 0.15);
 }
 .symbolOption > span {
   display: flex;
@@ -162,7 +173,7 @@
   justify-content: center;
 }
 
-.nameEntry input {
+.nameInput {
   font-weight: 500;
   color: #333;
   padding: 8px;
@@ -172,14 +183,15 @@
   width: 80%;
 }
 
-.nameEntry input::placeholder {
+.nameInput::placeholder {
   font-weight: lighter;
   color: #a0a0a0;
   font-style: italic;
 }
 
 /* Style for the setup button */
-.setupScreen button {
+.startButton,
+.startButtonLobby {
   padding: 10px 20px;
   font-size: 1rem;
   border: none;
@@ -191,6 +203,67 @@
   transition: background-color 0.2s;
 }
 
-.setupScreen button:hover {
+.startButton:hover,
+.startButtonLobby:hover {
   background-color: #d32f2f;
+}
+
+/* ============================= */
+/* Lobby Styles                  */
+/* ============================= */
+
+.playerListLobby {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.playerItemLobby {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 6px;
+  padding: 8px 12px;
+  font-weight: 500;
+  color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  font-size: 1.05rem;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+
+.statusMessageLobby {
+  color: #e53935;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+.waitingForPlayers {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 1rem 0;
+}
+
+.spinner {
+  border: 4px solid #eee;
+  border-top: 4px solid #e53935;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 0.5rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg);}
+  100% { transform: rotate(360deg);}
 }

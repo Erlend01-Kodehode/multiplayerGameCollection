@@ -7,89 +7,31 @@ import styles from "../../../CSSModule/gameCSS/tictactoeGame.module.css";
 import { registerTicTacToeSocketHandlers, unregisterTicTacToeSocketHandlers } from "./components/tictactoe.socket.jsx";
 import socket from "../Socket.jsx";
 
-/** 
- * @typedef {"X" | "O"} Symbol 
- * @typedef {Symbol | null} Winner 
- * @typedef {boolean} IsDraw
- * @typedef {boolean} IsSetupComplete
- * @typedef {boolean} IsWaitingInLobby
- * @typedef {boolean} CanHostStartGame
- * @typedef {boolean} IsMultiplayer
- * @typedef {boolean} IsLobbyView
- * @typedef {string} GamePin
- * @typedef {"host" | "join"} GameMode
- * @typedef {Symbol} PlayerSymbol
- * @typedef {string} SocketId
- * @typedef {string} PlayerName
- * 
- * @typedef {Object} Player
- * @property {SocketId} id
- * @property {PlayerName} name
- * @property {PlayerSymbol} symbol // TODO: Should be deprecated in favor of id
- * 
- * @typedef {Object} GameCreatedWaitingForPlayersData
- * @property {GamePin} pin
- * @property {PlayerSymbol} playerSymbol
- * @property {PlayerName} playerName
- * @property {Player[]} playersList
- * @property {number} minPlayers
- * @property {number} maxPlayers
- * @property {SocketId} hostId
- * 
- * @typedef {Object} PlayerJoinedLobbyData
- * @property {GamePin} pin
- * @property {Player[]} playersList
- * @property {GameType} gameType
- * 
- * @typedef {Object} GameStateUpdateData
- * @property {Symbol[]} board
- * @property {SocketId} turn
- * @property {Symbol | null} winner
- * @property {boolean} isDraw
- * @property {Player[]} playersData
- */
-
 const GameTicTacToe = () => {
   const boardRef = useRef();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  /** @type {string | null} */
   const initialPin = searchParams.get("pin");
-  /** @type {GameMode} */
   const initialMode = searchParams.get("mode") || (initialPin ? "join" : "host");
 
-  /** @type {[GamePin | null, (pin: GamePin | null) => void]} */
   const [gamePin, setGamePin] = useState(initialPin);
-  /** @type {[GameMode, (mode: GameMode) => void]} */
   const [gameMode, setGameMode] = useState(initialMode);
 
-  /** @type {[boolean, (isSetupComplete: boolean) => void]} */
   const [isSetupComplete, setIsSetupComplete] = useState(false);
-  /** @type {[PlayerSymbol | null, (symbol: PlayerSymbol | null) => void]} */
-  const [playerSymbol, setPlayerSymbol] = useState(null); 
-  /** @type {[PlayerName, (name: PlayerName) => void]} */
+  const [playerSymbol, setPlayerSymbol] = useState(null);
   const [playerName, setPlayerName] = useState("");
-  
-  /** @type {[("X" | "O" | null)[], (squares: ("X" | "O" | null)[]) => void]} */
   const [boardSquares, setBoardSquares] = useState(Array(9).fill(null));
-  /** @type {string | null} */
   const [currentTurn, setCurrentTurn] = useState(null);
-  /** @type {string | null} */
-  const [winner, setWinner] = useState(null); // 'X' or 'O'
-  /** @type {boolean} */
+  const [winner, setWinner] = useState(null);
   const [isDraw, setIsDraw] = useState(false);
-  const [players, setPlayers] = useState([]); // Array of player objects {id, name, symbol}
+  const [players, setPlayers] = useState([]);
   const [gameStatusMessage, setGameStatusMessage] = useState("Setting up game...");
 
   // Lobby states
-  /** @type {[boolean, (isWaitingInLobby: boolean) => void]} */
   const [isWaitingInLobby, setIsWaitingInLobby] = useState(false);
-  /** @type {[Player[], (players: Player[]) => void]} */
   const [lobbyPlayers, setLobbyPlayers] = useState([]);
-  /** @type {[boolean, (canHostStartGame: boolean) => void]} */
   const [canHostStartGame, setCanHostStartGame] = useState(false);
-  /** @type {[number, (minPlayersRequired: number) => void]} */
   const [minPlayersRequired, setMinPlayersRequired] = useState(2);
   const [maxPlayersAllowed, setMaxPlayersAllowed] = useState(2);
   const [hostId, setHostId] = useState(null);
@@ -198,6 +140,25 @@ const GameTicTacToe = () => {
     [boardSquares, currentTurn, winner, isDraw, bot, botPlayer]
   );
 
+  // --- Multiplayer move handler ---
+  const handleMultiplayerSquareClick = useCallback(
+    (index) => {
+      if (winner || isDraw || boardSquares[index]) return;
+      // Only allow move if it's your turn (by socket id)
+      if (currentTurn !== socket.id) return;
+      const me = players.find(p => p.id === socket.id);
+      if (!me) return;
+      socket.emit("performAction", {
+        pin: gamePin,
+        action: {
+          squareIndex: index,
+          playerSymbol: me.symbol,
+        }
+      });
+    },
+    [winner, isDraw, boardSquares, players, currentTurn, gamePin]
+  );
+
   // Host starts game
   const handleHostStartsGame = useCallback(() => {
     if (gamePin && canHostStartGame) {
@@ -223,14 +184,16 @@ const GameTicTacToe = () => {
     </div>
   );
 
-  // Render PreGameSetupTicTacToe for all pre-game and lobby states
-  if (!isSetupComplete) {
+  // --- Explicit Lobby/Setup Screens ---
+
+  // Host Lobby View
+  if (!isSetupComplete && isWaitingInLobby && gameMode === 'host') {
     return (
       <PreGameSetupTicTacToe
         mode={gameMode}
         pin={gamePin}
-        isMultiplayer={multiplayer}
-        isLobbyView={isWaitingInLobby}
+        isMultiplayer={true}
+        isLobbyView={true}
         lobbyPlayers={lobbyPlayers}
         canStart={canHostStartGame}
         minPlayers={minPlayersRequired}
@@ -238,15 +201,68 @@ const GameTicTacToe = () => {
         onStartGame={handleHostStartsGame}
         gameStatusMessage={gameStatusMessage}
         currentClientSocketId={socket.id}
-        availableSymbol={playerSymbol}
-        onSetupComplete={(data) => {
-          setPlayerName(data.name);
-          setIsSetupComplete(true);
-        }}
       />
     );
   }
 
+  // Join Lobby View
+  if (!isSetupComplete && isWaitingInLobby && gameMode === 'join') {
+    return (
+      <div className={styles.setupScreen}>
+        <h1>Tic Tac Toe - Lobby</h1>
+        <p>Game PIN: {gamePin}</p>
+        <p>{gameStatusMessage}</p>
+        <h2>Players Connected:</h2>
+        <ul className={styles.playerListLobby}>
+          {lobbyPlayers.map((player, index) => (
+            <li key={player.id || index} className={styles.playerItemLobby}>
+              {player.name} ({player.symbol || 'Joining...'}) {player.id === socket.id ? "(You)" : ""}
+            </li>
+          ))}
+        </ul>
+        {lobbyPlayers.length < minPlayersRequired && <p>Waiting for more players...</p>}
+        {lobbyPlayers.length < minPlayersRequired && <div className={styles.spinner}></div>}
+        <p style={{marginTop: '20px'}}><em>Waiting for the host to start the game or for more players to join.</em></p>
+      </div>
+    );
+  }
+
+  // Pregame Setup (host/join, before lobby)
+  if (!isSetupComplete && !isWaitingInLobby) {
+    return (
+      <PreGameSetupTicTacToe
+        mode={gameMode}
+        pin={gamePin}
+        isMultiplayer={multiplayer}
+        availableSymbol={playerSymbol}
+        onSetupComplete={(data) => {
+          setPlayerName(data.name);
+          socket.emit("gameType", { type: "TicTacToe" });
+          if (gameMode === "host") {
+            socket.emit("createGame", {
+              name: data.name,
+              symbol: data.symbol,
+              pin: gamePin,
+              gameType: "TicTacToe",
+            });
+          } else if (gameMode === "join") {
+            socket.emit("joinGame", {
+              pin: gamePin,
+              name: data.name,
+              gameType: "TicTacToe",
+            });
+            setGameStatusMessage(`Joining game with PIN: ${gamePin}...`);
+          }
+        }}
+        gameStatusMessage={gameStatusMessage}
+      />
+    );
+  }
+  
+  const filteredStatusMessage =
+    multiplayer && gameStatusMessage.startsWith("Turn:") ? "" : gameStatusMessage;
+
+  // --- Main Game ---
   return (
     <div className={styles.game}>
       {gamePin && <h2>Your game PIN is: {gamePin}</h2>}
@@ -259,7 +275,7 @@ const GameTicTacToe = () => {
           botPlayer,
           squares: boardSquares,
           onSquareClick: multiplayer
-            ? undefined // multiplayer handled by socket
+            ? handleMultiplayerSquareClick
             : handleLocalSquareClick,
           playerSymbol,
           currentTurn,
@@ -283,7 +299,7 @@ const GameTicTacToe = () => {
         }
       }} style={{ marginTop: "1rem" }} />
       {multiplayer && (
-        <p className={styles.statusMessage}>{gameStatusMessage}</p>
+        <p className={styles.statusMessage}>{filteredStatusMessage}</p>
       )}
     </div>
   );

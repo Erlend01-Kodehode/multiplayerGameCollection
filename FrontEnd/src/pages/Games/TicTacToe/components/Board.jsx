@@ -1,7 +1,6 @@
-import React, { useState, forwardRef, useImperativeHandle } from "react";
+import React, { useState, forwardRef, useImperativeHandle, useEffect } from "react";
 import styles from "../../../../CSSModule/gameCSS/tictactoeGame.module.css";
 import Square from "./Square";
-import { useEffect } from "react";
 
 // Winner calculation logic
 const calculateWinner = (squares) => {
@@ -31,337 +30,166 @@ const getSquareClass = (value) => {
   return "";
 };
 
-const Board = forwardRef(({ props: { bot, botPlayer } }, ref) => {
-  const [squares, setSquares] = useState(Array(9).fill(null));
+const Board = forwardRef(({ props }, ref) => {
+  // Destructure all props
+  const {
+    bot,
+    botPlayer,
+    squares: propSquares,
+    onSquareClick,
+    playerSymbol,
+    currentTurn,
+    isMultiplayer,
+    winner: propWinner,
+    isDraw: propIsDraw,
+  } = props;
+
+  // Use local state for local/bot games, props for multiplayer
+  const [localSquares, setLocalSquares] = useState(Array(9).fill(null));
   const [xIsNext, setXIsNext] = useState(true);
-  const [twoInARow, setTwoInARow] = useState(false);
 
   useImperativeHandle(ref, () => ({
     resetBoard: () => {
-      setSquares(Array(9).fill(null));
+      setLocalSquares(Array(9).fill(null));
       setXIsNext(true);
     },
+    resetBoardVisuals: () => {},
   }));
 
+  const squares = isMultiplayer ? propSquares : localSquares;
+  const winner = isMultiplayer ? propWinner : calculateWinner(squares);
+  const isDraw = isMultiplayer ? propIsDraw : (!winner && squares.every((sq) => sq !== null));
+
+  // Only block moves if bot is enabled and botPlayer is not set
   const handleClick = (i) => {
-    if (bot == null || (bot == true && botPlayer == null)) {
+    if (isMultiplayer) return; // Prevent local moves in multiplayer
+
+    if (bot === true && botPlayer == null) {
       console.warn("Bot has not been configured");
       return;
     }
+
     const newSquares = squares.slice();
     if (newSquares[i] || calculateWinner(newSquares)) return;
     newSquares[i] = xIsNext ? "X" : "O";
-    setSquares(newSquares);
+    setLocalSquares(newSquares);
     setXIsNext(!xIsNext);
   };
 
-  const winner = calculateWinner(squares);
-  const isDraw = !winner && squares.every((sq) => sq !== null);
-
-  // Ai behaviour
-  const aiAction = () => {
-    if (winner || isDraw) {
-      // If game is over. Abort.
-      return;
-    } else if (squares[4] == null) {
-      // If available. Click the centre square.
-      handleClick(4);
-      console.log("Ai clicked square", 4);
-      return;
-    } else if (!aiGaveUp) {
-      // If anyone has two in a row: complete or prevent.
-      selectSpesific(boardState);
-      return;
+  const getClickHandler = (i) => {
+    if (isMultiplayer) {
+      return () => onSquareClick(i);
     } else {
-      // Click randomly
-      selectRandom();
-      return;
+      return () => handleClick(i);
     }
   };
 
-  // Select random square
-  const selectRandom = () => {
-    let random = 0;
-    // Randomly loop until stumbling over open square
-    while (true) {
-      random = Math.round(Math.random() * (squares.length - 1));
-      if (squares[random] == null) {
-        handleClick(random);
-        console.log("Ai clicked square", random);
-        return;
-      }
+  // Only show status for local game, multiplayer status is handled by parent
+  let status = null;
+  if (!isMultiplayer) {
+    if (winner) {
+      status = (
+        <>
+          Winner: <span className={getSquareClass(winner)}>{winner}</span>
+        </>
+      );
+    } else if (isDraw) {
+      status = "It's a draw!";
+    } else {
+      const next = xIsNext ? "X" : "O";
+      status = (
+        <>
+          Next player: <span className={getSquareClass(next)}>{next}</span>
+        </>
+      );
     }
-  };
-
-  const selectSpesific = () => {
-    // Gave up. Have an elif wall.
-    for (let i = 0; i < boardState.length; i++) {
-      const [a, b, c] = lines[i];
-      for (let u = 0; u < boardState[i].length; u++) {
-        // Ai is stupid and will prioritize clearing the first set of 2/3's it finds.
-        if (
-          squares[a] === null &&
-          squares[a] != squares[b] &&
-          squares[b] === squares[c]
-        ) {
-          if (i === 0) {
-            handleClick(0);
-            console.log("Ai reacted with square", 0);
-            return;
-          } else if (i === 1) {
-            handleClick(3);
-            console.log("Ai reacted with square", 3);
-            return;
-          } else if (i === 2) {
-            handleClick(6);
-            console.log("Ai reacted with square", 6);
-            return;
-          } else if (i === 3) {
-            handleClick(0);
-            console.log("Ai reacted with square", 0);
-            return;
-          } else if (i === 4) {
-            handleClick(1);
-            console.log("Ai reacted with square", 1);
-            return;
-          } else if (i === 5) {
-            handleClick(2);
-            console.log("Ai reacted with square", 2);
-            return;
-          } else if (i === 6) {
-            handleClick(0);
-            console.log("Ai reacted with square", 0);
-            return;
-          } else if (i === 7) {
-            handleClick(2);
-            console.log("Ai reacted with square", 2);
-            return;
-          }
-        } else if (
-          squares[b] === null &&
-          squares[b] != squares[a] &&
-          squares[a] === squares[c]
-        ) {
-          if (i === 0) {
-            handleClick(1);
-            console.log("Ai reacted with square", 1);
-            return;
-          } else if (i === 1) {
-            handleClick(4);
-            console.log("Ai reacted with square", 4);
-            return;
-          } else if (i === 2) {
-            handleClick(7);
-            console.log("Ai reacted with square", 7);
-            return;
-          } else if (i === 3) {
-            handleClick(3);
-            console.log("Ai reacted with square", 3);
-            return;
-          } else if (i === 4) {
-            handleClick(4);
-            console.log("Ai reacted with square", 4);
-            return;
-          } else if (i === 5) {
-            handleClick(5);
-            console.log("Ai reacted with square", 5);
-            return;
-          } else if (i === 6) {
-            handleClick(4);
-            console.log("Ai reacted with square", 4);
-            return;
-          } else if (i === 7) {
-            handleClick(4);
-            console.log("Ai reacted with square", 4);
-            return;
-          }
-        } else if (
-          squares[c] === null &&
-          squares[c] != squares[a] &&
-          squares[a] === squares[b]
-        ) {
-          if (i === 0) {
-            handleClick(2);
-            console.log("Ai reacted with square", 2);
-            return;
-          } else if (i === 1) {
-            handleClick(5);
-            console.log("Ai reacted with square", 5);
-            return;
-          } else if (i === 2) {
-            handleClick(8);
-            console.log("Ai reacted with square", 8);
-            return;
-          } else if (i === 3) {
-            handleClick(6);
-            console.log("Ai reacted with square", 6);
-            return;
-          } else if (i === 4) {
-            handleClick(7);
-            console.log("Ai reacted with square", 7);
-            return;
-          } else if (i === 5) {
-            handleClick(8);
-            console.log("Ai reacted with square", 8);
-            return;
-          } else if (i === 6) {
-            handleClick(8);
-            console.log("Ai reacted with square", 8);
-            return;
-          } else if (i === 7) {
-            handleClick(6);
-            console.log("Ai reacted with square", 6);
-            return;
-          }
-        }
-      }
-    }
-    // Backup for when the AI gets confused
-    aiGaveUp = true;
-    selectRandom();
-    return;
-  };
-
-  // Container for reading status of winlines
-  let boardState = [];
-
-  // Winlines
-  const lines = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-  ];
-
-  let aiGaveUp = false;
-
-  // Check if any player as two in a row
-  const checkWinRisk = () => {
-    // Reset variables to default
-    setTwoInARow(false);
-    boardState = [];
-
-    // Loop through win conditions and check for 2/3
-    for (let i = 0; i < lines.length; i++) {
-      const [a, b, c] = lines[i];
-      if (
-        (squares[a] === null &&
-          squares[a] != squares[b] &&
-          squares[b] === squares[c]) ||
-        (squares[b] === null &&
-          squares[b] != squares[a] &&
-          squares[a] === squares[c]) ||
-        (squares[c] === null &&
-          squares[c] != squares[a] &&
-          squares[a] === squares[b])
-      ) {
-        // console.log(
-        //   "Two in a row somewhere",
-        //   squares[a],
-        //   squares[b],
-        //   squares[c]
-        // );
-        setTwoInARow(true);
-      }
-      // Push status of winlines into state container
-      boardState.push([squares[a], squares[b], squares[c]]);
-    }
-    // console.log("BoardState", boardState);
-  };
-
-  // Initiate AI move
-  useEffect(() => {
-    aiGaveUp = false;
-    checkWinRisk();
-    if ((xIsNext && botPlayer == "X") || (!xIsNext && botPlayer == "O")) {
-      aiAction();
-      return;
-    }
-  }, [botPlayer, squares]);
-
-  let status;
-  if (winner) {
-    status = (
-      <>
-        Winner: <span className={getSquareClass(winner)}>{winner}</span>
-      </>
-    );
-  } else if (isDraw) {
-    status = "It's a draw!";
-  } else {
-    const next = xIsNext ? "X" : "O";
-    status = (
-      <>
-        Next player: <span className={getSquareClass(next)}>{next}</span>
-      </>
-    );
   }
 
-  // Runs on board Update
   useEffect(() => {
-    const board = [
-      { line1: squares[0], line2: squares[1], line3: squares[2] },
-      { line1: squares[3], line2: squares[4], line3: squares[5] },
-      { line1: squares[6], line2: squares[7], line3: squares[8] },
-    ];
-    console.table(board);
-  }, [squares]);
+    if (
+      !isMultiplayer &&
+      bot === true &&
+      botPlayer &&
+      !winner &&
+      !isDraw &&
+      ((xIsNext && botPlayer === "X") || (!xIsNext && botPlayer === "O"))
+    ) {
+      // Find first empty square (simple bot)
+      const emptySquares = localSquares
+        .map((val, idx) => (val === null ? idx : null))
+        .filter((v) => v !== null);
+      if (emptySquares.length > 0) {
+        const move = emptySquares[0];
+        setTimeout(() => {
+          handleClick(move);
+        }, 500);
+      }
+    }
+    // eslint-disable-next-line
+  }, [localSquares, xIsNext, bot, botPlayer, isMultiplayer, winner, isDraw]);
+
+  useEffect(() => {
+    if (!isMultiplayer) {
+      const board = [
+        { line1: squares[0], line2: squares[1], line3: squares[2] },
+        { line1: squares[3], line2: squares[4], line3: squares[5] },
+        { line1: squares[6], line2: squares[7], line3: squares[8] },
+      ];
+      console.table(board);
+    }
+  }, [squares, isMultiplayer]);
 
   return (
     <div className={styles.board}>
-      <div className={styles.status}>{status}</div>
+      {status && <div className={styles.status}>{status}</div>}
       <div className={styles.boardRow}>
         <Square
           value={squares[0]}
-          onSquareClick={() => handleClick(0)}
+          onSquareClick={getClickHandler(0)}
           className={getSquareClass(squares[0])}
         />
         <Square
           value={squares[1]}
-          onSquareClick={() => handleClick(1)}
+          onSquareClick={getClickHandler(1)}
           className={getSquareClass(squares[1])}
         />
         <Square
           value={squares[2]}
-          onSquareClick={() => handleClick(2)}
+          onSquareClick={getClickHandler(2)}
           className={getSquareClass(squares[2])}
         />
       </div>
       <div className={styles.boardRow}>
         <Square
           value={squares[3]}
-          onSquareClick={() => handleClick(3)}
+          onSquareClick={getClickHandler(3)}
           className={getSquareClass(squares[3])}
         />
         <Square
           value={squares[4]}
-          onSquareClick={() => handleClick(4)}
+          onSquareClick={getClickHandler(4)}
           className={getSquareClass(squares[4])}
         />
         <Square
           value={squares[5]}
-          onSquareClick={() => handleClick(5)}
+          onSquareClick={getClickHandler(5)}
           className={getSquareClass(squares[5])}
         />
       </div>
       <div className={styles.boardRow}>
         <Square
           value={squares[6]}
-          onSquareClick={() => handleClick(6)}
+          onSquareClick={getClickHandler(6)}
           className={getSquareClass(squares[6])}
         />
         <Square
           value={squares[7]}
-          onSquareClick={() => handleClick(7)}
+          onSquareClick={getClickHandler(7)}
           className={getSquareClass(squares[7])}
         />
         <Square
           value={squares[8]}
-          onSquareClick={() => handleClick(8)}
+          onSquareClick={getClickHandler(8)}
           className={getSquareClass(squares[8])}
         />
       </div>
