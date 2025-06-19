@@ -5,9 +5,7 @@ body {
   padding: 0;
   background-color: lightgrey;
 }
-.logo {
-  height: 80px;
-}
+
 .header {
   background-color: #ff0000;
   border: #000000 solid;
@@ -19,10 +17,12 @@ body {
   justify-content: center;
   align-items: center;
   gap: 10px;
+  color: white;
+  font-weight: bold;
 }
 
 .game-container {
-  margin: 20px auto;
+  margin: 30px auto;
   padding: 20px;
   max-width: 600px;
   background-color: whitesmoke;
@@ -34,11 +34,44 @@ body {
   width: 300px;
   height: 300px;
   margin-bottom: 20px;
+  object-fit: contain;
 }
 
-input,
-button {
-  margin: 5px;
+.guess-input {
+  display: block;
+  margin: 20px auto 10px;
   padding: 10px;
   font-size: 16px;
+  width: 80%;
+  max-width: 300px;
+  border: 1px solid #999;
+  border-radius: 5px;
+}
+
+button {
+  margin: 5px;
+  padding: 10px 15px;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  background-color: #ff0000;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+button:hover {
+  background-color: #cc0000;
+}
+
+.gen-select {
+  margin: 20px auto;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.gen-select label {
+  font-size: 14px;
 }

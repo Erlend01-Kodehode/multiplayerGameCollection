@@ -13,6 +13,30 @@ export default function GuessPokemon() {
   const [pokemon, setPokemon] = useState(null);
   const [guess, setGuess] = useState("");
 
+  const [enabledGens, setEnabledGens] = useState({
+    gen1: false,
+    gen2: false,
+    gen3: false,
+    gen4: false,
+    gen5: false,
+    gen6: false,
+    gen7: false,
+    gen8: false,
+    gen9: false,
+  });
+
+  const genRanges = {
+    gen1: [1, 151],
+    gen2: [152, 251],
+    gen3: [252, 386],
+    gen4: [387, 493],
+    gen5: [494, 649],
+    gen6: [650, 721],
+    gen7: [722, 809],
+    gen8: [810, 905],
+    gen9: [906, 1025],
+  };
+
   useEffect(() => {
     startGame();
   }, []);
@@ -25,7 +49,19 @@ export default function GuessPokemon() {
 
   const fetchPokemon = async () => {
     try {
-      const id = Math.floor(Math.random() * 1025) + 1;
+      let activeGens = Object.entries(enabledGens).filter(([_, val]) => val);
+
+      if (activeGens.length === 0) {
+        activeGens = Object.entries(genRanges);
+      }
+
+      const enabledRanges = activeGens.map(([gen]) => genRanges[gen]);
+
+      const validIds = enabledRanges.flatMap(([start, end]) =>
+        Array.from({ length: end - start + 1 }, (_, i) => start + i)
+      );
+
+      const id = validIds[Math.floor(Math.random() * validIds.length)];
       const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
       const data = await res.json();
       setPokemon(data);
@@ -37,7 +73,7 @@ export default function GuessPokemon() {
 
   const handleGuess = () => {
     if (!pokemon) return;
-    const userGuess = guess.toLowerCase().trim();
+    const userGuess = guess.toLowerCase().trim().replace(/\s+/g, "-");
     if (userGuess === pokemon.name) {
       const newScore = score + 1;
       setScore(newScore);
@@ -51,7 +87,7 @@ export default function GuessPokemon() {
         fetchPokemon();
       } else {
         alert(
-          `the final pokemon was ${pokemon.name}! Your final score is ${score}`
+          `The final Pokémon was ${pokemon.name}! Your final score is ${score}`
         );
         if (score > highScore) {
           setHighScore(score);
@@ -66,13 +102,29 @@ export default function GuessPokemon() {
   return (
     <div>
       <div className="header">
-        <Link to="/home" className="logo-link">
-          <img className="logo" src="./images/api.png" alt="Logo" />
-        </Link>
         <p className="score">Score: {score}</p>
         <p className="health">Health: {health}</p>
         <p className="high-score">High Score: {highScore}</p>
       </div>
+
+      <div className="gen-select">
+        {Object.keys(genRanges).map((genKey) => (
+          <label key={genKey} style={{ marginRight: "10px" }}>
+            <input
+              type="checkbox"
+              checked={enabledGens[genKey]}
+              onChange={() =>
+                setEnabledGens((prev) => ({
+                  ...prev,
+                  [genKey]: !prev[genKey],
+                }))
+              }
+            />
+            {genKey.toUpperCase()}
+          </label>
+        ))}
+      </div>
+
       <div className="game-container">
         <img
           className="pokemon-image"
